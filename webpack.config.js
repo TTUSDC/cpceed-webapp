@@ -1,18 +1,35 @@
-var path = require('path');
-
 module.exports = {
-  entry: path.resolve(__dirname, 'src/client/scripts/client.jsx'),
+  entry: './src/app/index.js',
+
   output: {
-      path: path.resolve(__dirname, 'build'),
+      path: 'src/client/',
+      publicPath: '/',
       filename: "bundle.js"
   },
+
   module: {
-      loaders: [
-          {
-            test: /\.jsx?$/,
-            exclude: /node_modules/,
-            loader: 'babel'
-          }
-      ]
+    loaders: [
+    {
+        test: /\.js?$/,
+        exclude: /node_modules/,
+        loader: 'babel'
+    },
+    {
+        test: /\.css$/,
+        loaders: [
+            'style?sourceMap',
+            'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
+        ]
+    },
+    {
+        test: /\.scss$/,
+        loaders: [
+            'style?sourceMap',
+            'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
+            'resolve-url',
+            'sass?sourceMap'
+        ]
+    }
+    ]
   }
 };
