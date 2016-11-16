@@ -1,5 +1,5 @@
-module.exports = {
-    path: 'Login/',
+const loginRoute = {
+    path: 'login/',
 
     getComponent(nextState, callback) {
         require.ensure([], (require) => {
@@ -7,3 +7,5 @@ module.exports = {
         })
     }
 }
+
+module.exports = loginRoute

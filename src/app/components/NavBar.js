@@ -5,11 +5,12 @@ class Nav extends React.Component {
     render() {
         return (
             <div>
-                <h1>Guest</h1>
+                <h1>Navigation Bar</h1>
                 <ul>
-                  <li><Link to="Guest/Login/">Login</Link></li>
-                  <li><Link to="Guest/Register/">Register</Link></li>
+                  <li><Link to="/login/">Login</Link></li>
+                  <li><Link to="/register/">Register</Link></li>
                 </ul>
+                {this.props.children}
             </div>
         )
     }

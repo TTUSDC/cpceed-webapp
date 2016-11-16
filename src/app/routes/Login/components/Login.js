@@ -5,9 +5,13 @@ class Login extends React.Component {
     render() {
         return (
             <div>
+                <h2>Login</h2>
                 <form>
-                    Username:<br><input type="text" name="username"/></br>
-                    Password:<br><input type="text" name="password"/></br>
+                    Username<br/>
+                    <input type="text" name="username"/>
+                    <br/>
+                    Password<br/>
+                    <input type="text" name="password"/>
                 </form>
             </div>
         )
