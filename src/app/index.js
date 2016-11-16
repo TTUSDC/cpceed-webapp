@@ -1,28 +1,32 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { Router, Route, hashHistory, IndexRoute } from 'react-router'
-import Nav from './routes/Guest/components/Nav'
-import Coordinator from './routes/Coordinator'
 
-const rootRoute = {
+const appRoute = {
     path: '/',
 
-    getIndexRoute(partialNextState, callback) {
+    getComponent(nextState, callback) {
         require.ensure([], (require) => {
-            callback(null, require('./routes/Guest'))
+            callback(null, require('./components/NavBar'))
         })
     },
+
+    // getIndexRoute(partialNextState, callback) {
+    //     require.ensure([], (require) => {
+    //         callback(null, require('./routes/Login'))
+    //     })
+    // },
 
     getChildRoutes(partialNextState, callback) {
         require.ensure([], (require) => {
             callback(null, [
-                require('./routes/Coordinator')
+                require('./routes/Register'),
+                require('./routes/Login')
             ])
         })
     }
 }
 
-render(
-  (<Router history={hashHistory} routes={rootRoute}/>),
-  document.getElementById('app')
-)
+render((
+  <Router history={hashHistory} routes={appRoute}/>
+), document.getElementById('app'))
