@@ -1,16 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router';
-import styles from './NavBar.scss';
+import React from 'react'
+import { Link, hashHistory } from 'react-router'
+import styles from './NavBar.scss'
+import AppBar from 'react-toolbox/lib/app_bar'
+import Navigation from 'react-toolbox/lib/navigation'
+import Button from 'react-toolbox/lib/button'
 
 class Nav extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         return (
-            <div className={styles.test}>
-                <h1>Navigation Bar</h1>
-                <ul>
-                    <li><Link to="/login/">Login</Link></li>
-                    <li><Link to="/register/">Register</Link></li>
-                </ul>
+            <div>
+                <AppBar>
+                    <Navigation type='horizontal'>
+                        <Button label='Register' onClick={() => {
+                            hashHistory.push('/register/');
+                        }}/>
+                        <Button label='Login' onClick={() => {
+                            hashHistory.push('/login/');
+                        }}/>
+                    </Navigation>
+                </AppBar>
                 {this.props.children}
             </div>
         );
