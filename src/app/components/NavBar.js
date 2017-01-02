@@ -6,15 +6,12 @@ import Navigation from 'react-toolbox/lib/navigation'
 import Button from 'react-toolbox/lib/button'
 
 class Nav extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <div>
                 <AppBar>
                     <Navigation type='horizontal'>
+                        {/* Navigate by pushing changes to hashHistory */}
                         <Button label='Register' onClick={() => {
                             hashHistory.push('/register/');
                         }}/>
