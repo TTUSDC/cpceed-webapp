@@ -3,9 +3,9 @@ const registerRoute = {
 
     getComponent(nextState, callback) {
         require.ensure([], (require) => {
-            callback(null, require('./components/Register'))
+            callback(null, require('./components/Register').default)
         })
     }
 }
 
-module.exports = registerRoute
+export default registerRoute;

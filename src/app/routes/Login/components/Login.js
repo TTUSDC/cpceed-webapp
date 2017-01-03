@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
 import styles from './Login.scss';
 
 class Login extends React.Component {
@@ -19,4 +18,4 @@ class Login extends React.Component {
     }
 }
 
-module.exports = Login;
+export default Login;

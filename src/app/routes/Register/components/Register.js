@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router'
 
 class Register extends React.Component {
     render() {
@@ -21,4 +20,4 @@ class Register extends React.Component {
     }
 }
 
-module.exports = Register
+export default Register;
