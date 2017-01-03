@@ -3,9 +3,9 @@ const loginRoute = {
 
     getComponent(nextState, callback) {
         require.ensure([], (require) => {
-            callback(null, require('./components/Login'))
+            callback(null, require('./components/Login').default)
         })
     }
 }
 
-module.exports = loginRoute
+export default loginRoute;

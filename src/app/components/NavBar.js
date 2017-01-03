@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, hashHistory } from 'react-router'
+import { withRouter } from 'react-router'
 import styles from './NavBar.scss'
 import AppBar from 'react-toolbox/lib/app_bar'
 import Navigation from 'react-toolbox/lib/navigation'
@@ -11,12 +11,12 @@ class Nav extends React.Component {
             <div>
                 <AppBar>
                     <Navigation type='horizontal'>
-                        {/* Navigate by pushing changes to hashHistory */}
+                        {/* Navigate by pushing changes to router */}
                         <Button label='Register' onClick={() => {
-                            hashHistory.push('/register/');
+                            this.props.router.push('/register/');
                         }}/>
                         <Button label='Login' onClick={() => {
-                            hashHistory.push('/login/');
+                            this.props.router.push('/login/');
                         }}/>
                     </Navigation>
                 </AppBar>
@@ -26,4 +26,4 @@ class Nav extends React.Component {
     }
 }
 
-module.exports = Nav;
+export default withRouter(Nav);
