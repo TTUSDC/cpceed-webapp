@@ -3,7 +3,7 @@ const registerRoute = {
 
     getComponent(nextState, callback) {
         require.ensure([], (require) => {
-            callback(null, require('./components/Register').default)
+            callback(null, require('./components/RegisterContainer').default)
         })
     }
 }
