@@ -3,7 +3,7 @@ const loginRoute = {
 
     getComponent(nextState, callback) {
         require.ensure([], (require) => {
-            callback(null, require('./components/Login').default)
+            callback(null, require('./components/LoginContainer').default)
         })
     }
 }
