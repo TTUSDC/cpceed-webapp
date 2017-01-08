@@ -23,3 +23,7 @@ node_modules
 
 # VS Code
 .vscode
+
+
+# Firebase secrets
+devutils/dbdatagen/cpceed-firebase-admin-key.json
