@@ -43,7 +43,7 @@ class NavBar extends React.Component {
                 <AppBar theme={theme}>
                     <Navigation type='horizontal'>
                         <Button label='Events' onClick={() => {
-                            this.props.navigate('events/');
+                            this.props.navigate('/');
                         }}/>
                         <Button label='Activity' onClick={() => {
                             this.props.navigate('activity/');
