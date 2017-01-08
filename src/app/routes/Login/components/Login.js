@@ -1,10 +1,10 @@
-import React from 'react'
-import { Link } from 'react-router'
+import React from 'react';
+import styles from './Login.scss';
 
 class Login extends React.Component {
     render() {
         return (
-            <div>
+            <div className={styles.test}>
                 <h2>Login</h2>
                 <form>
                     Username<br/>
@@ -14,8 +14,8 @@ class Login extends React.Component {
                     <input type="text" name="password"/>
                 </form>
             </div>
-        )
+        );
     }
 }
 
-module.exports = Login
+export default Login;

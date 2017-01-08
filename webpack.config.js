@@ -1,35 +1,38 @@
 module.exports = {
-  entry: './src/app/index.js',
+    entry: './src/app/index.js',
 
-  output: {
-      path: 'src/client/',
-      publicPath: '/',
-      filename: "bundle.js"
-  },
+    output: {
+        path: 'src/client/',
+        publicPath: '/',
+        filename: "bundle.js"
+    },
 
-  module: {
-    loaders: [
-    {
-        test: /\.js?$/,
-        exclude: /node_modules/,
-        loader: 'babel'
-    },
-    {
-        test: /\.css$/,
-        loaders: [
-            'style?sourceMap',
-            'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
-        ]
-    },
-    {
-        test: /\.scss$/,
-        loaders: [
-            'style?sourceMap',
-            'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-            'resolve-url',
-            'sass?sourceMap'
+    devtool: 'source-map',
+
+    module: {
+            loaders: [
+            {
+                test: /\.js?$/,
+                exclude: /node_modules/,
+                loader: 'babel'
+            },
+            {
+                test: /\.css$/,
+                loaders: [
+                    'style-loader',
+                    'css-loader?modules&importLoaders=1&localIdentName=[path]__[name]__[local]__[hash:base64:5]',
+                    'resolve-url-loader'
+                ]
+            },
+            {
+                test: /\.scss$/,
+                loaders: [
+                    'style-loader',
+                    'css-loader?modules&importLoaders=1&localIdentName=[path]__[name]__[local]__[hash:base64:5]',
+                    'resolve-url-loader',
+                    'sass-loader?sourceMap'
+                ]
+            }
         ]
     }
-    ]
-  }
 };
