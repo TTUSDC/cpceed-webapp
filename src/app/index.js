@@ -27,12 +27,19 @@ const appRoute = {
         })
     },
 
+    // Load the events page by default
+    getIndexRoute(partialNextState, callback) {
+        require.ensure([], (require) => {
+            callback(null, require('./routes/Events').default)
+        })
+    },
+
     // Sets the children of the primary component
     getChildRoutes(partialNextState, callback) {
         require.ensure([], (require) => {
             callback(null, [
-                require('./routes/Register').default,
-                require('./routes/Login').default
+                require('./routes/Events').default,
+                require('./routes/Activity').default
             ])
         })
     }
