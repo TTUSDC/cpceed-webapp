@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase-admin": "^4.0.4",
     "prompt": "^1.0.0",
     "tracer": "^0.8.7"
   }
