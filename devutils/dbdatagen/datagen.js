@@ -7,6 +7,7 @@ var fs = require('fs'); //FileSystem
 var Q = require('q')
 var program = require('commander'); //For taking arguments
 var colors = require("colors/safe"); //Makes user input pretty
+var readLine = require('readline'); //For reading in files
 
 
 /*******************************************************************************
@@ -24,7 +25,7 @@ String.prototype.format = function() {
   var i = 0,
     args = arguments;
   return this.replace(/{}/g, function() {
-    return typeof args[i] != "undefined" ? args[i++] : '';
+    return typeof args[i] !== "undefined" ? args[i++] : '';
   });
 };
 
@@ -96,7 +97,7 @@ function generateData(){
 
       addProps("student", result.studentCount);
       addProps("admin", result.adminCount);
-      
+
       createUsers(propsList).then(function(){
         uidWriteStream.end();
         closeFirebase();
@@ -116,7 +117,7 @@ function createProps(role) {
   props.user.lastName = "Last"
   props.displayName = "dummyDisplay"
 
-  props.user = ((props.user.role == "student") ? generateStudentData(props.user) : props.user)
+  props.user = ((props.user.role === "student") ? generateStudentData(props.user) : props.user)
   return props;
 }
 
@@ -180,8 +181,8 @@ function deleteData(uidFile){
   logger.info("Deleting UIDs");
 
   //Reads through the file in an async way
-  var lineReader = require('readline').createInterface({
-    input: require('fs').createReadStream(uidFile)
+  var lineReader = readLine.createInterface({
+    input: fs.createReadStream(uidFile)
   });
 
   //Called on each line read in by lineReader
