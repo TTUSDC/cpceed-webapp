@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-var prompt = require('prompt') //Gets user input
 var tracer = require('tracer'); //For logging
 var admin = require("firebase-admin");
 var fs = require('fs'); //FileSystem
@@ -11,8 +10,8 @@ var readLine = require('readline'); //For reading in files
 
 
 /*******************************************************************************
-* UTILS
-*******************************************************************************/
+ * UTILS
+ *******************************************************************************/
 //Logging stuff
 tracer.setLevel(0) //'log':0, 'trace':1, 'debug':2, 'info':3, 'warn':4, 'error':5
 var logger = tracer.console({
@@ -42,8 +41,8 @@ function onError(err) {
 
 
 /*******************************************************************************
-* Firebase
-*******************************************************************************/
+ * Firebase
+ *******************************************************************************/
 var app = admin.initializeApp({
   credential: admin.credential.cert("./cpceed-firebase-admin-key.json"),
   databaseURL: "https://cpceed.firebaseio.com"
@@ -51,7 +50,7 @@ var app = admin.initializeApp({
 
 var db = admin.database();
 
-function closeFirebase(){
+function closeFirebase() {
   app.delete()
     .then(function() {
       logger.log("Firebase closed successfully");
@@ -64,69 +63,46 @@ function closeFirebase(){
 
 
 /*******************************************************************************
-* Generating Data
-*******************************************************************************/
+ * Generating Data
+ *******************************************************************************/
 var uidWriteStream; //Used to writing generated UIDs to file
 
-function generateData(){
-  prompt.get({
-    properties: {
-      studentCount: {
-        description: colors.magenta("Number of students to generate"),
-        required: true,
-        pattern: /^[0-9]+$/, //The message below should give a hint as to what this pattern is
-        message: 'Should be a number.'
-      },
-      adminCount: {
-        description: colors.magenta("Number of admins to generate"),
-        required: true,
-        pattern: /^[0-9]+$/, //The message below should give a hint as to what this pattern is
-        message: 'Should be a number.'
-      }
-    }
-  }, function(err, result){
-    if(err) return onError(err);
+function generateData(templateFile) {
+  uidWriteStream = fs.createWriteStream('./genUIDS', {'flags': 'a'});
+  var template = JSON.parse(fs.readFileSync(templateFile));
+  var propsList = [];
+  template.people.forEach(function(person){
+          propsList.push(createProps(person));
+  })
 
-      uidWriteStream = fs.createWriteStream('./genUIDS', {'flags': 'a'});
-      var propsList = []
-      function addProps(role, count) {
-        for(var i = 0; i < count; i++){
-          propsList.push(createProps(role));
-        }
-      }
-
-      addProps("student", result.studentCount);
-      addProps("admin", result.adminCount);
-
-      createUsers(propsList).then(function(){
-        uidWriteStream.end();
-        closeFirebase();
-      })
+  createUsers(propsList).then(function() {
+    uidWriteStream.end();
+    closeFirebase();
   })
 }
 
 //Type = student or admin
-function createProps(role) {
+function createProps(template) {
   randomString = genRandomString();
   props = {}
-  props.password = randomString;
+  props.password = ((template.password) ? template.password : randomString);
   props.user = {} //This is the object that will be placed in "/users/{uid}"
-  props.user.role = role;
-  props.user.email = "user{}@example.com".format(randomString)
-  props.user.firstName = "First"
-  props.user.lastName = "Last"
-  props.displayName = "dummyDisplay"
+  props.user.role = template.role; //This is required!
+  props.user.email = ((template.email) ? template.email : "user{}@example.com".format(randomString));
+  props.user.firstName = ((template.firstName) ? template.firstName : "First");
+  props.user.lastName = ((template.lastName) ? template.lastName : "Last");
+  props.displayName = ((template.displayName) ? template.displayName : "Display")
 
-  props.user = ((props.user.role === "student") ? generateStudentData(props.user) : props.user)
+  props.user = ((props.user.role === "student") ? generateStudentData(props.user, template) : props.user)
   return props;
 }
 
 // Used to generate data specfic to the student role
-function generateStudentData(user) {
+function generateStudentData(user, template) {
   logger.log("Generating student data for", user.email)
-  user.approvalStatus = true;
-  user.studentId = genRandomString();
-  user.points = 10
+  user.approvalStatus = ((template.approvalStatus) ? true : false);
+  user.studentId = ((template.studentId) ? template.studentId : genRandomString());
+  user.points = ((template.points) ? template.points : 10 );
   return user;
 }
 
@@ -155,7 +131,7 @@ function createUser(props, cb) {
       displayName: props.displayName,
       disabled: false
     })
-    .then(function(userRecord) {// A UserRecord representation of the newly created user is returned
+    .then(function(userRecord) { // A UserRecord representation of the newly created user is returned
       logger.log("Successfully created new user:", userRecord.uid);
       props.uid = userRecord.uid;
       var usersRef = db.ref("users/")
@@ -171,11 +147,11 @@ function createUser(props, cb) {
 
 
 /*******************************************************************************
-* Deleting Data
-*******************************************************************************/
+ * Deleting Data
+ *******************************************************************************/
 // Iterates through the passed in file to get the UIDs of people that need to be
 // deleted.
-function deleteData(uidFile){
+function deleteData(uidFile) {
   var uidList = []
   var delete_promises = [];
   logger.info("Deleting UIDs");
@@ -230,22 +206,18 @@ function deleteUser(uid, cb) {
 
 
 /*******************************************************************************
-* User Input
-*******************************************************************************/
-prompt.message = ("DBDataGen")
-prompt.delimiter = colors.green(":");
-prompt.start();
-
+ * Program 
+ *******************************************************************************/
 //Handles CLI arguemnts/options
 program
-    .version('0.0.1')
-    .option('-g, --gen', 'Generate data')
-    .option('-d, --delete <uidfile>', 'Delete all UIDs listed in file')
-    .parse(process.argv);
+  .version('0.0.1')
+  .option('-g, --gen <genfile>', 'Generate data using passed in file as template')
+  .option('-d, --delete <uidfile>', 'Delete all UIDs listed in file')
+  .parse(process.argv);
 
 
-if(program.gen){
-  generateData();
-} else if(program.delete){
+if(program.gen) {
+  generateData(program.gen);
+} else if(program.delete) {
   deleteData(program.delete);
 }
