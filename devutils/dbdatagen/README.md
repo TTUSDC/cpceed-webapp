@@ -3,6 +3,20 @@ Generates random data to fill the database
 This script uses firebase-admin which needs authentication.
 Instructions on how to get that set up on your machine can be found [here](https://firebase.google.com/docs/database/admin/start).
 
+# Usage
+```
+
+  Usage: datagen [options]
+
+  Options:
+
+    -h, --help              output usage information
+    -V, --version           output the version number
+    -g, --gen <genfile>     Generate data using passed in file as template
+    -d, --delete <uidfile>  Delete all UIDs listed in file
+```
+
+
 ## Gen Script
 To generate data, you need to pass in a 'script', a JSON file with what you want generated. This allows you to specify exactly what you want generated.
 The way this works is you define a JSON object for each 'thing' you want generated filling in all the required information.
