@@ -1,0 +1,34 @@
+{
+  "first": {
+    "description" : "FIRST Program Workshops, Presentations, and Socials",
+    "value" : 3
+  },
+  "professor": {
+    "description" : "Professor Meetings",
+    "value" : 4
+  },
+  "staff": {
+    "description" : "Advisor/Faculty/Staff Meetings",
+    "value" : 1
+  },
+  "outreach": {
+    "description" : "FIRST Program Outreach",
+    "value" : 2
+  },
+  "community": {
+    "description" : "Community Involvement Activities",
+    "value" : 1
+  },
+  "other": {
+    "description" : "Other College of Engineering Workshops & Engineering Company Info Sessions",
+    "value" : 1
+  },
+  "mentor": {
+    "description" : "Mentor Meetings",
+    "value" : 2
+  },
+  "career": {
+    "description" : "University Career Center Testing & Events",
+    "value" : 1
+  }
+}

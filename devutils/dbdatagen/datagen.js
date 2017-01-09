@@ -36,6 +36,7 @@ function genRandomString() {
 function onError(err) {
   logger.error('Message: %s', err.message)
   logger.debug('Stack: %j', err);
+  closeFirebase();
   return 1;
 }
 
@@ -204,15 +205,29 @@ function deleteUser(uid, cb) {
     });
 }
 
+/*******************************************************************************
+* Activity & Event Points
+*******************************************************************************/
+//Used to reset the Activity & Event points to their default values
+function resetAEPoints(){
+  logger.log("Resetting A&E Points")
+  var points = JSON.parse(fs.readFileSync("data/aepoints.json"));
+  var pointsRef = db.ref("aepoints/")
+  pointsRef.set(points, function(error) {
+    logger.log("Done resetting A&E Points");
+    closeFirebase();
+  })
+}
 
 /*******************************************************************************
- * Program 
+ * Program
  *******************************************************************************/
 //Handles CLI arguemnts/options
 program
   .version('0.0.1')
   .option('-g, --gen <genfile>', 'Generate data using passed in file as template')
   .option('-d, --delete <uidfile>', 'Delete all UIDs listed in file')
+  .option('-p --points', 'Resets the activity & event points')
   .parse(process.argv);
 
 
@@ -220,4 +235,6 @@ if(program.gen) {
   generateData(program.gen);
 } else if(program.delete) {
   deleteData(program.delete);
+} else if(program.points){
+  resetAEPoints();
 }
