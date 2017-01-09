@@ -88,13 +88,15 @@ function generateData(){
 
       uidWriteStream = fs.createWriteStream('./genUIDS', {'flags': 'a'});
       var propsList = []
-      for(var i = 0; i < result.studentCount; i++){
-        propsList.push(createProps("student"))
+      function addProps(role, count) {
+        for(var i = 0; i < count; i++){
+          propsList.push(createProps(role));
+        }
       }
-      for(var i = 0; i < result.adminCount; i++){
-        propsList.push(createProps("admin"))
 
-      }
+      addProps("student", result.studentCount);
+      addProps("admin", result.adminCount);
+      
       createUsers(propsList).then(function(){
         uidWriteStream.end();
         closeFirebase();
