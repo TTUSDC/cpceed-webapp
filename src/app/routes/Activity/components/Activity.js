@@ -1,5 +1,5 @@
 import React from 'react';
-import RequireAuth from '../../../components/Auth/RequireAuth.js';
+import RequireAuth from 'components/Auth/RequireAuth.js';
 
 class Activity extends React.Component {
     render() {

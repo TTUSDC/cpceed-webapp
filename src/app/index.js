@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Router, Route, hashHistory } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import cpceedApp from './redux/reducers.js';
+import cpceedApp from 'redux/reducers.js';
 
 // store holds the redux store that allows app-wide state to be shared
 const store = createStore(cpceedApp);

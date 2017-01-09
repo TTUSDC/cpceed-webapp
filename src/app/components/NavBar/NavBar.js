@@ -3,7 +3,7 @@ import AppBar from 'react-toolbox/lib/app_bar';
 import Navigation from 'react-toolbox/lib/navigation';
 import Button from 'react-toolbox/lib/button';
 import theme from './NavBar.scss';
-import AuthContainer from '../Auth/AuthContainer.js';
+import AuthContainer from 'components/Auth/AuthContainer.js';
 
 class NavBar extends React.Component {
     constructor(props) {

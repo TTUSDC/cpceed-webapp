@@ -1,7 +1,7 @@
 import React from 'react';
 import * as firebase from "firebase";
 import { connect } from 'react-redux';
-import { setAuthState } from '../../redux/actions.js';
+import { setAuthState } from 'redux/actions.js';
 import App from './App.js';
 
 var config = {

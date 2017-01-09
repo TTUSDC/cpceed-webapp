@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { AuthStates } from '../../redux/actions.js';
+import { AuthStates } from 'redux/actions.js';
 import AuthContainer from './AuthContainer.js';
 
 const requireAuth = (WrappedComponent) => {

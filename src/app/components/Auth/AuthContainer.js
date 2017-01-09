@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { withRouter } from 'react-router';
 import * as firebase from 'firebase';
 import { connect } from 'react-redux';
-import { setAuthState } from '../../redux/actions.js';
+import { setAuthState } from 'redux/actions.js';
 import Auth from './Auth.js';
 
 class AuthContainer extends React.Component {
@@ -48,7 +48,7 @@ class AuthContainer extends React.Component {
                         console.log("User was logged in");
 
                         this.props.dispatch(setAuthState(type.val()));
-                        
+
                         if(this.props.authFinished) {
                             this.props.authFinished();
                         }
