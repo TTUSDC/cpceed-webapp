@@ -2,8 +2,8 @@
 Generates random data to fill the database.
 This script uses firebase-admin which needs authentication.
 
-Instructions for setting that up on your machine are as follows:
-1. Go to **project settings => service accounts => firebase admin sdk** in the firebase console for the app
+Instructions for setting that up on your machine are as follows:  
+1. Go to **project settings => service accounts => firebase admin sdk** in the firebase console for the app  
 2. Click on **generate private key** and rename the file to `cpceed-firebase-admin-key.json` before saving to `CPCEEDWebApp/devutils/dbdatagen/`
 
 Further help can be found [here](https://firebase.google.com/docs/database/admin/start).
