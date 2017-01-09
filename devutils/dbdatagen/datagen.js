@@ -41,7 +41,7 @@ function onError(err) {
 
 
 /*******************************************************************************
-* Firebase Initialization
+* Firebase
 *******************************************************************************/
 var app = admin.initializeApp({
   credential: admin.credential.cert("./cpceed-firebase-admin-key.json"),
@@ -49,6 +49,16 @@ var app = admin.initializeApp({
 });
 
 var db = admin.database();
+
+function closeFirebase(){
+  app.delete()
+    .then(function() {
+      logger.log("Firebase closed successfully");
+    })
+    .catch(function(error) {
+      logger.error("Error closing firebase app:", error);
+    });
+}
 
 
 
@@ -87,13 +97,7 @@ function generateData(){
       }
       createUsers(propsList).then(function(){
         uidWriteStream.end();
-        app.delete()
-        .then(function() {
-          console.log("Firebase closed successfully");
-        })
-        .catch(function(error) {
-          console.log("Error closing firebase app:", error);
-        });
+        closeFirebase();
       })
   })
 }
@@ -193,13 +197,7 @@ function deleteData(uidFile){
   lineReader.on('close', function() {
     Q.all(delete_promises).then(function() {
       fs.unlink(uidFile)
-      app.delete()
-        .then(function() {
-          logger.log("Firebase closed successfully");
-        })
-        .catch(function(error) {
-          logger.error("Error closing firebase app:", error);
-        });
+      closeFirebase();
     })
   })
 }
