@@ -1,6 +1,12 @@
-import React from 'react'
-import { render } from 'react-dom'
-import { Router, Route, hashHistory } from 'react-router'
+import React from 'react';
+import { render } from 'react-dom';
+import { Router, Route, hashHistory } from 'react-router';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import cpceedApp from 'redux/reducers.js';
+
+// store holds the redux store that allows app-wide state to be shared
+const store = createStore(cpceedApp);
 
 const appRoute = {
     /*
@@ -17,7 +23,14 @@ const appRoute = {
     // Sets the primary component for this route
     getComponent(nextState, callback) {
         require.ensure([], (require) => {
-            callback(null, require('./components/NavBar').default)
+            callback(null, require('./components/App/AppContainer').default)
+        })
+    },
+
+    // Load the events page by default
+    getIndexRoute(partialNextState, callback) {
+        require.ensure([], (require) => {
+            callback(null, require('./routes/Events').default)
         })
     },
 
@@ -25,13 +38,17 @@ const appRoute = {
     getChildRoutes(partialNextState, callback) {
         require.ensure([], (require) => {
             callback(null, [
-                require('./routes/Register').default,
-                require('./routes/Login').default
+                require('./routes/Events').default,
+                require('./routes/Activity').default
             ])
         })
     }
-}
+};
 
-render((
-  <Router history={hashHistory} routes={appRoute}/>
-), document.getElementById('app'))
+render(
+    // Provider shares store with components joined by connect()
+    <Provider store={store}>
+        <Router history={hashHistory} routes={appRoute}/>
+    </Provider>,
+    document.getElementById('app')
+);
