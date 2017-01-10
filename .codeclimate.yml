@@ -1,0 +1,28 @@
+---
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
+      - javascript
+      - python
+      - php
+  eslint:
+    enabled: true
+    exclude_fingerprints:
+      - c6414090fac335e67ae8283280cf335a # String prototype-read-only override
+      - 81d208d75e746e5e808b505f99e2b991 # datagen#createProps() requires high complexity level
+
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - "**.inc"
+  - "**.js"
+  - "**.jsx"
+  - "**.module"
+  - "**.php"
+  - "**.py"
+  - "**.rb"
+exclude_paths: []

@@ -23,3 +23,9 @@ node_modules
 
 # VS Code
 .vscode
+
+
+# dbdatagen
+devutils/dbdatagen/cpceed-firebase-admin-key.json
+devutils/dbdatagen/genUIDS
+devutils/dbdatagen/gen-script.json
