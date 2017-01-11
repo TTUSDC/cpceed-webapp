@@ -96,7 +96,6 @@ And this snippet contains **all** the info you can override. The values do **not
       "title" : "The Mind Behind Linux",
       "description" : "Ted Talk with Linus Torvalds given by TED Curator, Chris Anderson"
     }
-
   ]
 }
 ```

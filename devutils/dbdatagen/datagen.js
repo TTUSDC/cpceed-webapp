@@ -71,31 +71,31 @@ var uidWriteStream; //Used to writing generated UIDs to file
 function generateData(templateFile) {
   uidWriteStream = fs.createWriteStream('./genUIDS', {'flags': 'a'});
   var template = JSON.parse(fs.readFileSync(templateFile));
-  var propsList = [];
+  var personList = [];
   template.people.forEach(function(person){
-          propsList.push(createProps(person));
+          personList.push(createPerson(person));
   })
 
-  createUsers(propsList).then(function() {
+  createUsers(personList).then(function() {
     uidWriteStream.end();
     closeFirebase();
   })
 }
 
 //Type = student or admin
-function createProps(template) {
+function createPerson(template) {
   randomString = genRandomString();
-  props = {}
-  props.password = ((template.password) ? template.password : randomString);
-  props.user = {} //This is the object that will be placed in "/users/{uid}"
-  props.user.role = template.role; //This is required!
-  props.user.email = ((template.email) ? template.email : "user{}@example.com".format(randomString));
-  props.user.firstName = ((template.firstName) ? template.firstName : "First");
-  props.user.lastName = ((template.lastName) ? template.lastName : "Last");
-  props.displayName = ((template.displayName) ? template.displayName : "Display")
+  person = {}
+  person.password = ((template.password) ? template.password : randomString);
+  person.user = {} //This is the object that will be placed in "/users/{uid}"
+  person.user.role = template.role; //This is required!
+  person.user.email = ((template.email) ? template.email : "user{}@example.com".format(randomString));
+  person.user.firstName = ((template.firstName) ? template.firstName : "First");
+  person.user.lastName = ((template.lastName) ? template.lastName : "Last");
+  person.displayName = ((template.displayName) ? template.displayName : "Display")
 
-  props.user = ((props.user.role === "student") ? generateStudentData(props.user, template) : props.user)
-  return props;
+  person.user = ((person.user.role === "student") ? generateStudentData(person.user, template) : person.user)
+  return person;
 }
 
 // Used to generate data specfic to the student role
@@ -107,16 +107,16 @@ function generateStudentData(user, template) {
   return user;
 }
 
-// Calls #createUser on every props in the list and gathers all promises.
+// Calls #createUser on every person in the list and gathers all promises.
 // Returns a "promise of promises".
-function createUsers(propsList) {
+function createUsers(personList) {
   var the_promises = [];
-  propsList.forEach(function(props) {
+  personList.forEach(function(person) {
     var deferred = Q.defer();
-    createUser(props, function(error, props) {
-      logger.log("Done creating user", props.uid);
-      uidWriteStream.write("{}\n".format(props.uid))
-      deferred.resolve(props)
+    createUser(person, function(error, person) {
+      logger.log("Done creating user", person.uid);
+      uidWriteStream.write("{}\n".format(person.uid))
+      deferred.resolve(person)
     })
     the_promises.push(deferred.promise);
   });
@@ -124,25 +124,25 @@ function createUsers(propsList) {
 }
 
 // Handles the firebase-admin calls to to creating the user and adding user data
-function createUser(props, cb) {
+function createUser(person, cb) {
   admin.auth().createUser({
-      email: props.user.email,
+      email: person.user.email,
       emailVerified: true,
-      password: props.password,
-      displayName: props.displayName,
+      password: person.password,
+      displayName: person.displayName,
       disabled: false
     })
     .then(function(userRecord) { // A UserRecord representation of the newly created user is returned
       logger.log("Successfully created new user:", userRecord.uid);
-      props.uid = userRecord.uid;
+      person.uid = userRecord.uid;
       var usersRef = db.ref("users/")
-      var userRef = usersRef.child(props.uid)
-      userRef.update(props.user, function(error) {
-        cb(error, props)
+      var userRef = usersRef.child(person.uid)
+      userRef.update(person.user, function(error) {
+        cb(error, person)
       })
     })
     .catch(function(error) {
-      cb(error, props)
+      cb(error, person)
     });
 }
 
