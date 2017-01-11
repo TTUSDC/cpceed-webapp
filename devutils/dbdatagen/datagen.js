@@ -2,11 +2,10 @@
 
 var tracer = require('tracer'); //For logging
 var admin = require("firebase-admin");
-var fs = require('fs'); //FileSystem
 var Q = require('q')
 var program = require('commander'); //For taking arguments
 var colors = require("colors/safe"); //Makes user input pretty
-var readLine = require('readline'); //For reading in files
+var jsonfile = require('jsonfile')
 
 
 /*******************************************************************************
@@ -66,18 +65,20 @@ function closeFirebase() {
 /*******************************************************************************
  * Generating Data
  *******************************************************************************/
-var uidWriteStream; //Used to writing generated UIDs to file
+var peopleRefToUIDs = {}; //Used to map a persons REF to their user UID
+var genOutput = {
+  people: []
+}
 
 function generateData(templateFile) {
-  uidWriteStream = fs.createWriteStream('./genUIDS', {'flags': 'a'});
-  var template = JSON.parse(fs.readFileSync(templateFile));
+  var template = jsonfile.readFileSync(templateFile);
   var personList = [];
   template.people.forEach(function(person){
           personList.push(createPerson(person));
   })
 
   createUsers(personList).then(function() {
-    uidWriteStream.end();
+    jsonfile.writeFile("gen-uids.json", genOutput)
     closeFirebase();
   })
 }
@@ -114,8 +115,13 @@ function createUsers(personList) {
   personList.forEach(function(person) {
     var deferred = Q.defer();
     createUser(person, function(error, person) {
-      logger.log("Done creating user", person.uid);
-      uidWriteStream.write("{}\n".format(person.uid))
+      if(error) {
+        logger.error("Error creating user", person)
+      } else {
+        logger.log("Done creating user", person.uid);
+        //uidWriteStream.write("{}\n".format(person.uid))
+        genOutput.people.push(person.uid)
+      }
       deferred.resolve(person)
     })
     the_promises.push(deferred.promise);
@@ -135,6 +141,9 @@ function createUser(person, cb) {
     .then(function(userRecord) { // A UserRecord representation of the newly created user is returned
       logger.log("Successfully created new user:", userRecord.uid);
       person.uid = userRecord.uid;
+      if(person.ref){
+        peopleRefToUIDs[person.ref] = person.uid;
+      }
       var usersRef = db.ref("users/")
       var userRef = usersRef.child(person.uid)
       userRef.update(person.user, function(error) {
@@ -153,55 +162,53 @@ function createUser(person, cb) {
 // Iterates through the passed in file to get the UIDs of people that need to be
 // deleted.
 function deleteData(uidFile) {
-  var uidList = []
   var delete_promises = [];
-  logger.info("Deleting UIDs");
-
-  //Reads through the file in an async way
-  var lineReader = readLine.createInterface({
-    input: fs.createReadStream(uidFile)
+  logger.info("Deleting objects");
+  jsonfile.readFile(uidFile, function(err, uids){
+    console.log(uids);
+    uids.people.forEach(function(userUID){
+        var deferred = Q.defer();
+        deleteUser(userUID, function(userUID) {
+          if(userUID){
+            logger.log("Removing used with uid:", userUID);
+            deferred.resolve(userUID)
+          }
+        })
+        delete_promises.push(deferred.promise);
+    });
+      Q.all(delete_promises).then(function() {
+        closeFirebase();
+      })
   });
-
-  //Called on each line read in by lineReader
-  lineReader.on('line', function(line) {
-    uidList.push(line);
-    var deferred = Q.defer();
-    deleteUser(line, function(error, line) {
-      logger.log("Removing used with uid:", line);
-      deferred.resolve(line)
-    })
-    delete_promises.push(deferred.promise);
-  });
-
-  //Called when lineReader is done reading the file
-  lineReader.on('close', function() {
-    Q.all(delete_promises).then(function() {
-      fs.unlink(uidFile)
-      closeFirebase();
-    })
-  })
 }
 
 // Handles connecting to Firebase and deleting all relevant user data
 function deleteUser(uid, cb) {
+  logger.log("Deleting user with UID:", uid)
   admin.auth().deleteUser(uid)
-    .then(function() {
+    .then(function() { //The user account was deleted
       logger.log("Successfully deleted user", uid);
+    })
+    .catch(function(error) {
+      //Error with deleting user account. Most likely case it that it
+      //doesn't exist anymore.
+      logger.warn("Error deleting user:", error);
+      cb(null);
+    }).then(function(){
+      console.log("Then.");
       logger.log("Removing user data")
       var usersRef = db.ref("users/")
       usersRef.update({
         [uid]: null
       }, function(error) {
+        //Even if there was an error deleting an account due to it may have been
+        //removed by something else, there still may be user data to remove.
         if(error) {
           logger.warn("Error removing user data for UID:", uid, error)
         }
         logger.log("Removed user data")
-        cb(null, uid);
+        cb(uid);
       })
-    })
-    .catch(function(error) {
-      logger.error("Error deleting user:", error);
-      cb(error, uid);
     });
 }
 
@@ -211,7 +218,7 @@ function deleteUser(uid, cb) {
 //Used to reset the Activity & Event points to their default values
 function resetAEPoints(){
   logger.log("Resetting A&E Points")
-  var points = JSON.parse(fs.readFileSync("data/aepoints.json"));
+  var points = jsonfile.readFileSync("data/aepoints.json");
   var pointsRef = db.ref("aepoints/")
   pointsRef.set(points, function(error) {
     logger.log("Done resetting A&E Points");

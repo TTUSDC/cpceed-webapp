@@ -27,5 +27,5 @@ node_modules
 
 # dbdatagen
 devutils/dbdatagen/cpceed-firebase-admin-key.json
-devutils/dbdatagen/genUIDS
+devutils/dbdatagen/gen-uids.json
 devutils/dbdatagen/gen-script.json
