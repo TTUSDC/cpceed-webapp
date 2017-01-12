@@ -39,6 +39,12 @@ function onError(err) {
   return 1;
 }
 
+//Returns the UID mapped to the ref if exists, else returns the ref
+//If the ref is null, returns a random string
+function getUIDFromRef(type, ref){
+  if(!ref) return genRandomString();
+  if(type === "people") return ((peopleRefToUIDs[ref]) ? peopleRefToUIDs[ref] : ref);
+}
 
 /*******************************************************************************
  * Firebase
@@ -67,22 +73,32 @@ function closeFirebase() {
  *******************************************************************************/
 var peopleRefToUIDs = {}; //Used to map a persons REF to their user UID
 var genOutput = {
-  people: []
+  people: [],
+  events: []
 }
 
 function generateData(templateFile) {
   var template = jsonfile.readFileSync(templateFile);
   var personList = [];
+  var eventsList = [];
   template.people.forEach(function(person){
           personList.push(createPerson(person));
-  })
+  });
+
+  template.events.forEach(function(event){
+    eventsList.push(createEvent(event))
+  });
 
   createUsers(personList).then(function() {
     jsonfile.writeFile("gen-uids.json", genOutput)
     closeFirebase();
-  })
+  });
 }
 
+
+/*******************************************************************************
+* Creating People
+*******************************************************************************/
 //Type = student or admin
 function createPerson(template) {
   randomString = genRandomString();
@@ -94,6 +110,7 @@ function createPerson(template) {
   person.user.firstName = ((template.firstName) ? template.firstName : "First");
   person.user.lastName = ((template.lastName) ? template.lastName : "Last");
   person.displayName = ((template.displayName) ? template.displayName : "Display")
+  person.ref = template.ref;
 
   person.user = ((person.user.role === "student") ? generateStudentData(person.user, template) : person.user)
   return person;
@@ -155,6 +172,23 @@ function createUser(person, cb) {
     });
 }
 
+
+/*******************************************************************************
+* Creating Events
+*******************************************************************************/
+function createEvent(template) {
+  randomString = genRandomString();
+  event = {};
+  event.creator = getUIDFromRef(template.ref);
+  event.contact = template.contact;
+  event.category = template.category;
+  event.datetime = template.datetime;
+  event.location = template.location;
+  event.title = template.title;
+  event.description = template.description;
+
+  return event;
+}
 
 /*******************************************************************************
  * Deleting Data
@@ -236,6 +270,7 @@ program
   .option('-d, --delete <uidfile>', 'Delete all UIDs listed in file')
   .option('-p --points', 'Resets the activity & event points')
   .parse(process.argv);
+
 
 
 if(program.gen) {
