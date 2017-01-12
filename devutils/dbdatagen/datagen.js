@@ -72,6 +72,7 @@ function closeFirebase() {
  * Generating Data
  *******************************************************************************/
 var peopleRefToUIDs = {}; //Used to map a persons REF to their user UID
+var eventsRefToUIDs = {}; // ^^^ with events
 var genOutput = {
   people: [],
   events: []
@@ -176,6 +177,8 @@ function createUser(person, cb) {
 /*******************************************************************************
 * Creating Events
 *******************************************************************************/
+//Creates and returns a fully-filled event object using the psased in template
+//and filling in any missing data with generated data.
 function createEvent(template) {
   randomString = genRandomString();
   event = {};
@@ -190,6 +193,28 @@ function createEvent(template) {
   return event;
 }
 
+
+// Handles the firebase-admin calls add the event data to '/events'
+function saveEvent(event, cb){
+  var eventsRef = db.ref("events/")
+  var newEventRef = eventsRef.push({
+    creator: event.creator,
+    contact: event.contact,
+    category: event.category,
+    datetime: event.datetime,
+    location: event.location,
+    title: event.title,
+    description: event.description
+  }, function(error){
+    if(error) logger.error("Error adding event: ", error);
+    event.uid = newEventRef.key;
+    if(event.ref) eventsRefToUIDs[event.ref] = event.uid;
+    cb(error,event)
+  });
+
+
+
+}
 /*******************************************************************************
  * Deleting Data
  *******************************************************************************/
