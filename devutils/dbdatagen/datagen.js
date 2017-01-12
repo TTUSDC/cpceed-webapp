@@ -52,11 +52,13 @@ function getUIDFromRef(type, ref) {
  *******************************************************************************/
 var defaultData = jsonfile.readFileSync("data/defaults.json");
 
+//Returns a random item from the list
+function getRandomItem(list) {
+  return list[Math.floor(Math.random() * list.length)]
+}
 // Returns a random name
 function getRandomName() {
-  var count = defaultData.names.length;
-  var index = Math.floor(Math.random() * count);
-  var name = defaultData.names[index];
+  var name = getRandomItem(defaultData.names);
   var splitname = name.split(" ");
   var result = {
     full: name,
@@ -65,6 +67,10 @@ function getRandomName() {
     display: name.replace(" ", "_")
   }
   return result;
+}
+
+function getRandomEvent() {
+  return getRandomItem(defaultData.events)
 }
 
 
@@ -208,14 +214,15 @@ function createUser(person, cb) {
 //and filling in any missing data with generated data.
 function createEvent(template) {
   randomString = genRandomString();
+  randomEvent = getRandomEvent();
   event = {};
   event.creator = getUIDFromRef(template.ref);
   event.contact = ((template.contact) ? template.contact : event.creator);
-  event.category = template.category;
-  event.datetime = template.datetime;
-  event.location = template.location;
-  event.title = template.title;
-  event.description = template.description;
+  event.category = ((template.category) ? template.category : "other");
+  event.datetime = ((template.datetime) ? template.datetime : randomEvent.datetime);
+  event.location = ((template.location) ? template.location : randomEvent.location);
+  event.title = ((template.title) ? template.title : randomEvent.title );
+  event.description = ((template.description) ? template.description : randomEvent.description);
 
   return event;
 }
@@ -265,6 +272,7 @@ function saveEvent(event, cb) {
 function deleteData(uidFile) {
   logger.info("Preparing to delete items.");
   var deleteMap = {};
+
   function addListToDeleteMap(uidList, deleteCall) {
     uidList.forEach(function(uid) {
       deleteMap[uid] = deleteCall;
