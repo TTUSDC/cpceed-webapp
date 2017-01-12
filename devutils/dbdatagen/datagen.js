@@ -48,8 +48,8 @@ function getUIDFromRef(type, ref) {
 
 
 /*******************************************************************************
-* Data Defaults
-*******************************************************************************/
+ * Data Defaults
+ *******************************************************************************/
 var defaultData = jsonfile.readFileSync("data/defaults.json");
 
 // Returns a random name
@@ -134,7 +134,7 @@ function createPerson(template) {
   person.password = ((template.password) ? template.password : randomString);
   person.user = {} //This is the object that will be placed in "/users/{uid}"
   person.user.role = template.role; //This is required!
-  person.user.email = ((template.email) ? template.email : "{}.{}@{}.com".format(randomName.first,randomName.last,randomString));
+  person.user.email = ((template.email) ? template.email : "{}.{}@{}.com".format(randomName.first, randomName.last, randomString));
   person.user.firstName = ((template.firstName) ? template.firstName : randomName.first);
   person.user.lastName = ((template.lastName) ? template.lastName : randomName.last);
   person.displayName = ((template.displayName) ? template.displayName : randomName.display)
@@ -210,7 +210,7 @@ function createEvent(template) {
   randomString = genRandomString();
   event = {};
   event.creator = getUIDFromRef(template.ref);
-  event.contact = ((template.contact) ? template.contact : event.creator ;
+  event.contact = ((template.contact) ? template.contact : event.creator);
   event.category = template.category;
   event.datetime = template.datetime;
   event.location = template.location;
@@ -264,22 +264,26 @@ function saveEvent(event, cb) {
 // deleted.
 function deleteData(uidFile) {
   var delete_promises = [];
+  var deferred = Q.defer();
   logger.info("Deleting objects");
   jsonfile.readFile(uidFile, function(err, uids) {
     uids.people.forEach(function(userUID) {
-      var deferred = Q.defer();
       deleteUser(userUID, function(userUID) {
-        if(userUID) {
-          logger.log("Removing used with uid:", userUID);
-          deferred.resolve(userUID)
-        }
+        deferred.resolve(userUID)
       })
       delete_promises.push(deferred.promise);
     });
+    uids.events.forEach(function(eventUID) {
+      deleteEvent(eventUID, function(eventUID) {
+        deferred.resolve(eventUID)
+      })
+    })
+
     Q.all(delete_promises).then(function() {
       closeFirebase();
     })
   });
+
 }
 
 // Handles connecting to Firebase and deleting all relevant user data
@@ -295,7 +299,6 @@ function deleteUser(uid, cb) {
       logger.warn("Error deleting user:", error);
       cb(null);
     }).then(function() {
-      console.log("Then.");
       logger.log("Removing user data")
       var usersRef = db.ref("users/")
       usersRef.update({
@@ -303,13 +306,25 @@ function deleteUser(uid, cb) {
       }, function(error) {
         //Even if there was an error deleting an account due to it may have been
         //removed by something else, there still may be user data to remove.
-        if(error) {
-          logger.warn("Error removing user data for UID:", uid, error)
-        }
-        logger.log("Removed user data")
+        if(error) logger.warn("Error removing user data for UID:", uid, error);
+        else logger.log("Removing used with uid:", uid);
         cb(uid);
       })
     });
+}
+
+// Handles connecting to Firebase and deleting the event data
+function deleteEvent(uid, cb) {
+  logger.log("Deleting event with UID:", uid)
+  var eventsRef = db.ref("events/")
+  eventsRef.update({
+    [uid]: null
+  }, function(error) {
+    if(error) logger.warn("Error removing event data for UID:", uid, error);
+    else logger.log("Removed event data");
+    cb(uid);
+  })
+
 }
 
 
