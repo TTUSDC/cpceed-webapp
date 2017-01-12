@@ -45,7 +45,7 @@ function onError(err) {
 function getDateJSONFromString(dateString){
   var dateArr = dateString.split(":");
   for (var i = 0; i < dateArr.length; i++){
-    dateArr[i] = parseInt(dateArr[i]);
+    dateArr[i] = parseInt(dateArr[i], 10);
   }
   var date = new Date(dateArr[0], dateArr[1], dateArr[2], dateArr[3], dateArr[4]);
   return date.toJSON();
