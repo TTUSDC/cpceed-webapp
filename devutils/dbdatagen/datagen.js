@@ -260,29 +260,43 @@ function saveEvent(event, cb) {
 /*******************************************************************************
  * Deleting Data
  *******************************************************************************/
-// Iterates through the passed in file to get the UIDs of people that need to be
-// deleted.
+// Iterates through the passed in file to get the UIDs of items that need to be
+// removed and creates a map of them and their corresponding removal functions.
 function deleteData(uidFile) {
+  logger.info("Preparing to delete items.");
+  var deleteMap = {};
+  function addListToDeleteMap(uidList, deleteCall) {
+    uidList.forEach(function(uid) {
+      deleteMap[uid] = deleteCall;
+    });
+  }
+  jsonfile.readFile(uidFile, function(err, uids) {
+    if(err) return onError(err);
+    addListToDeleteMap(uids.people, deleteUser);
+    addListToDeleteMap(uids.events, deleteEvent);
+    deleteAllInMap(deleteMap);
+  });
+
+}
+
+//Goes through the map, calling the removal function on each key, collecting
+// all callbacks into one big promise. Once all promises are finished,
+// Firebase connection is closed.
+function deleteAllInMap(deleteMap) {
+  logger.log("Deleting items.")
   var delete_promises = [];
   var deferred = Q.defer();
-  logger.info("Deleting objects");
-  jsonfile.readFile(uidFile, function(err, uids) {
-    uids.people.forEach(function(userUID) {
-      deleteUser(userUID, function(userUID) {
-        deferred.resolve(userUID)
-      })
-      delete_promises.push(deferred.promise);
-    });
-    uids.events.forEach(function(eventUID) {
-      deleteEvent(eventUID, function(eventUID) {
-        deferred.resolve(eventUID)
-      })
-    })
-
-    Q.all(delete_promises).then(function() {
-      closeFirebase();
-    })
-  });
+  for(var key in deleteMap) {
+    if(deleteMap.hasOwnProperty(key)) {
+      deleteMap[key](key, function(uid) {
+        if(uid) deferred.resolve(uid);
+      });
+      delete_promises.push(deferred.promise)
+    }
+  }
+  Q.all(delete_promises).then(function() {
+    closeFirebase();
+  })
 
 }
 
@@ -297,7 +311,7 @@ function deleteUser(uid, cb) {
       //Error with deleting user account. Most likely case it that it
       //doesn't exist anymore.
       logger.warn("Error deleting user:", error);
-      cb(null);
+      cb();
     }).then(function() {
       logger.log("Removing user data")
       var usersRef = db.ref("users/")
