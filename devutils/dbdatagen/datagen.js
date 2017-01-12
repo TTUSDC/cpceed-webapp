@@ -41,9 +41,9 @@ function onError(err) {
 
 //Returns the UID mapped to the ref if exists, else returns the ref
 //If the ref is null, returns a random string
-function getUIDFromRef(type, ref){
+function getUIDFromRef(type, ref) {
   if(!ref) return genRandomString();
-  if(type === "people") return ((peopleRefToUIDs[ref]) ? peopleRefToUIDs[ref] : ref);
+  if(type === "people") return((peopleRefToUIDs[ref]) ? peopleRefToUIDs[ref] : ref);
 }
 
 /*******************************************************************************
@@ -81,25 +81,27 @@ var genOutput = {
 function generateData(templateFile) {
   var template = jsonfile.readFileSync(templateFile);
   var personList = [];
-  var eventsList = [];
-  template.people.forEach(function(person){
-          personList.push(createPerson(person));
+  var eventList = [];
+  template.people.forEach(function(person) {
+    personList.push(createPerson(person));
   });
 
-  template.events.forEach(function(event){
-    eventsList.push(createEvent(event))
+  template.events.forEach(function(event) {
+    eventList.push(createEvent(event))
   });
 
   createUsers(personList).then(function() {
-    jsonfile.writeFile("gen-uids.json", genOutput)
-    closeFirebase();
+    createEvents(eventList).then(function() {
+      jsonfile.writeFile("gen-uids.json", genOutput)
+      closeFirebase();
+    })
   });
 }
 
 
 /*******************************************************************************
-* Creating People
-*******************************************************************************/
+ * Creating People
+ *******************************************************************************/
 //Type = student or admin
 function createPerson(template) {
   randomString = genRandomString();
@@ -122,7 +124,7 @@ function generateStudentData(user, template) {
   logger.log("Generating student data for", user.email)
   user.approvalStatus = ((template.approvalStatus) ? true : false);
   user.studentId = ((template.studentId) ? template.studentId : genRandomString());
-  user.points = ((template.points) ? template.points : 10 );
+  user.points = ((template.points) ? template.points : 10);
   return user;
 }
 
@@ -159,7 +161,7 @@ function createUser(person, cb) {
     .then(function(userRecord) { // A UserRecord representation of the newly created user is returned
       logger.log("Successfully created new user:", userRecord.uid);
       person.uid = userRecord.uid;
-      if(person.ref){
+      if(person.ref) {
         peopleRefToUIDs[person.ref] = person.uid;
       }
       var usersRef = db.ref("users/")
@@ -175,8 +177,8 @@ function createUser(person, cb) {
 
 
 /*******************************************************************************
-* Creating Events
-*******************************************************************************/
+ * Creating Events
+ *******************************************************************************/
 //Creates and returns a fully-filled event object using the psased in template
 //and filling in any missing data with generated data.
 function createEvent(template) {
@@ -195,27 +197,25 @@ function createEvent(template) {
 
 //Calls #saveEvent on every event in the list and gathers all the promises.
 // Returns a "promise of promises".
-function createEvents(eventList){
+function createEvents(eventList) {
   var the_promises = [];
-  eventList.forEach(function(event){
+  eventList.forEach(function(event) {
     var deferred = Q.defer();
-    saveEvent(event, function(result){
-      if(result.uid) {
-        logger.log("Done creating event:" , result.title );
-        genOutput.events.push(result.uid);
-      }
-      deffered.resolve(result);
+    saveEvent(event, function(result) {
+      if(result.uid) genOutput.events.push(result.uid);
+      deferred.resolve(result);
     })
+    the_promises.push(deferred.promise);
   });
-    return Q.all(the_promises);
+  return Q.all(the_promises);
 }
-
 
 // Handles the firebase-admin calls add the event data to '/events'
 // Returns the event object with the UID key filled if successfull.
-function saveEvent(event, cb){
-  var eventsRef = db.ref("events/")
-  var newEventRef = eventsRef.push({
+function saveEvent(event, cb) {
+  var eventsRef = db.ref("events/");
+  var newEventRef = eventsRef.push();
+  newEventRef.set({
     creator: event.creator,
     contact: event.contact,
     category: event.category,
@@ -223,18 +223,15 @@ function saveEvent(event, cb){
     location: event.location,
     title: event.title,
     description: event.description
-  }, function(error){
-    if(error) logger.error("Error adding event: ", error);
-    else {
-      event.uid = newEventRef.key;
-      if(event.ref) eventsRefToUIDs[event.ref] = event.uid;
-    }
+  }, function(error) {
+    event.uid = newEventRef.key;
+    logger.log("Done creating event ", event.title, " with UID ", event.uid)
+
     cb(event)
-  });
-
-
-
+  })
 }
+
+
 /*******************************************************************************
  * Deleting Data
  *******************************************************************************/
@@ -243,21 +240,20 @@ function saveEvent(event, cb){
 function deleteData(uidFile) {
   var delete_promises = [];
   logger.info("Deleting objects");
-  jsonfile.readFile(uidFile, function(err, uids){
-    console.log(uids);
-    uids.people.forEach(function(userUID){
-        var deferred = Q.defer();
-        deleteUser(userUID, function(userUID) {
-          if(userUID){
-            logger.log("Removing used with uid:", userUID);
-            deferred.resolve(userUID)
-          }
-        })
-        delete_promises.push(deferred.promise);
-    });
-      Q.all(delete_promises).then(function() {
-        closeFirebase();
+  jsonfile.readFile(uidFile, function(err, uids) {
+    uids.people.forEach(function(userUID) {
+      var deferred = Q.defer();
+      deleteUser(userUID, function(userUID) {
+        if(userUID) {
+          logger.log("Removing used with uid:", userUID);
+          deferred.resolve(userUID)
+        }
       })
+      delete_promises.push(deferred.promise);
+    });
+    Q.all(delete_promises).then(function() {
+      closeFirebase();
+    })
   });
 }
 
@@ -273,7 +269,7 @@ function deleteUser(uid, cb) {
       //doesn't exist anymore.
       logger.warn("Error deleting user:", error);
       cb(null);
-    }).then(function(){
+    }).then(function() {
       console.log("Then.");
       logger.log("Removing user data")
       var usersRef = db.ref("users/")
@@ -291,11 +287,12 @@ function deleteUser(uid, cb) {
     });
 }
 
+
 /*******************************************************************************
-* Activity & Event Points
-*******************************************************************************/
+ * Activity & Event Points
+ *******************************************************************************/
 //Used to reset the Activity & Event points to their default values
-function resetAEPoints(){
+function resetAEPoints() {
   logger.log("Resetting A&E Points")
   var points = jsonfile.readFileSync("data/aepoints.json");
   var pointsRef = db.ref("aepoints/")
@@ -304,6 +301,7 @@ function resetAEPoints(){
     closeFirebase();
   })
 }
+
 
 /*******************************************************************************
  * Program
@@ -322,6 +320,6 @@ if(program.gen) {
   generateData(program.gen);
 } else if(program.delete) {
   deleteData(program.delete);
-} else if(program.points){
+} else if(program.points) {
   resetAEPoints();
 }
