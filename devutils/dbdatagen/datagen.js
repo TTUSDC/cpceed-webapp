@@ -193,8 +193,26 @@ function createEvent(template) {
   return event;
 }
 
+//Calls #saveEvent on every event in the list and gathers all the promises.
+// Returns a "promise of promises".
+function createEvents(eventList){
+  var the_promises = [];
+  eventList.forEach(function(event){
+    var deferred = Q.defer();
+    saveEvent(event, function(result){
+      if(result.uid) {
+        logger.log("Done creating event:" , result.title );
+        genOutput.events.push(result.uid);
+      }
+      deffered.resolve(result);
+    })
+  });
+    return Q.all(the_promises);
+}
+
 
 // Handles the firebase-admin calls add the event data to '/events'
+// Returns the event object with the UID key filled if successfull.
 function saveEvent(event, cb){
   var eventsRef = db.ref("events/")
   var newEventRef = eventsRef.push({
@@ -207,9 +225,11 @@ function saveEvent(event, cb){
     description: event.description
   }, function(error){
     if(error) logger.error("Error adding event: ", error);
-    event.uid = newEventRef.key;
-    if(event.ref) eventsRefToUIDs[event.ref] = event.uid;
-    cb(error,event)
+    else {
+      event.uid = newEventRef.key;
+      if(event.ref) eventsRefToUIDs[event.ref] = event.uid;
+    }
+    cb(event)
   });
 
 
