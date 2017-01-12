@@ -128,8 +128,8 @@ function generateData(templateFile) {
     personList.push(createPerson(person));
   });
 
-  template.events.forEach(function(event) {
-    eventList.push(createEvent(event))
+  template.events.forEach(function(eventObj) {
+    eventList.push(createEvent(eventObj))
   });
 
   createUsers(personList).then(function() {
@@ -227,16 +227,16 @@ function createUser(person, cb) {
 function createEvent(template) {
   randomString = genRandomString();
   randomEvent = getRandomEvent();
-  event = {};
-  event.creator = getUIDFromRef(template.ref);
-  event.contact = ((template.contact) ? template.contact : event.creator);
-  event.category = ((template.category) ? template.category : "other");
-  event.datetime = ((template.datetime) ? getDateJSONFromString(template.datetime) : getDateJSONFromString(randomEvent.datetime));
-  event.location = ((template.location) ? template.location : randomEvent.location);
-  event.title = ((template.title) ? template.title : randomEvent.title );
-  event.description = ((template.description) ? template.description : randomEvent.description);
+  eventObj = {};
+  eventObj.creator = getUIDFromRef(template.ref);
+  eventObj.contact = ((template.contact) ? template.contact : eventObj.creator);
+  eventObj.category = ((template.category) ? template.category : "other");
+  eventObj.datetime = ((template.datetime) ? getDateJSONFromString(template.datetime) : getDateJSONFromString(randomEvent.datetime));
+  eventObj.location = ((template.location) ? template.location : randomEvent.location);
+  eventObj.title = ((template.title) ? template.title : randomEvent.title );
+  eventObj.description = ((template.description) ? template.description : randomEvent.description);
 
-  return event;
+  return eventObj;
 }
 
 //Calls #saveEvent on every event in the list and gathers all the promises.
@@ -256,22 +256,22 @@ function createEvents(eventList) {
 
 // Handles the firebase-admin calls add the event data to '/events'
 // Returns the event object with the UID key filled if successfull.
-function saveEvent(event, cb) {
+function saveEvent(eventObj, cb) {
   var eventsRef = db.ref("events/");
   var newEventRef = eventsRef.push();
   newEventRef.set({
-    creator: event.creator,
-    contact: event.contact,
-    category: event.category,
-    datetime: event.datetime,
-    location: event.location,
-    title: event.title,
-    description: event.description
+    creator: eventObj.creator,
+    contact: eventObj.contact,
+    category: eventObj.category,
+    datetime: eventObj.datetime,
+    location: eventObj.location,
+    title: eventObj.title,
+    description: eventObj.description
   }, function(error) {
-    event.uid = newEventRef.key;
-    logger.log("Done creating event ", event.title, " with UID ", event.uid)
+    eventObj.uid = newEventRef.key;
+    logger.log("Done creating event ", eventObj.title, " with UID ", eventObj.uid)
 
-    cb(event)
+    cb(eventObj)
   })
 }
 
