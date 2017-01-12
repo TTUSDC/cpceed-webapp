@@ -4,6 +4,9 @@ import Navigation from 'react-toolbox/lib/navigation';
 import Button from 'react-toolbox/lib/button';
 import theme from './NavBar.scss';
 import AuthContainer from 'components/Auth/AuthContainer.js';
+import MoreVert from './ic_more_vert_black_24px.svg';
+
+// Images can be imported the same way as normal files
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -53,6 +56,9 @@ class NavBar extends React.Component {
                         }}/>
                     </Navigation>
                 </AppBar>
+                <h2 className={theme.testing}>Testing</h2>
+                {/* Imported images can be used like variables */}
+                <img src={MoreVert} />
                 {authView}
             </div>
         );
