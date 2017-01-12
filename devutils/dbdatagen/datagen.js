@@ -5,7 +5,7 @@ var admin = require("firebase-admin");
 var Q = require('q')
 var program = require('commander'); //For taking arguments
 var colors = require("colors/safe"); //Makes user input pretty
-var jsonfile = require('jsonfile')
+var jsonfile = require('jsonfile');
 
 
 /*******************************************************************************
@@ -37,6 +37,18 @@ function onError(err) {
   logger.debug('Stack: %j', err);
   closeFirebase();
   return 1;
+}
+
+//Excepts the dateString to be in format: YYYY:MM:DD:HH:MM
+//Returns a string representing the Date using toISOString().
+//Intended for use by JSON.stringify().
+function getDateJSONFromString(dateString){
+  var dateArr = dateString.split(":");
+  for (var i = 0; i < dateArr.length; i++){
+    dateArr[i] = parseInt(dateArr[i]);
+  }
+  var date = new Date(dateArr[0], dateArr[1], dateArr[2], dateArr[3], dateArr[4]);
+  return date.toJSON();
 }
 
 //Returns the UID mapped to the ref if exists, else returns the ref
@@ -219,7 +231,7 @@ function createEvent(template) {
   event.creator = getUIDFromRef(template.ref);
   event.contact = ((template.contact) ? template.contact : event.creator);
   event.category = ((template.category) ? template.category : "other");
-  event.datetime = ((template.datetime) ? template.datetime : randomEvent.datetime);
+  event.datetime = ((template.datetime) ? getDateJSONFromString(template.datetime) : getDateJSONFromString(randomEvent.datetime));
   event.location = ((template.location) ? template.location : randomEvent.location);
   event.title = ((template.title) ? template.title : randomEvent.title );
   event.description = ((template.description) ? template.description : randomEvent.description);
