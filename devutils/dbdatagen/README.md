@@ -122,6 +122,7 @@ Database Reference: `/users`
 - contact
   - Type: String
   - Description: Who to contact about the event, in case the creator isn't the one who should be contacted.
+  - Generation: If no contact is provided, the generator auto-fills it with whatever the 'creator' holds.
 
 - category
   - Type: ENUM { first, professor, staff, outreach, community, other, mentor, career}

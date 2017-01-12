@@ -46,6 +46,30 @@ function getUIDFromRef(type, ref) {
   if(type === "people") return((peopleRefToUIDs[ref]) ? peopleRefToUIDs[ref] : ref);
 }
 
+
+/*******************************************************************************
+* Data Defaults
+*******************************************************************************/
+var defaultData = jsonfile.readFileSync("data/defaults.json");
+
+// Returns a random name
+function getRandomName() {
+  var count = defaultData.names.length;
+  var index = Math.floor(Math.random() * count);
+  var name = defaultData.names[index];
+  var splitname = name.split(" ");
+  var result = {
+    full: name,
+    first: splitname[0],
+    last: splitname[1],
+    display: name.replace(" ", "_")
+  }
+  return result;
+}
+
+
+
+
 /*******************************************************************************
  * Firebase
  *******************************************************************************/
@@ -105,14 +129,15 @@ function generateData(templateFile) {
 //Type = student or admin
 function createPerson(template) {
   randomString = genRandomString();
+  randomName = getRandomName();
   person = {}
   person.password = ((template.password) ? template.password : randomString);
   person.user = {} //This is the object that will be placed in "/users/{uid}"
   person.user.role = template.role; //This is required!
-  person.user.email = ((template.email) ? template.email : "user{}@example.com".format(randomString));
-  person.user.firstName = ((template.firstName) ? template.firstName : "First");
-  person.user.lastName = ((template.lastName) ? template.lastName : "Last");
-  person.displayName = ((template.displayName) ? template.displayName : "Display")
+  person.user.email = ((template.email) ? template.email : "{}.{}@{}.com".format(randomName.first,randomName.last,randomString));
+  person.user.firstName = ((template.firstName) ? template.firstName : randomName.first);
+  person.user.lastName = ((template.lastName) ? template.lastName : randomName.last);
+  person.displayName = ((template.displayName) ? template.displayName : randomName.display)
   person.ref = template.ref;
 
   person.user = ((person.user.role === "student") ? generateStudentData(person.user, template) : person.user)
@@ -185,7 +210,7 @@ function createEvent(template) {
   randomString = genRandomString();
   event = {};
   event.creator = getUIDFromRef(template.ref);
-  event.contact = template.contact;
+  event.contact = ((template.contact) ? template.contact : event.creator ;
   event.category = template.category;
   event.datetime = template.datetime;
   event.location = template.location;
