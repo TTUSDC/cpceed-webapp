@@ -10,9 +10,12 @@ engines:
       - php
   eslint:
     enabled: true
+    checks:
+      complexity:
+        enabled: false # Not something we really need to worry about.
     exclude_fingerprints:
       - c6414090fac335e67ae8283280cf335a # String prototype-read-only override
-      - 81d208d75e746e5e808b505f99e2b991 # datagen#createProps() requires high complexity level
+      - bdc38e86d543c7cdfff0a4850d504b48  # CodeCliamte is inaccurately thinking this is a function
 
   fixme:
     enabled: true
