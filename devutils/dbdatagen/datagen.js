@@ -39,7 +39,7 @@ function onError(err) {
   return 1;
 }
 
-//Excepts the dateString to be in format: YYYY:MM:DD:HH:MM
+//Expects the dateString to be in format: YYYY:MM:DD:HH:MM
 //Returns a string representing the Date using toISOString().
 //Intended for use by JSON.stringify().
 function getDateJSONFromString(dateString){
