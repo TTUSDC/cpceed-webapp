@@ -54,36 +54,30 @@ module.exports = {
             },
             {
                 /*
-                    "Since Sass/libsass does not provide url rewriting, all
-                    linked assets must be relative to the output."
-                    - https://github.com/jtangelder/sass-loader
+                    sass-loader is only used to allow customization of
+                    grommet. The two main types of customization are:
+                        - Overriding variables
+                        - Creating a custom theme
 
-                    Typically, one needs to use resolve-url-loader in order
-                    to reference assets via paths relative to the source scss
-                    file, however I have been able to do so without it.
-
-                    If it turns out that resolve-url-loader is required at
-                    some point in the future, note that there is, as of the
-                    writing of this documentation, an ongoing issue around
-                    the use of css-loader with the sourceMap option enabled
-                    and file-loader. resolve-url-loader requires that
-                    sourceMap be enabled on the sass-loader, so this might
-                    not be applicable to the css-loader issue, but the link
-                    to the relvant webpage is below just-in-case.
-
-                    https://github.com/webpack/style-loader/issues/55
+                    We are primarily concerned with the second option as of
+                    writing of this documentation.
                 */
                 test: /\.scss$/,
                 loaders: [
                     'style-loader',
-                    'css-loader?modules&importLoaders=1&localIdentName=[path]__[name]__[local]__[hash:base64:5]',
-                    'sass-loader'
+                    'css-loader',
+                    'sass-loader?outputStyle=compressed'
                 ]
             },
             {
                 test: /\.(svg|png|jpg)$/,
                 loader: 'file-loader'
             }
+        ]
+    },
+    sassLoader: {
+        includePaths: [
+            './node_modules',
         ]
     }
 };

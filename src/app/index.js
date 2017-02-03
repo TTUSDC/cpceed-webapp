@@ -5,6 +5,8 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import cpceedApp from 'redux/reducers.js';
 
+import 'styles/grommet.scss';
+
 // store holds the redux store that allows app-wide state to be shared
 const store = createStore(cpceedApp);
 
