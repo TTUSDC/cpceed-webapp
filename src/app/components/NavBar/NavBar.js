@@ -2,7 +2,7 @@ import React from 'react';
 import AppBar from 'react-toolbox/lib/app_bar';
 import Navigation from 'react-toolbox/lib/navigation';
 import Button from 'react-toolbox/lib/button';
-import theme from './NavBar.scss';
+import theme from './NavBar.css';
 import AuthContainer from 'components/Auth/AuthContainer.js';
 import MoreVert from './ic_more_vert_black_24px.svg';
 

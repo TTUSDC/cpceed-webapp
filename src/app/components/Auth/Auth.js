@@ -2,7 +2,7 @@ import React from 'react';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs';
 import Input from 'react-toolbox/lib/input';
 import Button from 'react-toolbox/lib/button';
-import styles from './Auth.scss';
+import styles from './Auth.css';
 
 class Auth extends React.Component {
     constructor(props) {
