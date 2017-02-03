@@ -1,6 +1,9 @@
 import React from 'react';
 import { withRouter } from 'react-router';
+import * as firebase from 'firebase';
 import { connect } from 'react-redux';
+
+import { setAuthState } from 'redux/actions.js';
 import NavBar from './NavBar.js';
 
 class NavBarContainer extends React.Component {
@@ -12,12 +15,24 @@ class NavBarContainer extends React.Component {
             access the router, since it is being called from NavBar.js.
         */
         this.navigate = this.navigate.bind(this);
+        this.logout = this.logout.bind(this);
     }
-
 
     // Navigate by pushing the relative URL to the router
     navigate(url) {
         this.props.router.push(url);
+    }
+
+    logout() {
+        firebase.auth().signOut()
+            .then(() => {
+                console.log("User was signed out");
+
+                this.props.dispatch(setAuthState('GUEST'));
+            })
+            .catch((e) => {
+                console.log(e.message);
+            });
     }
 
     render() {
@@ -28,7 +43,10 @@ class NavBarContainer extends React.Component {
                 function is passed to NavBar.js as a prop. When it is called
                 from NavBar.js, the context switches back to NavBarContainer.js.
             */
-            <NavBar authState={this.props.authState} navigate={this.navigate}/>
+            <NavBar
+                authState={this.props.authState}
+                navigate={this.navigate}
+                logout={this.logout}/>
         );
     }
 }
