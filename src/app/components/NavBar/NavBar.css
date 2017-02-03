@@ -1,13 +1,4 @@
-.appBar {
-    background-color: #F44336;
-    z-index:4;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-}
-
 /*
     When using css modules, `url()` references local files with `./` and
     files in `node_modules` with just the name of the file.
 */
-.testing {
-    background-image: url(./ic_more_vert_black_24px.svg);
-}
