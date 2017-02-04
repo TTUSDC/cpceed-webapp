@@ -5,7 +5,6 @@ import Tabs from 'grommet/components/Tabs';
 import Tab from 'grommet/components/Tab';
 import Form from 'grommet/components/Form';
 import FormField from 'grommet/components/FormField';
-import TextInput from 'grommet/components/TextInput';
 import Select from 'grommet/components/Select';
 import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
@@ -16,11 +15,16 @@ class Auth extends React.Component {
         this.state = {
             index: 0,
             email: '',
-            password: ''
+            password: '',
+            firstName: '',
+            lastName: '',
+            studentID: '',
+            role: 'student'
         };
 
         this.handleTabChange = this.handleTabChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -36,13 +40,28 @@ class Auth extends React.Component {
         });
     }
 
+    handleSelectChange(event) {
+        this.setState({
+            role: event.option
+        });
+    }
+
     handleSubmit(event, key) {
         event.preventDefault();
 
         if(key === 'login') {
             this.props.handleLogin(this.state.email, this.state.password);
         } else {
-            this.props.handleRegister(this.state.email, this.state.password);
+            var data = {
+                email: this.state.email,
+                password: this.state.password,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                studentID: this.state.studentID,
+                role: this.state.role
+            };
+
+            this.props.handleRegister(data);
         }
     }
 
@@ -83,12 +102,51 @@ class Auth extends React.Component {
             </Tab>
         );
 
+        var studentIDField = null;
+        if(this.state.role === 'student') {
+            studentIDField = (
+                <FormField label='Student ID'>
+                    <input
+                        type='text'
+                        value={this.state.studentID}
+                        onChange={(event) => {
+                            this.handleInputChange(event, 'studentID');
+                        }}/>
+                </FormField>
+            );
+        }
+
         var register = (
             <Tab title='Register'>
                 <Form
                     pad='small'
                     plain={true}>
                     <fieldset>
+                        <FormField label='Role'>
+                            <Select
+                                options={['student', 'admin']}
+                                value={this.state.role}
+                                onChange={(event) => {
+                                    this.handleSelectChange(event);
+                                }}/>
+                        </FormField>
+                        {studentIDField}
+                        <FormField label='First Name'>
+                            <input
+                                type='text'
+                                value={this.state.firstName}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'firstName');
+                                }}/>
+                        </FormField>
+                        <FormField label='Last Name'>
+                            <input
+                                type='text'
+                                value={this.state.lastName}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'lastName');
+                                }}/>
+                        </FormField>
                         <FormField label='Email'>
                             <input
                                 type='email'
