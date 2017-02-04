@@ -2,11 +2,10 @@
 
 var tracer = require('tracer'); //For logging
 var admin = require("firebase-admin");
-var fs = require('fs'); //FileSystem
 var Q = require('q')
 var program = require('commander'); //For taking arguments
 var colors = require("colors/safe"); //Makes user input pretty
-var readLine = require('readline'); //For reading in files
+var jsonfile = require('jsonfile');
 
 
 /*******************************************************************************
@@ -40,6 +39,54 @@ function onError(err) {
   return 1;
 }
 
+//Expects the dateString to be in format: YYYY:MM:DD:HH:MM
+//Returns a string representing the Date using toISOString().
+//Intended for use by JSON.stringify().
+function getDateJSONFromString(dateString){
+  var dateArr = dateString.split(":");
+  for (var i = 0; i < dateArr.length; i++){
+    dateArr[i] = parseInt(dateArr[i], 10);
+  }
+  var date = new Date(dateArr[0], dateArr[1], dateArr[2], dateArr[3], dateArr[4]);
+  return date.toJSON();
+}
+
+//Returns the UID mapped to the ref if exists, else returns the ref
+//If the ref is null, returns a random string
+function getUIDFromRef(type, ref) {
+  if(!ref) return genRandomString();
+  if(type === "people") return((peopleRefToUIDs[ref]) ? peopleRefToUIDs[ref] : ref);
+}
+
+
+/*******************************************************************************
+ * Data Defaults
+ *******************************************************************************/
+var defaultData = jsonfile.readFileSync("data/defaults.json");
+
+//Returns a random item from the list
+function getRandomItem(list) {
+  return list[Math.floor(Math.random() * list.length)]
+}
+// Returns a random name
+function getRandomName() {
+  var name = getRandomItem(defaultData.names);
+  var splitname = name.split(" ");
+  var result = {
+    full: name,
+    first: splitname[0],
+    last: splitname[1],
+    display: name.replace(" ", "_")
+  }
+  return result;
+}
+
+function getRandomEvent() {
+  return getRandomItem(defaultData.events)
+}
+
+
+
 
 /*******************************************************************************
  * Firebase
@@ -66,36 +113,53 @@ function closeFirebase() {
 /*******************************************************************************
  * Generating Data
  *******************************************************************************/
-var uidWriteStream; //Used to writing generated UIDs to file
-
-function generateData(templateFile) {
-  uidWriteStream = fs.createWriteStream('./genUIDS', {'flags': 'a'});
-  var template = JSON.parse(fs.readFileSync(templateFile));
-  var propsList = [];
-  template.people.forEach(function(person){
-          propsList.push(createProps(person));
-  })
-
-  createUsers(propsList).then(function() {
-    uidWriteStream.end();
-    closeFirebase();
-  })
+var peopleRefToUIDs = {}; //Used to map a persons REF to their user UID
+var eventsRefToUIDs = {}; // ^^^ with events
+var genOutput = {
+  people: [],
+  events: []
 }
 
-//Type = student or admin
-function createProps(template) {
-  randomString = genRandomString();
-  props = {}
-  props.password = ((template.password) ? template.password : randomString);
-  props.user = {} //This is the object that will be placed in "/users/{uid}"
-  props.user.role = template.role; //This is required!
-  props.user.email = ((template.email) ? template.email : "user{}@example.com".format(randomString));
-  props.user.firstName = ((template.firstName) ? template.firstName : "First");
-  props.user.lastName = ((template.lastName) ? template.lastName : "Last");
-  props.displayName = ((template.displayName) ? template.displayName : "Display")
+function generateData(templateFile) {
+  var template = jsonfile.readFileSync(templateFile);
+  var personList = [];
+  var eventList = [];
+  template.people.forEach(function(person) {
+    personList.push(createPerson(person));
+  });
 
-  props.user = ((props.user.role === "student") ? generateStudentData(props.user, template) : props.user)
-  return props;
+  template.events.forEach(function(eventObj) {
+    eventList.push(createEvent(eventObj))
+  });
+
+  createUsers(personList).then(function() {
+    createEvents(eventList).then(function() {
+      jsonfile.writeFile("gen-uids.json", genOutput)
+      closeFirebase();
+    })
+  });
+}
+
+
+/*******************************************************************************
+ * Creating People
+ *******************************************************************************/
+//Type = student or admin
+function createPerson(template) {
+  randomString = genRandomString();
+  randomName = getRandomName();
+  person = {}
+  person.password = ((template.password) ? template.password : randomString);
+  person.user = {} //This is the object that will be placed in "/users/{uid}"
+  person.user.role = template.role; //This is required!
+  person.user.email = ((template.email) ? template.email : "{}.{}@{}.com".format(randomName.first, randomName.last, randomString));
+  person.user.firstName = ((template.firstName) ? template.firstName : randomName.first);
+  person.user.lastName = ((template.lastName) ? template.lastName : randomName.last);
+  person.displayName = ((template.displayName) ? template.displayName : randomName.display)
+  person.ref = template.ref;
+
+  person.user = ((person.user.role === "student") ? generateStudentData(person.user, template) : person.user)
+  return person;
 }
 
 // Used to generate data specfic to the student role
@@ -103,20 +167,25 @@ function generateStudentData(user, template) {
   logger.log("Generating student data for", user.email)
   user.approvalStatus = ((template.approvalStatus) ? true : false);
   user.studentId = ((template.studentId) ? template.studentId : genRandomString());
-  user.points = ((template.points) ? template.points : 10 );
+  user.points = ((template.points) ? template.points : 10);
   return user;
 }
 
-// Calls #createUser on every props in the list and gathers all promises.
+// Calls #createUser on every person in the list and gathers all promises.
 // Returns a "promise of promises".
-function createUsers(propsList) {
+function createUsers(personList) {
   var the_promises = [];
-  propsList.forEach(function(props) {
+  personList.forEach(function(person) {
     var deferred = Q.defer();
-    createUser(props, function(error, props) {
-      logger.log("Done creating user", props.uid);
-      uidWriteStream.write("{}\n".format(props.uid))
-      deferred.resolve(props)
+    createUser(person, function(error, person) {
+      if(error) {
+        logger.error("Error creating user", person)
+      } else {
+        logger.log("Done creating user", person.uid);
+        //uidWriteStream.write("{}\n".format(person.uid))
+        genOutput.people.push(person.uid)
+      }
+      deferred.resolve(person)
     })
     the_promises.push(deferred.promise);
   });
@@ -124,100 +193,189 @@ function createUsers(propsList) {
 }
 
 // Handles the firebase-admin calls to to creating the user and adding user data
-function createUser(props, cb) {
+function createUser(person, cb) {
   admin.auth().createUser({
-      email: props.user.email,
+      email: person.user.email,
       emailVerified: true,
-      password: props.password,
-      displayName: props.displayName,
+      password: person.password,
+      displayName: person.displayName,
       disabled: false
     })
     .then(function(userRecord) { // A UserRecord representation of the newly created user is returned
       logger.log("Successfully created new user:", userRecord.uid);
-      props.uid = userRecord.uid;
+      person.uid = userRecord.uid;
+      if(person.ref) {
+        peopleRefToUIDs[person.ref] = person.uid;
+      }
       var usersRef = db.ref("users/")
-      var userRef = usersRef.child(props.uid)
-      userRef.update(props.user, function(error) {
-        cb(error, props)
+      var userRef = usersRef.child(person.uid)
+      userRef.update(person.user, function(error) {
+        cb(error, person)
       })
     })
     .catch(function(error) {
-      cb(error, props)
+      cb(error, person)
     });
+}
+
+
+/*******************************************************************************
+ * Creating Events
+ *******************************************************************************/
+//Creates and returns a fully-filled event object using the psased in template
+//and filling in any missing data with generated data.
+function createEvent(template) {
+  randomString = genRandomString();
+  randomEvent = getRandomEvent();
+  eventObj = {};
+  eventObj.creator = getUIDFromRef(template.ref);
+  eventObj.contact = ((template.contact) ? template.contact : eventObj.creator);
+  eventObj.category = ((template.category) ? template.category : "other");
+  eventObj.datetime = ((template.datetime) ? getDateJSONFromString(template.datetime) : getDateJSONFromString(randomEvent.datetime));
+  eventObj.location = ((template.location) ? template.location : randomEvent.location);
+  eventObj.title = ((template.title) ? template.title : randomEvent.title );
+  eventObj.description = ((template.description) ? template.description : randomEvent.description);
+
+  return eventObj;
+}
+
+//Calls #saveEvent on every event in the list and gathers all the promises.
+// Returns a "promise of promises".
+function createEvents(eventList) {
+  var the_promises = [];
+  eventList.forEach(function(event) {
+    var deferred = Q.defer();
+    saveEvent(event, function(result) {
+      if(result.uid) genOutput.events.push(result.uid);
+      deferred.resolve(result);
+    })
+    the_promises.push(deferred.promise);
+  });
+  return Q.all(the_promises);
+}
+
+// Handles the firebase-admin calls add the event data to '/events'
+// Returns the event object with the UID key filled if successfull.
+function saveEvent(eventObj, cb) {
+  var eventsRef = db.ref("events/");
+  var newEventRef = eventsRef.push();
+  newEventRef.set({
+    creator: eventObj.creator,
+    contact: eventObj.contact,
+    category: eventObj.category,
+    datetime: eventObj.datetime,
+    location: eventObj.location,
+    title: eventObj.title,
+    description: eventObj.description
+  }, function(error) {
+    eventObj.uid = newEventRef.key;
+    logger.log("Done creating event ", eventObj.title, " with UID ", eventObj.uid)
+
+    cb(eventObj)
+  })
 }
 
 
 /*******************************************************************************
  * Deleting Data
  *******************************************************************************/
-// Iterates through the passed in file to get the UIDs of people that need to be
-// deleted.
+// Iterates through the passed in file to get the UIDs of items that need to be
+// removed and creates a map of them and their corresponding removal functions.
 function deleteData(uidFile) {
-  var uidList = []
+  logger.info("Preparing to delete items.");
+  var deleteMap = {};
+
+  function addListToDeleteMap(uidList, deleteCall) {
+    uidList.forEach(function(uid) {
+      deleteMap[uid] = deleteCall;
+    });
+  }
+  jsonfile.readFile(uidFile, function(err, uids) {
+    if(err) return onError(err);
+    addListToDeleteMap(uids.people, deleteUser);
+    addListToDeleteMap(uids.events, deleteEvent);
+    deleteAllInMap(deleteMap);
+  });
+
+}
+
+//Goes through the map, calling the removal function on each key, collecting
+// all callbacks into one big promise. Once all promises are finished,
+// Firebase connection is closed.
+function deleteAllInMap(deleteMap) {
+  logger.log("Deleting items.")
   var delete_promises = [];
-  logger.info("Deleting UIDs");
-
-  //Reads through the file in an async way
-  var lineReader = readLine.createInterface({
-    input: fs.createReadStream(uidFile)
-  });
-
-  //Called on each line read in by lineReader
-  lineReader.on('line', function(line) {
-    uidList.push(line);
-    var deferred = Q.defer();
-    deleteUser(line, function(error, line) {
-      logger.log("Removing used with uid:", line);
-      deferred.resolve(line)
-    })
-    delete_promises.push(deferred.promise);
-  });
-
-  //Called when lineReader is done reading the file
-  lineReader.on('close', function() {
-    Q.all(delete_promises).then(function() {
-      fs.unlink(uidFile)
-      closeFirebase();
-    })
+  var deferred = Q.defer();
+  for(var key in deleteMap) {
+    if(deleteMap.hasOwnProperty(key)) {
+      deleteMap[key](key, function(uid) {
+        if(uid) deferred.resolve(uid);
+      });
+      delete_promises.push(deferred.promise)
+    }
+  }
+  Q.all(delete_promises).then(function() {
+    closeFirebase();
   })
+
 }
 
 // Handles connecting to Firebase and deleting all relevant user data
 function deleteUser(uid, cb) {
+  logger.log("Deleting user with UID:", uid)
   admin.auth().deleteUser(uid)
-    .then(function() {
+    .then(function() { //The user account was deleted
       logger.log("Successfully deleted user", uid);
+    })
+    .catch(function(error) {
+      //Error with deleting user account. Most likely case it that it
+      //doesn't exist anymore.
+      logger.warn("Error deleting user:", error);
+      cb();
+    }).then(function() {
       logger.log("Removing user data")
       var usersRef = db.ref("users/")
       usersRef.update({
         [uid]: null
       }, function(error) {
-        if(error) {
-          logger.warn("Error removing user data for UID:", uid, error)
-        }
-        logger.log("Removed user data")
-        cb(null, uid);
+        //Even if there was an error deleting an account due to it may have been
+        //removed by something else, there still may be user data to remove.
+        if(error) logger.warn("Error removing user data for UID:", uid, error);
+        else logger.log("Removing used with uid:", uid);
+        cb(uid);
       })
-    })
-    .catch(function(error) {
-      logger.error("Error deleting user:", error);
-      cb(error, uid);
     });
 }
 
+// Handles connecting to Firebase and deleting the event data
+function deleteEvent(uid, cb) {
+  logger.log("Deleting event with UID:", uid)
+  var eventsRef = db.ref("events/")
+  eventsRef.update({
+    [uid]: null
+  }, function(error) {
+    if(error) logger.warn("Error removing event data for UID:", uid, error);
+    else logger.log("Removed event data");
+    cb(uid);
+  })
+
+}
+
+
 /*******************************************************************************
-* Activity & Event Points
-*******************************************************************************/
+ * Activity & Event Points
+ *******************************************************************************/
 //Used to reset the Activity & Event points to their default values
-function resetAEPoints(){
+function resetAEPoints() {
   logger.log("Resetting A&E Points")
-  var points = JSON.parse(fs.readFileSync("data/aepoints.json"));
+  var points = jsonfile.readFileSync("data/aepoints.json");
   var pointsRef = db.ref("aepoints/")
   pointsRef.set(points, function(error) {
     logger.log("Done resetting A&E Points");
     closeFirebase();
   })
 }
+
 
 /*******************************************************************************
  * Program
@@ -231,10 +389,11 @@ program
   .parse(process.argv);
 
 
+
 if(program.gen) {
   generateData(program.gen);
 } else if(program.delete) {
   deleteData(program.delete);
-} else if(program.points){
+} else if(program.points) {
   resetAEPoints();
 }
