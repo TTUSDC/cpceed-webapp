@@ -1,15 +1,23 @@
 import React from 'react';
+
+import App from 'grommet/components/App';
+import Box from 'grommet/components/Box';
+
 import NavBarContainer from 'components/NavBar/NavBarContainer.js';
 
-class App extends React.Component {
+class Main extends React.Component {
     render() {
         return (
-            <div>
-                <NavBarContainer/>
-                {this.props.children}
-            </div>
+            <App
+                centered={false}
+                inline={false}>
+                <Box full={true}>
+                    <NavBarContainer/>
+                    {this.props.children}
+                </Box>
+            </App>
         );
     }
 }
 
-export default App;
+export default Main;
