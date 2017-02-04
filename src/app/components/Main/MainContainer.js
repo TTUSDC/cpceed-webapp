@@ -1,17 +1,11 @@
 import React from 'react';
 import * as firebase from "firebase";
 import { connect } from 'react-redux';
+
 import { setAuthState } from 'redux/actions.js';
-import App from './App.js';
+import Main from './Main.js';
 
-var config = {
-    apiKey: "AIzaSyCtMk74zXBsAYRYIzamcyRXyGDFP3vKXhA",
-    authDomain: "testing-project-a5d42.firebaseapp.com",
-    databaseURL: "https://testing-project-a5d42.firebaseio.com/"
-};
-firebase.initializeApp(config);
-
-class AppContainer extends React.Component {
+class MainContainer extends React.Component {
     constructor(props) {
         super(props);
 
@@ -39,13 +33,14 @@ class AppContainer extends React.Component {
         return (
             /*
                 The container-presenter model dicates that the presenter
-                (App.js) must be composed by the container (AppContainer.js).
-                However, this means that the children must be passed as props
-                to App.js, as it is not connected to the router directly.
+                (Main.js) must be composed by the container
+                (MainContainer.js). However, this means that the children
+                must be passed as props to Main.js, as it is not connected to
+                the router directly.
             */
-            <App children={this.props.children}/>
+            <Main children={this.props.children}/>
         );
     }
 }
 
-export default connect()(AppContainer);
+export default connect()(MainContainer);

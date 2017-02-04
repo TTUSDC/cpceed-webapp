@@ -1,8 +1,13 @@
 import React from 'react';
-import { Tab, Tabs } from 'react-toolbox/lib/tabs';
-import Input from 'react-toolbox/lib/input';
-import Button from 'react-toolbox/lib/button';
-import styles from './Auth.scss';
+
+import Layer from 'grommet/components/Layer';
+import Tabs from 'grommet/components/Tabs';
+import Tab from 'grommet/components/Tab';
+import Form from 'grommet/components/Form';
+import FormField from 'grommet/components/FormField';
+import Select from 'grommet/components/Select';
+import Footer from 'grommet/components/Footer';
+import Button from 'grommet/components/Button';
 
 class Auth extends React.Component {
     constructor(props) {
@@ -10,11 +15,17 @@ class Auth extends React.Component {
         this.state = {
             index: 0,
             email: '',
-            password: ''
+            password: '',
+            firstName: '',
+            lastName: '',
+            studentID: '',
+            role: 'student'
         };
 
         this.handleTabChange = this.handleTabChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleTabChange(newIndex) {
@@ -25,80 +36,166 @@ class Auth extends React.Component {
 
     handleInputChange(event, key) {
         this.setState({
-            [key]: event
+            [key]: event.target.value
         });
+    }
+
+    handleSelectChange(event) {
+        this.setState({
+            role: event.option
+        });
+    }
+
+    handleSubmit(event, key) {
+        event.preventDefault();
+
+        if(key === 'login') {
+            this.props.handleLogin(this.state.email, this.state.password);
+        } else {
+            var data = {
+                email: this.state.email,
+                password: this.state.password,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                studentID: this.state.studentID,
+                role: this.state.role
+            };
+
+            this.props.handleRegister(data);
+        }
     }
 
     render() {
         var login = (
-            <div>
-                <h2>Login</h2>
-                <Input
-                    type="text"
-                    label="Email"
-                    value={this.state.email}
-                    onChange={(event) => {
-                        this.handleInputChange(event, 'email');
-                    }}/>
-                <Input
-                    type="text"
-                    label="Password"
-                    value={this.state.password}
-                    onChange={(event) => {
-                        this.handleInputChange(event, 'password');
-                    }}/>
-                <Button label='Login' onClick={() => {
-                    this.props.handleLogin(this.state.email, this.state.password);
-                }}/>
-            </div>
+            <Tab title='Login'>
+                <Form
+                    pad='small'
+                    plain={true}>
+                    <fieldset>
+                        <FormField label='Email'>
+                            <input
+                                type='email'
+                                value={this.state.email}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'email');
+                                }}/>
+                        </FormField>
+                        <FormField label='Password'>
+                            <input
+                                type='password'
+                                value={this.state.password}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'password');
+                                }}/>
+                        </FormField>
+                    </fieldset>
+                    <Footer>
+                        <Button
+                            label='Login'
+                            type='submit'
+                            primary={true}
+                            onClick={(event) => {
+                                this.handleSubmit(event, 'login');
+                            }}/>
+                    </Footer>
+                </Form>
+            </Tab>
         );
 
+        var studentIDField = null;
+        if(this.state.role === 'student') {
+            studentIDField = (
+                <FormField label='Student ID'>
+                    <input
+                        type='text'
+                        value={this.state.studentID}
+                        onChange={(event) => {
+                            this.handleInputChange(event, 'studentID');
+                        }}/>
+                </FormField>
+            );
+        }
+
         var register = (
-            <div>
-                <h2>Register</h2>
-                <Input
-                    type="text"
-                    label="Email"
-                    value={this.state.email}
-                    onChange={(event) => {
-                        this.handleInputChange(event, 'email');
-                    }}/>
-                <Input
-                    type="text"
-                    label="Password"
-                    value={this.state.password}
-                    onChange={(event) => {
-                        this.handleInputChange(event, 'password');
-                    }}/>
-                <Button label='Register' onClick={() => {
-                    this.props.handleRegister(this.state.email, this.state.password);
-                }}/>
-            </div>
+            <Tab title='Register'>
+                <Form
+                    pad='small'
+                    plain={true}>
+                    <fieldset>
+                        <FormField label='Role'>
+                            <Select
+                                options={['student', 'admin']}
+                                value={this.state.role}
+                                onChange={(event) => {
+                                    this.handleSelectChange(event);
+                                }}/>
+                        </FormField>
+                        {studentIDField}
+                        <FormField label='First Name'>
+                            <input
+                                type='text'
+                                value={this.state.firstName}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'firstName');
+                                }}/>
+                        </FormField>
+                        <FormField label='Last Name'>
+                            <input
+                                type='text'
+                                value={this.state.lastName}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'lastName');
+                                }}/>
+                        </FormField>
+                        <FormField label='Email'>
+                            <input
+                                type='email'
+                                value={this.state.email}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'email');
+                                }}/>
+                        </FormField>
+                        <FormField label='Password'>
+                            <input
+                                type='password'
+                                value={this.state.password}
+                                onChange={(event) => {
+                                    this.handleInputChange(event, 'password');
+                                }}/>
+                        </FormField>
+                    </fieldset>
+                    <Footer>
+                        <Button
+                            label='Register'
+                            type='submit'
+                            primary={true}
+                            onClick={(event) => {
+                                this.handleSubmit(event, 'register');
+                            }}/>
+                    </Footer>
+                </Form>
+            </Tab>
         );
 
         return (
-            <div className={styles.authBackground}>
-                <div className={styles.authMain}>
-                    <div className={styles.auth}>
-                        <Tabs index={this.state.index} onChange={(event) => {
-                            this.handleTabChange(event);
-                        }}>
-                            <Tab label="Login">
-                                {login}
-                            </Tab>
-                            <Tab label="Register">
-                                {register}
-                            </Tab>
-                        </Tabs>
-                    </div>
-                    <Button
-                        label="Cancel"
-                        className={styles.authCancelButton}
-                        onClick={() => {
-                            this.props.authCancelled();
-                        }}/>
-                </div>
-            </div>
+            <Layer
+                closer={true}
+                flush={false}
+                align='center'
+                onClose={() => {
+                    this.props.authCancelled();
+                }}>
+                <Tabs
+                    activeIndex={this.state.index}
+                    justify='center'
+                    responsive={false}
+                    onActive={(event) => {
+                        this.handleTabChange(event);
+                    }}>
+                    {login}
+                    {register}
+                </Tabs>
+            </Layer>
         );
     }
 }

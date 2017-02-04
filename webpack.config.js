@@ -40,28 +40,44 @@ module.exports = {
                 loader: 'babel'
             },
             {
-                test: /\.css$/,
-                loaders: [
-                    'style-loader',
-                    'css-loader?modules&importLoaders=1&localIdentName=[path]__[name]__[local]__[hash:base64:5]',
-                    'resolve-url-loader'
-                ]
-            },
-            {
                 // 'test' indicates the file type
-                test: /\.scss$/,
+                test: /\.css$/,
                 /*
-                    Each sub-loader is separated by '!', queries are
-                    indicated by '?', and individual parts of queries are
-                    separated by '&'
+                    Each sub-loader is separated by a comma, queries are
+                    indicated by question marks, and individual parts of
+                    queries are separated by ampersands.
                 */
                 loaders: [
                     'style-loader',
-                    'css-loader?modules&importLoaders=1&localIdentName=[path]__[name]__[local]__[hash:base64:5]',
-                    'resolve-url-loader',
-                    'sass-loader?sourceMap'
+                    'css-loader?modules&importLoaders=1&localIdentName=[path]__[name]__[local]__[hash:base64:5]'
                 ]
+            },
+            {
+                /*
+                    sass-loader is only used to allow customization of
+                    grommet. The two main types of customization are:
+                        - Overriding variables
+                        - Creating a custom theme
+
+                    We are primarily concerned with the second option as of
+                    writing of this documentation.
+                */
+                test: /\.scss$/,
+                loaders: [
+                    'style-loader',
+                    'css-loader',
+                    'sass-loader?outputStyle=compressed'
+                ]
+            },
+            {
+                test: /\.(svg|png|jpg)$/,
+                loader: 'file-loader'
             }
+        ]
+    },
+    sassLoader: {
+        includePaths: [
+            './node_modules',
         ]
     }
 };

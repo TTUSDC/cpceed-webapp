@@ -13,11 +13,17 @@ class AuthContainer extends React.Component {
         this.handleLogin = this.handleLogin.bind(this);
     }
 
-    handleRegister(email, password) {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
+    handleRegister(data) {
+        firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
             .then((user) => {
                 firebase.database().ref().child('users/' + user.uid).set({
-                    type: 'STUDENT'
+                    approvalStatus: false,
+                    email: data.email,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    points: 0,
+                    studentId: data.studentID,
+                    role: data.role
                 })
                     .then(() => {
                         console.log("User was registered");
@@ -41,13 +47,17 @@ class AuthContainer extends React.Component {
         firebase.auth().signInWithEmailAndPassword(email, password)
             .then((user) => {
                 const rootRef = firebase.database().ref();
-                const userRef = rootRef.child('users/' + user.uid + '/type');
+                const userRef = rootRef.child('users/' + user.uid + '/role');
 
                 userRef.once('value')
-                    .then((type) => {
+                    .then((snapshot) => {
                         console.log("User was logged in");
 
-                        this.props.dispatch(setAuthState(type.val()));
+                        if(snapshot.val() === 'student') {
+                            this.props.dispatch(setAuthState('STUDENT'));
+                        } else {
+                            this.props.dispatch(setAuthState('COORDINATOR'));
+                        }
 
                         if(this.props.authFinished) {
                             this.props.authFinished();
