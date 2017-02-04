@@ -33,6 +33,8 @@ class NavBarContainer extends React.Component {
             .catch((e) => {
                 console.log(e.message);
             });
+
+        this.props.router.push('/');
     }
 
     render() {
