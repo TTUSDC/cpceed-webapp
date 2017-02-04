@@ -1,11 +1,14 @@
 import React from 'react';
+import * as firebase from "firebase";
 import { Router, Route, hashHistory } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
+import config from './firebaseConfig.js';
 import appRoute from './appRoute.js';
 import cpceedApp from 'redux/reducers.js';
 
+firebase.initializeApp(config);
 // store holds the redux store that allows app-wide state to be shared
 const store = createStore(cpceedApp);
 
