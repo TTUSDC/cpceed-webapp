@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { Router, Route, hashHistory } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+
 import cpceedApp from 'redux/reducers.js';
 
 import 'styles/grommet.scss';
@@ -25,7 +26,7 @@ const appRoute = {
     // Sets the primary component for this route
     getComponent(nextState, callback) {
         require.ensure([], (require) => {
-            callback(null, require('./components/App/AppContainer').default)
+            callback(null, require('./components/Main/MainContainer').default)
         })
     },
 
