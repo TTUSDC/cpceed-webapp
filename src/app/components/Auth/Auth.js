@@ -10,8 +10,6 @@ import Select from 'grommet/components/Select';
 import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
 
-import styles from './Auth.css';
-
 class Auth extends React.Component {
     constructor(props) {
         super(props);
@@ -53,10 +51,7 @@ class Auth extends React.Component {
             <Tab title='Login'>
                 <Form
                     pad='small'
-                    plain={true}
-                    onSubmit={(event) => {
-                        this.handleSubmit(event, 'login');
-                    }}>
+                    plain={true}>
                     <fieldset>
                         <FormField label='Email'>
                             <input
@@ -92,10 +87,7 @@ class Auth extends React.Component {
             <Tab title='Register'>
                 <Form
                     pad='small'
-                    plain={true}
-                    onSubmit={(event) => {
-                        this.handleSubmit(event, 'register');
-                    }}>
+                    plain={true}>
                     <fieldset>
                         <FormField label='Email'>
                             <input
