@@ -1,13 +1,13 @@
 var path = require('path');
 
 var nodePath = path.join(__dirname, 'node_modules');
-var appPath = path.join(__dirname, 'src/app');
+var appPath = path.join(__dirname, 'src');
 
 module.exports = {
-    entry: './src/app/index.js',
+    entry: './src/index.js',
 
     output: {
-        path: 'src/client/',
+        path: 'build/',
         publicPath: '/',
         filename: "bundle.js"
     },

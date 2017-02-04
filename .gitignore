@@ -5,7 +5,7 @@
 ### Node ###
 
 # Bundled files
-src/client/bundle.js
+build/bundle.js
 
 # Dependencies
 node_modules
