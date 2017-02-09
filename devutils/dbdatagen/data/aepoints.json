@@ -35,7 +35,7 @@
     "description" : "Advisor/Faculty/Staff Meetings",
     "value" : 1
   },
-  "other": {
+  "misc": {
     "description" : "For things that don't fit any category",
     "value" : 0
   }
