@@ -8,7 +8,7 @@ import Menu from 'grommet/components/Menu';
 import MenuIcon from 'grommet/components/icons/base/Menu';
 import Anchor from 'grommet/components/Anchor';
 
-import { AuthStates } from 'redux/actions.js';
+import { PermissionStates } from 'redux/actions.js';
 import AuthContainer from 'components/Auth/AuthContainer.js';
 
 // Images can be imported the same way as normal files
@@ -47,7 +47,10 @@ class NavBar extends React.Component {
         }
 
         var authButton = null;
-        if(this.props.authState === AuthStates.GUEST) {
+        if(
+            JSON.stringify(this.props.permissions)
+            === JSON.stringify(PermissionStates.GUEST)
+        ) {
             authButton = (
                 <Button
                     label="Sign In"

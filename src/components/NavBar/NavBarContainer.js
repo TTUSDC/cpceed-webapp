@@ -46,22 +46,22 @@ class NavBarContainer extends React.Component {
                 from NavBar.js, the context switches back to NavBarContainer.js.
             */
             <NavBar
-                authState={this.props.authState}
+                permissions={this.props.permissions}
                 navigate={this.navigate}
                 logout={this.logout}/>
         );
     }
 }
 
-// Used by mapStateToProps to get authState from the redux store
-const getAuthState = (authState) => {
-    return authState;
+// Used by mapStateToProps to get permissions from the redux store
+const getPermissions = (permissions) => {
+    return permissions;
 }
 
-// Used by connect to map authState to this.props.authState
+// Used by connect to map permissions to this.props.permissions
 const mapStateToProps = (state) => {
     return {
-        authState: getAuthState(state.authState)
+        permissions: getPermissions(state.permissions)
     }
 }
 
