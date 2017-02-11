@@ -1,11 +1,10 @@
-const activityRoute = {
-    path: 'activity/',
+import React from 'react';
+import { Route } from 'react-router';
 
-    getComponent(nextState, callback) {
-        require.ensure([], (require) => {
-            callback(null, require('./components/Activity.js').default)
-        })
-    }
-}
+import Activity from './components/Activity.js';
+
+const activityRoute = (
+    <Route path='activity' component={Activity} />
+);
 
 export default activityRoute;
