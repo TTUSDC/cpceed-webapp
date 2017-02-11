@@ -2,7 +2,7 @@ import React from 'react';
 import * as firebase from "firebase";
 import { connect } from 'react-redux';
 
-import { setAuthState } from 'redux/actions.js';
+import { setAuthState, AuthStates } from 'redux/actions.js';
 import Main from './Main.js';
 
 class MainContainer extends React.Component {
@@ -25,7 +25,7 @@ class MainContainer extends React.Component {
             // User is a guest
             console.log("No pre-existing users");
 
-            this.props.dispatch(setAuthState('GUEST'));
+            this.props.dispatch(setAuthState(AuthStates.GUEST));
         }
     }
 

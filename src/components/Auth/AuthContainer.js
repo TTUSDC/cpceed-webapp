@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { withRouter } from 'react-router';
 import * as firebase from 'firebase';
 import { connect } from 'react-redux';
+
 import { setAuthState } from 'redux/actions.js';
 import Auth from './Auth.js';
 
@@ -28,7 +29,7 @@ class AuthContainer extends React.Component {
                     .then(() => {
                         console.log("User was registered");
 
-                        this.props.dispatch(setAuthState('STUDENT'));
+                        this.props.dispatch(setAuthState(data.role));
 
                         if(this.props.authFinished) {
                             this.props.authFinished();
@@ -53,11 +54,7 @@ class AuthContainer extends React.Component {
                     .then((snapshot) => {
                         console.log("User was logged in");
 
-                        if(snapshot.val() === 'student') {
-                            this.props.dispatch(setAuthState('STUDENT'));
-                        } else {
-                            this.props.dispatch(setAuthState('COORDINATOR'));
-                        }
+                        this.props.dispatch(setAuthState(snapshot.val()));
 
                         if(this.props.authFinished) {
                             this.props.authFinished();

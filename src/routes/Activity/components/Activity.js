@@ -1,4 +1,5 @@
 import React from 'react';
+
 import RequireAuth from 'components/Auth/RequireAuth.js';
 
 class Activity extends React.Component {
@@ -11,4 +12,9 @@ class Activity extends React.Component {
     }
 }
 
-export default RequireAuth(Activity);
+// Defining the permissions required to access this component
+const requiredState = {
+    viewActivity: true
+};
+
+export default RequireAuth(Activity, requiredState);
