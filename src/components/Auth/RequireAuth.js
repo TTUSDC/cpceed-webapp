@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+
 import { AuthStates } from 'redux/actions.js';
 import AuthContainer from './AuthContainer.js';
 
-const requireAuth = (WrappedComponent) => {
+const requireAuth = (WrappedComponent, requiredState) => {
     class AuthWrapper extends WrappedComponent {
         constructor(props) {
             super(props);
@@ -17,7 +18,7 @@ const requireAuth = (WrappedComponent) => {
         }
 
         render() {
-            if(this.props.authState === AuthStates.STUDENT) {
+            if(this.props.authState === requiredState) {
                 return super.render();
             } else {
                 return <AuthContainer authCancelled={this.authCancelled} />;
