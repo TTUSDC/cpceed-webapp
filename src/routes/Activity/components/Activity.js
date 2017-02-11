@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { AuthStates } from 'redux/actions.js';
 import RequireAuth from 'components/Auth/RequireAuth.js';
 
 class Activity extends React.Component {
@@ -13,6 +12,9 @@ class Activity extends React.Component {
     }
 }
 
-const requiredState = AuthStates.STUDENT;
+// Defining the permissions required to access this component
+const requiredState = {
+    viewActivity: true
+};
 
 export default RequireAuth(Activity, requiredState);

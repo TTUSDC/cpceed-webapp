@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import { AuthStates } from 'redux/actions.js';
 import AuthContainer from './AuthContainer.js';
 
 const requireAuth = (WrappedComponent, requiredState) => {
@@ -18,7 +17,22 @@ const requireAuth = (WrappedComponent, requiredState) => {
         }
 
         render() {
-            if(this.props.authState === requiredState) {
+            var authorized = true;
+
+            // Checks if user has the required permissions
+            for(var key in requiredState) {
+                // Skips properties from prototype
+                if(!requiredState.hasOwnProperty(key)) {
+                    continue;
+                }
+
+                if(this.props.permissions[key] !== requiredState[key]) {
+                    authorized = false;
+                    break;
+                }
+            }
+
+            if(authorized === true) {
                 return super.render();
             } else {
                 return <AuthContainer authCancelled={this.authCancelled} />;
@@ -26,13 +40,13 @@ const requireAuth = (WrappedComponent, requiredState) => {
         }
     }
 
-    const getAuthState = (authState) => {
-        return authState;
+    const getPermissions = (permissions) => {
+        return permissions;
     }
 
     const mapStateToProps = (state) => {
         return {
-            authState: getAuthState(state.authState)
+            permissions: getPermissions(state.permissions)
         }
     }
 
