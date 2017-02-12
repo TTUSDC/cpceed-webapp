@@ -11,8 +11,6 @@ import Anchor from 'grommet/components/Anchor';
 import { PermissionStates } from 'redux/actions.js';
 import AuthContainer from 'components/Auth/AuthContainer.js';
 
-// Images can be imported the same way as normal files
-
 class NavBar extends React.Component {
     constructor(props) {
         super(props);
@@ -20,6 +18,7 @@ class NavBar extends React.Component {
             auth: false
         };
 
+        // Binding ensures that the bound function can access local props
         this.renderAuth = this.renderAuth.bind(this);
         this.authFinished = this.authFinished.bind(this);
     }
@@ -47,6 +46,10 @@ class NavBar extends React.Component {
         }
 
         var authButton = null;
+        /*
+            To do a simple compare of JavaScript objects, you must convert
+            them to JSON form first.
+        */
         if(
             JSON.stringify(this.props.permissions)
             === JSON.stringify(PermissionStates.GUEST)

@@ -28,6 +28,7 @@ class NavBarContainer extends React.Component {
             .then(() => {
                 console.log("User was signed out");
 
+                // Set permissions to guest
                 this.props.dispatch(setAuthState(AuthStates.GUEST));
             })
             .catch((e) => {
