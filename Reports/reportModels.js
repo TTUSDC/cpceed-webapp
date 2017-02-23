@@ -3,17 +3,17 @@ var Schema = mongoose.Schema;
 
 var eventReportSchema = new Schema({
     type: String,
-    approvalStatus: String,
+    approvalStatus: Boolean,
     student: String,
     event: String,
 })
 
 var otherReportSchema = new Schema({
     type: String,
-    approvalStatus: String,
+    approvalStatus: Boolean,
     student: String,
     category: String,
-    datetime: String,
+    datetime: Date,
     location: String,
     title: String,
     description: String

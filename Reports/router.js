@@ -7,12 +7,13 @@ var OtherReport = reportModels.OtherReport;
 var reportRouter = express.Router();
 
 reportRouter.post('/', (req, res) => {
-    var eventReport = new EventReport({
+    var otherReport = new OtherReport({
         type: 'event',
-        approvalStatus: 'notApproved'
+        approvalStatus: false,
+        datetime: new Date()
     });
     
-    eventReport.save(function(err, savedReport) {
+    otherReport.save(function(err, savedReport) {
         if (err)
             res.send(err);
         
@@ -26,8 +27,7 @@ reportRouter.post('/', (req, res) => {
 });
 
 reportRouter.get('/', (req, res) => {
-    var Report = mongoose.model('EventReport');
-    Report.find({}, function(err, reports) {
+    OtherReport.find({}, function(err, reports) {
         if (err) throw err;
         
         console.log(reports);
