@@ -13,6 +13,7 @@ const requireAuth = (WrappedComponent, requiredState) => {
         }
 
         authCancelled() {
+            // If signin is cancelled, go back to the previous page
             this.props.router.goBack();
         }
 
@@ -32,9 +33,12 @@ const requireAuth = (WrappedComponent, requiredState) => {
                 }
             }
 
+            // Depnding on whether the user has the required permissions
             if(authorized === true) {
+                // Render the component
                 return super.render();
             } else {
+                // Display the signin window
                 return <AuthContainer authCancelled={this.authCancelled} />;
             }
         }

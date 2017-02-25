@@ -16,6 +16,11 @@ export const AuthStates = {
     COORDINATOR: 'admin'
 };
 
+/*
+    This defines permissions for each user type. If you need to define new
+    permissions, you must add them as a comma separated key-value pair to
+    each of the user types in PermissionStates.
+*/
 export const PermissionStates = {
     GUEST: {
         viewActivity: false

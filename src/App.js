@@ -8,6 +8,7 @@ import config from './firebaseConfig.js';
 import appRoute from './appRoute.js';
 import cpceedApp from 'redux/reducers.js';
 
+// Connects the app to firebase
 firebase.initializeApp(config);
 // store holds the redux store that allows app-wide state to be shared
 const store = createStore(cpceedApp);

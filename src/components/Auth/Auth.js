@@ -47,6 +47,7 @@ class Auth extends React.Component {
     }
 
     handleSubmit(event, key) {
+        // This prevents a '?' from being appended to the URL
         event.preventDefault();
 
         if(key === 'login') {
