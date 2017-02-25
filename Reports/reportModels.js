@@ -19,8 +19,8 @@ var otherReportSchema = new Schema({
     description: String
 })
 
-var EventReport = mongoose.model('EventReport', eventReportSchema);
+var EventReport = mongoose.model('EventReport', eventReportSchema, 'reports');
 
-var OtherReport = mongoose.model('OtherReport', otherReportSchema);
+var OtherReport = mongoose.model('OtherReport', otherReportSchema, 'reports');
 
 module.exports = { EventReport, OtherReport };
