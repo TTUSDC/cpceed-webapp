@@ -1,7 +1,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017');
-var reportModels = require('./reportModels')
+var reportModels = require('./report-models')
 var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
 var reportRouter = express.Router();
