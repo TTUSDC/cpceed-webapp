@@ -14,10 +14,10 @@ firebase.initializeApp(config);
 const store = createStore(cpceedApp);
 
 const App = () => (
-    // Provider shares store with components joined by connect()
-    <Provider store={store}>
-        <Router history={hashHistory} routes={appRoute}/>
-    </Provider>
+  // Provider shares store with components joined by connect()
+  <Provider store={store}>
+    <Router history={hashHistory} routes={appRoute}/>
+  </Provider>
 );
 
 export default App;
