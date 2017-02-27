@@ -27,7 +27,7 @@ describe('server', function() {
   }),
   describe('#getLoggedInUser()', function(){
     var user = dummyData.users["hMXRXnHKQdbGmX9bwaZntRaJER03"];
-    it('should return null since no user is logged in.', function(done){
+    it('should logout user to and then return null since no user is logged in.', function(done){
       server.logout();
       var loggedInUser = server.getLoggedInUser();
       expect(loggedInUser).to.be.null;
