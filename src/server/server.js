@@ -5,9 +5,18 @@ server = {
 
   login: function(email, password) {
     return new Promise(function(resolve, reject) {
-      if(dummyData.auth[email] == password && password) resolve(dummyData.users[dummyData.emailToUid[email]])
+      if(dummyData.auth[email] == password && password){
+        server._currentUser = dummyData.users[dummyData.emailToUid[email]]
+        resolve(server._currentUser)
+      }
       else reject(server.errorMessages.invalidLogin)
     })
+  },
+  logout: function(){
+    server._currentUser = null;
+  },
+  getLoggedInUser: function(){
+    return server._currentUser;
   }
 }
 
