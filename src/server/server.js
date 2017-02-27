@@ -1,6 +1,10 @@
 
-
 dummyData = {
+  auth: {
+    "patty.lastname@ttu.edu" : "patty123",
+    "john.doesnt@ttu.edu" : "john234",
+    "sally.does@ttu.edu" : "324sally"
+  },
   users: {
     "QveDEhTHWSgVbnL4NXrdD6rSvns1": {
       email: "patty.lastname@ttu.edu",
