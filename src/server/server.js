@@ -1,8 +1,12 @@
 server = {
+  errorMessages: {
+    invalidLogin: "Invalid user/password combination"
+  },
+
   login: function(email, password) {
     return new Promise(function(resolve, reject) {
       if(dummyData.auth[email] == password && password) resolve(dummyData.users[dummyData.emailToUid[email]])
-      else reject("Invalid user/password combination")
+      else reject(server.errorMessages.invalidLogin)
     })
   }
 }
