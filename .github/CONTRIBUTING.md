@@ -26,3 +26,10 @@ To use the testing server, do the following:
 
 1. Run `npm start` from the project directory.
 2. Enter `localhost:8080` into the URL bar of your browser to see the app.
+
+## Coding Standards
+We use Google's [JavaScript](https://google.github.io/styleguide/jsguide.html) coding standards.
+
+Notable Aspects:
+
+- Indents should be 2 spaces.
