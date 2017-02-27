@@ -1,9 +1,22 @@
+server = {
+  login: function(email, password) {
+    return new Promise(function(resolve, reject) {
+      if(dummyData.auth[email] == password && password) resolve(dummyData.users[dummyData.emailToUid[email]])
+      else reject("Invalid user/password combination")
+    })
+  }
+}
 
 dummyData = {
   auth: {
-    "patty.lastname@ttu.edu" : "patty123",
-    "john.doesnt@ttu.edu" : "john234",
-    "sally.does@ttu.edu" : "324sally"
+    "patty.lastname@ttu.edu": "patty123",
+    "john.doesnt@ttu.edu": "john234",
+    "sally.does@ttu.edu": "324sally"
+  },
+  emailToUid: {
+    "patty.lastname@ttu.edu": "QveDEhTHWSgVbnL4NXrdD6rSvns1",
+    "john.doesnt@ttu.edu": "hMXRXnHKQdbGmX9bwaZntRaJER03",
+    "sally.does@ttu.edu": "k8fcP5IgEVcuVVaOTQWduYwheur1"
   },
   users: {
     "QveDEhTHWSgVbnL4NXrdD6rSvns1": {
