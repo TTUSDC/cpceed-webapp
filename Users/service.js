@@ -1,19 +1,47 @@
 var response = require('../Objects/response.js');
 
-var createUser = function (json) {
-    // Creates a user
+var createUser = function (id, json) {
+	// Create Student
+	if (id == 0) {
+		var User = new Student({
+			approvalStatus: false,
+			email: "email@email.com",
+			firstName: "Mortimer",
+			lastName: "Applesauce",
+			points: 0,
+			role: "Student",
+			studentId: "69"
+		})
+	}
 
-    // TODO: Create user and remove console.log
+	// Create Admin
+	else if (id == 1) {
+		var User = new Admin({
+			email: "email@email.com",
+			firstName: "Mortimer",
+			lastName: "Applesauce",
+			role: "Admin"
+		})
+	}
+
+	// TODO: save User
+
+    // TODO: remove console.log
     console.log(json);
 
     return new response.ResponseObject(201, {"uid":"1", "url":"//www.google.com"});
 }
 
 var modifyUser = function (id, json) {
-    // Modifies user
+    if (id == 0) {
+		 // Modify as student
+	}
+	else if (id == 1) {
+		// Modify as admin
+	}
 
     // TODO: Send to modifyUserAsSelf or modifyUserAsAdmin
-    // TODO: Remove 
+    // TODO: Remove
     console.log(id, json);
 
     return new response.ResponseObject(200, {"url":"//www.google.com"});

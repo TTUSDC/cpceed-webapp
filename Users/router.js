@@ -1,10 +1,15 @@
 var express = require('express');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:tits');
+var userModels = require('./userModels');
+var User = userModels.User;
+var Admin = userModels.Admin;
 var userService = require('./service.js');
 var userRouter = express.Router();
 
 // Create User
-userRouter.post('/register', (req, res) => {
-    var response = userService.createUser(req.body);
+userRouter.post('/:uid', (req, res) => {
+    var response = userService.createUser(req.params.uid, req.body);
 
     res.status(response.status).json(response.object);
 });
