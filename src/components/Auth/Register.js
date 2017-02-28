@@ -3,6 +3,7 @@ import React from 'react';
 import Form from 'grommet/components/Form';
 import FormField from 'grommet/components/FormField';
 import Select from 'grommet/components/Select';
+import Paragraph from 'grommet/components/Paragraph';
 import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
 
@@ -28,15 +29,22 @@ class Register extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleInputChange(event, key) {
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
     this.setState({
-      [key]: event.target.value
+      [name]: value
     });
   }
 
   handleSelectChange(event) {
+    const name = event.target.name;
+    const option = event.option;
+
     this.setState({
-      role: event.option
+      [name]: option
     });
   }
 
@@ -94,12 +102,11 @@ class Register extends React.Component {
           label='Student ID'
           error={this.state.stuIDErr}>
           <input
+            name='studentID'
             type='text'
             placeholder='Do not include R'
             value={this.state.studentID}
-            onChange={(event) => {
-              this.handleInputChange(event, 'studentID');
-            }}/>
+            onChange={this.handleInputChange}/>
         </FormField>
       );
     }
@@ -122,58 +129,58 @@ class Register extends React.Component {
     return (
       <Form
         pad='medium'
-        plain={false}>
+        plain={false}
+        onSubmit={this.handleSubmit}>
         <fieldset>
           <FormField label='Role'>
             <Select
+              name='role'
               options={authArray}
               value={this.state.role}
-              onChange={(event) => {
-                this.handleSelectChange(event);
-              }}/>
+              onChange={this.handleSelectChange}/>
           </FormField>
           {studentIDField}
           <FormField label='First Name'>
             <input
+              name='firstName'
               type='text'
               value={this.state.firstName}
-              onChange={(event) => {
-                this.handleInputChange(event, 'firstName');
-              }}/>
+              onChange={this.handleInputChange}/>
           </FormField>
           <FormField label='Last Name'>
             <input
+              name='lastName'
               type='text'
               value={this.state.lastName}
-              onChange={(event) => {
-                this.handleInputChange(event, 'lastName');
-              }}/>
+              onChange={this.handleInputChange}/>
           </FormField>
           <FormField label='Email'>
             <input
+              name='email'
               type='email'
               value={this.state.email}
-              onChange={(event) => {
-                this.handleInputChange(event, 'email');
-              }}/>
+              onChange={this.handleInputChange}/>
           </FormField>
+          <Paragraph>
+            Your password should use at least 8 characters. It should
+            contain only ASCII text, with at least one uppercase, one
+            lowercase, one number, and one special character.
+          </Paragraph>
           <FormField label='Password'>
             <input
+              name='password'
               type='password'
               value={this.state.password}
-              onChange={(event) => {
-                this.handleInputChange(event, 'password');
-              }}/>
+              onChange={this.handleInputChange}/>
           </FormField>
           <FormField
             label='Confirm Password'
             error={this.state.passErr}>
             <input
+              name='confirmPass'
               type='password'
               value={this.state.confirmPass}
-              onChange={(event) => {
-                this.handleInputChange(event, 'confirmPass');
-              }}/>
+              onChange={this.handleInputChange}/>
           </FormField>
           {errMessage}
         </fieldset>
@@ -182,9 +189,7 @@ class Register extends React.Component {
             label='Register'
             type='submit'
             primary={true}
-            onClick={(event) => {
-              this.handleSubmit(event);
-            }}/>
+            onClick={this.handleSubmit}/>
         </Footer>
       </Form>
     );
