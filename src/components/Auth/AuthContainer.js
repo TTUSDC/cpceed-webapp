@@ -14,6 +14,12 @@ class AuthContainer extends React.Component {
       regErr: ''
     };
 
+    /*
+      Only functions that are being passed out of this scope, as in the case
+      of passing props to children, need to be bound. This ensures that they
+      can still access the scope of this component even though they are
+      being called from another component.
+    */
     this.handleRegister = this.handleRegister.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
   }

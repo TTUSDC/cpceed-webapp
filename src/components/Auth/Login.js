@@ -17,9 +17,13 @@ class Login extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleInputChange(event, key) {
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
     this.setState({
-      [key]: event.target.value
+      [name]: value
     });
   }
 
@@ -40,23 +44,22 @@ class Login extends React.Component {
     return (
       <Form
         pad='medium'
-        plain={false}>
+        plain={false}
+        onSubmit={this.handleSubmit}>
         <fieldset>
           <FormField label='Email'>
             <input
+              name='email'
               type='email'
               value={this.state.email}
-              onChange={(event) => {
-                this.handleInputChange(event, 'email');
-              }}/>
+              onChange={this.handleInputChange}/>
           </FormField>
           <FormField label='Password'>
             <input
+              name='password'
               type='password'
               value={this.state.password}
-              onChange={(event) => {
-                this.handleInputChange(event, 'password');
-              }}/>
+              onChange={this.handleInputChange}/>
           </FormField>
           {errMessage}
         </fieldset>
@@ -65,9 +68,7 @@ class Login extends React.Component {
             label='Login'
             type='submit'
             primary={true}
-            onClick={(event) => {
-              this.handleSubmit(event);
-            }}/>
+            onClick={this.handleSubmit}/>
         </Footer>
       </Form>
     );
