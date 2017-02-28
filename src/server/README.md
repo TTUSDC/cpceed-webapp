@@ -1,5 +1,5 @@
 # Server API
-This component is to server as a internal library for connecting to the [backend
+This component is to serve as an internal library for connecting to the [backend
 API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
 
 ## Usage
