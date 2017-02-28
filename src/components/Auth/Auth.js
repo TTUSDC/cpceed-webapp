@@ -41,11 +41,13 @@ class Auth extends React.Component {
           }}>
           <Tab title='Login'>
             <Login
-              handleLogin={this.props.handleLogin} />
+              handleLogin={this.props.handleLogin}
+              logErr={this.props.logErr} />
           </Tab>
           <Tab title='Register'>
             <Register
-              handleRegister={this.props.handleRegister} />
+              handleRegister={this.props.handleRegister}
+              regErr={this.props.regErr} />
           </Tab>
         </Tabs>
       </Layer>

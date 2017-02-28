@@ -9,9 +9,25 @@ import Auth from './Auth.js';
 class AuthContainer extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      logErr: '',
+      regErr: ''
+    };
 
     this.handleRegister = this.handleRegister.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
+  }
+
+  setRegErr(message) {
+    this.setState({
+      regErr: message
+    });
+  }
+
+  setLogErr(message) {
+    this.setState({
+      logErr: message
+    });
   }
 
   handleRegister(data) {
@@ -26,21 +42,19 @@ class AuthContainer extends React.Component {
           studentId: data.studentID,
           role: data.role
         })
-          .then(() => {
-            console.log("User was registered");
+      })
+      .then(() => {
+        console.log("User was registered");
 
-            this.props.dispatch(setAuthState(data.role));
+        this.props.dispatch(setAuthState(data.role));
 
-            if(this.props.authFinished) {
-              this.props.authFinished();
-            }
-          })
-          .catch((e) => {
-            console.log(e.message);
-          });
+        if(this.props.authFinished) {
+          this.props.authFinished();
+        }
       })
       .catch((e) => {
         console.log(e.message);
+        this.setRegErr(e.message);
       });
   }
 
@@ -63,6 +77,7 @@ class AuthContainer extends React.Component {
       })
       .catch((e) => {
         console.log(e.message);
+        this.setLogErr(e.message);
       });
   }
 
@@ -71,7 +86,9 @@ class AuthContainer extends React.Component {
       <Auth
         handleRegister={this.handleRegister}
         handleLogin={this.handleLogin}
-        authCancelled={this.props.authCancelled}/>
+        authCancelled={this.props.authCancelled}
+        regErr={this.state.regErr}
+        logErr={this.state.logErr} />
     );
   }
 }

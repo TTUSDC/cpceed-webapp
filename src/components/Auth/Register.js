@@ -76,10 +76,17 @@ class Register extends React.Component {
       }
     }
 
+    var errMessage = null;
+    if(this.props.regErr !== '') {
+      errMessage = (
+        <span style={{color: 'red'}}>{this.props.regErr}</span>
+      );
+    }
+
     return (
       <Form
-        pad='small'
-        plain={true}>
+        pad='medium'
+        plain={false}>
         <fieldset>
           <FormField label='Role'>
             <Select
@@ -122,8 +129,9 @@ class Register extends React.Component {
                 this.handleInputChange(event, 'password');
               }}/>
           </FormField>
+          {errMessage}
         </fieldset>
-        <Footer>
+        <Footer size='small'>
           <Button
             label='Register'
             type='submit'

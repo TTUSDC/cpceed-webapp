@@ -30,10 +30,17 @@ class Login extends React.Component {
   }
 
   render() {
+    var errMessage = null;
+    if(this.props.logErr !== '') {
+      errMessage = (
+        <span style={{color: 'red'}}>{this.props.logErr}</span>
+      );
+    }
+
     return (
       <Form
-        pad='small'
-        plain={true}>
+        pad='medium'
+        plain={false}>
         <fieldset>
           <FormField label='Email'>
             <input
@@ -51,8 +58,9 @@ class Login extends React.Component {
                 this.handleInputChange(event, 'password');
               }}/>
           </FormField>
+          {errMessage}
         </fieldset>
-        <Footer>
+        <Footer size='small'>
           <Button
             label='Login'
             type='submit'
