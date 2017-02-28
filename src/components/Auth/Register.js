@@ -6,6 +6,8 @@ import Select from 'grommet/components/Select';
 import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
 
+import { AuthStates } from 'redux/actions.js';
+
 class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -66,6 +68,14 @@ class Register extends React.Component {
       );
     }
 
+    // Turn AuthStates from actions.js into array for Select
+    var authArray = [];
+    for(var key in AuthStates) {
+      if(AuthStates[key] !== 'guest') {
+        authArray.push(AuthStates[key]);
+      }
+    }
+
     return (
       <Form
         pad='small'
@@ -73,7 +83,7 @@ class Register extends React.Component {
         <fieldset>
           <FormField label='Role'>
             <Select
-              options={['student', 'admin']}
+              options={authArray}
               value={this.state.role}
               onChange={(event) => {
                 this.handleSelectChange(event);
