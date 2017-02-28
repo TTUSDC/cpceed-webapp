@@ -14,9 +14,12 @@ class Register extends React.Component {
     this.state = {
       email: '',
       password: '',
+      confirmPass: '',
+      passErr: '',
       firstName: '',
       lastName: '',
       studentID: '',
+      stuIDErr: '',
       role: 'student'
     };
 
@@ -53,13 +56,46 @@ class Register extends React.Component {
     this.props.handleRegister(data);
   }
 
+  componentDidUpdate() {
+    if(this.state.password !== this.state.confirmPass) {
+      if(this.state.passErr === '') {
+        this.setState({
+          passErr: 'Please enter a matching password.'
+        });
+      }
+    } else {
+      if(this.state.passErr !== '') {
+        this.setState({
+          passErr: ''
+        });
+      }
+    }
+
+    if(this.state.studentID.length !== 8) {
+      if(this.state.stuIDErr === '') {
+        this.setState({
+          stuIDErr: 'Please use 8 numbers.'
+        });
+      }
+    } else {
+      if(this.state.stuIDErr !== '') {
+        this.setState({
+          stuIDErr: ''
+        });
+      }
+    }
+  }
+
   render() {
     var studentIDField = null;
     if(this.state.role === 'student') {
       studentIDField = (
-        <FormField label='Student ID'>
+        <FormField
+          label='Student ID'
+          error={this.state.stuIDErr}>
           <input
             type='text'
+            placeholder='Do not include R'
             value={this.state.studentID}
             onChange={(event) => {
               this.handleInputChange(event, 'studentID');
@@ -127,6 +163,16 @@ class Register extends React.Component {
               value={this.state.password}
               onChange={(event) => {
                 this.handleInputChange(event, 'password');
+              }}/>
+          </FormField>
+          <FormField
+            label='Confirm Password'
+            error={this.state.passErr}>
+            <input
+              type='password'
+              value={this.state.confirmPass}
+              onChange={(event) => {
+                this.handleInputChange(event, 'confirmPass');
               }}/>
           </FormField>
           {errMessage}
