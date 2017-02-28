@@ -26,3 +26,12 @@ To use the testing server, do the following:
 
 1. Run `npm start` from the project directory.
 2. Enter `localhost:8080` into the URL bar of your browser to see the app.
+
+## Coding Standards
+We use [Google's](https://google.github.io/styleguide/jsguide.html) JavaScript coding standards. The exception to this rule is when dealing with React components, for which we use [Airbnb's](https://github.com/airbnb/javascript/tree/master/react) naming standards.
+
+Notable Aspects:
+
+- Indents should be 2 spaces.
+- Regular files and folders should use `dash-separated-names`. Short folder names are preferred.
+- React components should use `UpperCamelCase` for the class name, the file name, and the parent folder name.
