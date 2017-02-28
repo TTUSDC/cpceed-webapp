@@ -4,8 +4,8 @@ import { Router, Route, hashHistory } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
-import config from './firebaseConfig.js';
-import appRoute from './appRoute.js';
+import config from './firebase-config.js';
+import appRoute from './app-route.js';
 import cpceedApp from 'redux/reducers.js';
 
 // Connects the app to firebase
