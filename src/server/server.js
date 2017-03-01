@@ -1,6 +1,6 @@
 var auth = require('./user-auth.js')
 var reports = require('./reports.js')
-var dummyData = require('./test/dummy-data.js')
+var dummyData = require('../../test/server/dummy-data.js')
 
 
 server = {

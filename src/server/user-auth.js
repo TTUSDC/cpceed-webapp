@@ -1,4 +1,4 @@
-var dummyData = require('./test/dummy-data.js')
+var dummyData = require('../../test/server/dummy-data.js')
 var exports = module.exports = {};
 
 exports.login = function(email, password) {

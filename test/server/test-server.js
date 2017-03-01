@@ -2,7 +2,7 @@ var expect = require("chai").expect;
 var dummyData = require('./dummy-data.js')
 
 
-require('../server.js')
+require('../../src/server/server.js')
 
 describe('server', function() {
   describe('#login(email, password)', function() {
