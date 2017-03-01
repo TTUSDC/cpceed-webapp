@@ -28,3 +28,9 @@ exports.getByUid = function(uid){
     resolve(server.dummyData.reports[uid])
   })
 }
+
+exports.getAll = function(){
+  return new Promise(function(resolve, reject){
+    resolve(server.dummyData.reports)
+  })
+}

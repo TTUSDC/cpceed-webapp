@@ -48,6 +48,17 @@ describe('reports', function() {
       })
     }),
 
+    describe('#getAllReports()', function(){
+      it('should get all reports.', function(done){
+        server.getAllReports().then(function(reports){
+          expect(reports).to.equal(server.dummyData.reports);
+          done();
+        }).catch(function(reason) {
+          done(reason);
+        })
+      })
+    }),
+
     describe('#deleteReport(uid)', function() {
       it('should delete a created event report', function(done) {
         expect(testEventReportUid).to.not.be.undefined;
@@ -59,6 +70,8 @@ describe('reports', function() {
         })
       })
     })
+
+
 
 
 

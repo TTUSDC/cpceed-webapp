@@ -14,5 +14,6 @@ server = {
   createReport: reports.create,
   modifyReport: reports.modify,
   deleteReport: reports.delete,
-  getReportByUid: reports.getByUid
+  getReportByUid: reports.getByUid,
+  getAllReports: reports.getAll
 }
