@@ -1,4 +1,6 @@
 var expect = require("chai").expect;
+var dummyData = require('./dummy-data.js')
+
 
 require('../server.js')
 
