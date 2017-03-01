@@ -1,4 +1,5 @@
 import React from 'react';
+import update from 'immutability-helper';
 
 import Form from 'grommet/components/Form';
 import FormField from 'grommet/components/FormField';
@@ -14,16 +15,18 @@ class Register extends React.Component {
     super(props);
     this.state = {
       email: '',
-      emailErr: '',
       password: '',
-      passErr: '',
       confirmPass: '',
-      confirmErr: '',
       firstName: '',
       lastName: '',
       studentID: '',
-      stuIDErr: '',
-      role: 'student'
+      role: 'student',
+      err: {
+        emailErr: '',
+        passErr: '',
+        confirmErr: '',
+        stuIDErr: ''
+      }
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -74,12 +77,16 @@ class Register extends React.Component {
       case "email":
         if(/@ttu.edu$/.test(this.state.email) !== true) {
           this.setState({
-            emailErr: 'Please use a TTU email address.'
+            err: update(this.state.err, {
+              emailErr: {$set: 'Please use a TTU email address.'}
+            })
           });
         } else {
-          if(this.state.emailErr !== '') {
+          if(this.state.err.emailErr !== '') {
             this.setState({
-              emailErr: ''
+              err: update(this.state.err, {
+                emailErr: {$set: ''}
+              })
             });
           }
         }
@@ -89,37 +96,51 @@ class Register extends React.Component {
         if(/^[\x00-\x7F]+$/.test(this.state.password) !== true) {
           // ASCII only
           this.setState({
-            passErr: 'Please use only ASCII characters.'
+            err: update(this.state.err, {
+              passErr: {$set: 'Please use only ASCII characters.'}
+            })
           });
         } else if(this.state.password.length < 8) {
           // 8 characters long
           this.setState({
-            passErr: 'Please use at least 8 characters.'
+            err: update(this.state.err, {
+              passErr: {$set: 'Please use at least 8 characters.'}
+            })
           });
         } else if(/[A-Z]/.test(this.state.password) !== true) {
           // 1 uppercase
           this.setState({
-            passErr: 'Please use at least one uppercase letter.'
+            err: update(this.state.err, {
+              passErr: {$set: 'Please use at least one uppercase letter.'}
+            })
           });
         } else if(/[a-z]/.test(this.state.password) !== true) {
           // 1 lowercase
           this.setState({
-            passErr: 'Please use at least one lowercase letter.'
+            err: update(this.state.err, {
+              passErr: {$set: 'Please use at least one lowercase letter.'}
+            })
           });
         } else if(/[0-9]/.test(this.state.password) !== true) {
           // 1 number
           this.setState({
-            passErr: 'Please use at least one number.'
+            err: update(this.state.err, {
+              passErr: {$set: 'Please use at least one number.'}
+            })
           });
         } else if(/[^A-Za-z0-9]/.test(this.state.password) !== true) {
           // 1 special character
           this.setState({
-            passErr: 'Please use at least one special character.'
+            err: update(this.state.err, {
+              passErr: {$set: 'Please use at least one special character.'}
+            })
           });
         } else {
-          if(this.state.passErr !== '') {
+          if(this.state.err.passErr !== '') {
             this.setState({
-              passErr: ''
+              err: update(this.state.err, {
+                passErr: {$set: ''}
+              })
             });
           }
         }
@@ -128,12 +149,16 @@ class Register extends React.Component {
       case "confirmPass":
         if(this.state.password !== this.state.confirmPass) {
           this.setState({
-            confirmErr: 'Please enter a matching password.'
+            err: update(this.state.err, {
+              confirmErr: {$set: 'Please enter a matching password.'}
+            })
           });
         } else {
-          if(this.state.confirmErr !== '') {
+          if(this.state.err.confirmErr !== '') {
             this.setState({
-              confirmErr: ''
+              err: update(this.state.err, {
+                confirmErr: {$set: ''}
+              })
             });
           }
         }
@@ -142,12 +167,16 @@ class Register extends React.Component {
       case "studentID":
         if(/^[0-9]{8}$/.test(this.state.studentID) !== true) {
           this.setState({
-            stuIDErr: 'Please use 8 numbers.'
+            err: update(this.state.err, {
+              stuIDErr: {$set: 'Please use 8 numbers.'}
+            })
           });
         } else {
-          if(this.state.stuIDErr !== '') {
+          if(this.state.err.stuIDErr !== '') {
             this.setState({
-              stuIDErr: ''
+              err: update(this.state.err, {
+                stuIDErr: {$set: ''}
+              })
             });
           }
         }
@@ -172,7 +201,7 @@ class Register extends React.Component {
       studentIDField = (
         <FormField
           label='Student ID'
-          error={this.state.stuIDErr}>
+          error={this.state.err.stuIDErr}>
           <input
             name='studentID'
             type='text'
@@ -198,10 +227,9 @@ class Register extends React.Component {
       );
     }
 
-    // This relies on all error keys ending in 'Err'
     var passHandleSubmit = this.handleSubmit;
-    for(var key in this.state) {
-      if(this.state[key] !== '' && /Err$/.test(key) === true) {
+    for(var key in this.state.err) {
+      if(this.state.err[key] !== '') {
         passHandleSubmit = null;
       }
     }
@@ -237,7 +265,7 @@ class Register extends React.Component {
           </FormField>
           <FormField
             label='Email'
-            error={this.state.emailErr}>
+            error={this.state.err.emailErr}>
             <input
               name='email'
               type='email'
@@ -252,7 +280,7 @@ class Register extends React.Component {
           </Paragraph>
           <FormField
             label='Password'
-            error={this.state.passErr}>
+            error={this.state.err.passErr}>
             <input
               name='password'
               type='password'
@@ -262,7 +290,7 @@ class Register extends React.Component {
           </FormField>
           <FormField
             label='Confirm Password'
-            error={this.state.confirmErr}>
+            error={this.state.err.confirmErr}>
             <input
               name='confirmPass'
               type='password'
