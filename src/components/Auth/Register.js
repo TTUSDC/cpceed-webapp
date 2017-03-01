@@ -198,11 +198,19 @@ class Register extends React.Component {
       );
     }
 
+    // This relies on all error keys ending in 'Err'
+    var passHandleSubmit = this.handleSubmit;
+    for(var key in this.state) {
+      if(this.state[key] !== '' && /Err$/.test(key) === true) {
+        passHandleSubmit = null;
+      }
+    }
+
     return (
       <Form
         pad='medium'
         plain={false}
-        onSubmit={this.handleSubmit}>
+        onSubmit={passHandleSubmit}>
         <fieldset>
           <FormField label='Role'>
             <Select
@@ -269,7 +277,7 @@ class Register extends React.Component {
             label='Register'
             type='submit'
             primary={true}
-            onClick={this.handleSubmit}/>
+            onClick={passHandleSubmit}/>
         </Footer>
       </Form>
     );
