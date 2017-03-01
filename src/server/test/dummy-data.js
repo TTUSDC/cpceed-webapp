@@ -34,5 +34,12 @@ module.exports = {
       role: "STUDENT",
       studentId: "110451"
     }
+  },
+  reports:{
+    "QdbGmX9bwaOTQWduYw" : {
+      type: "event",
+      student: "110451",
+      event: "someevent"
+    }
   }
 }
