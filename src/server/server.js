@@ -11,5 +11,7 @@ server = {
   login: auth.login,
   logout: auth.logout,
   getLoggedInUser: auth.getLoggedInUser,
-  createReport: reports.createReport
+  createReport: reports.create,
+  modifyReport: reports.modify,
+  deleteReport: reports.delete
 }
