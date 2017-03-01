@@ -1,6 +1,7 @@
 var expect = require("chai").expect;
 var dummyData = require('./dummy-data.js')
-var reports = require('../reports.js')
+
+require('../server.js')
 
 describe('reports', function(){
   describe('#create(newReport)', function(){
@@ -10,7 +11,7 @@ describe('reports', function(){
         student: "1234567",
         event: "9876543321"
       }
-      var newEventUid = reports.create(newEventReport);
+      var newEventUid = server.createReport(newEventReport);
       expect(dummyData.reports[newEventUid]).to.equal(newEventReport);
       done();
     })
