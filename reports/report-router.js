@@ -26,8 +26,28 @@ reportRouter.post('/', (req, res) => {
   });
 });
 
+reportRouter.get('/:uid', (req, res) => {
+  reportManager.getReportById(req.params.uid, {}, (err, report) => {
+    if (err) {
+      // TODO(jmtaber129): Consider better error handling.
+      res.status(400).send(err).end();
+      return;
+    }
+    
+    if (!report) {
+      // Report was not found.
+      // TODO(jmtaber129): Add error handling for when a user is not authorized to view
+      // the report.
+      res.status(404).end();
+      return;
+    }
+    
+    res.json(report);
+  });
+});
+
 reportRouter.get('/', (req, res) => {
-  reportManager.getAllReports(req.body, {}, (err, reports) => {
+  reportManager.getAllReports(req.params, {}, (err, reports) => {
     if (err) {
       // TODO(jmtaber129): Consider better error handling.
       res.status(400).send(err).end();

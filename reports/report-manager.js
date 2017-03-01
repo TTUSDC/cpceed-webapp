@@ -31,6 +31,21 @@ var createReport = function(reqData, locals, saveCallback) {
   report.save(saveCallback); 
 }
 
+var getReportById = function(reportUid, locals, queryCallback) {
+  EventReport.findById(reportUid, (err, report) => {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+    
+    // If the report's student UID does not match the user UID, and the user is not an
+    // admin, 'report' should not be returned.
+    // TODO(jmtaber129): Check report's student UID and user UID, and add error handling.
+    
+    queryCallback(err, report);
+  });
+}
+
 var getAllReports = function(reqData, locals, queryCallback) {
   conditions = {};
   
@@ -50,11 +65,16 @@ var getAllReports = function(reqData, locals, queryCallback) {
   EventReport.find(conditions, (err, reports) => {
     if (err) {
       queryCallback(err);
+      return;
     }
     
     returnObject = {};
     
     reports.forEach((report) => {
+      // TODO(jmtaber129): Check if the report's student UID matches the user UID, or if
+      // the user is an admin.  Otherwise, return without adding the report to
+      // 'returnObject'.
+      
       returnObject[report.id] = report;
       
       // TODO(jmtaber129): Add point value to report in 'returnObject'.
@@ -65,4 +85,4 @@ var getAllReports = function(reqData, locals, queryCallback) {
   
 }
 
-module.exports = { createReport, getAllReports };
+module.exports = { createReport, getReportById, getAllReports };
