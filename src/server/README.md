@@ -32,7 +32,7 @@ API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
     "lastName" : STRING,
     "points" : NUMBER,
     "role" : ENUM/STRING,
-    "studentId" : NUMBER
+    "studentId" : STRING
   }
 }
 ```
