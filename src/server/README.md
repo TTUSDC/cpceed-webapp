@@ -61,8 +61,8 @@ API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
 ## Login
 Method: `login(email, password)`
 
-Returns:
-Promise, resolves with user object on success, rejects on failure.
+Returns: Promise  
+- Resolve: user object on success
 
 #### Example
 ```javascript
@@ -97,4 +97,87 @@ Returns: None
 user.logout()
 if(user.getLoggedInUser()) console.log("This won't happen")
 else console.log("User logged out successfully.")
+```
+
+## Create Report
+Method: `createReport(newReport)`
+
+Returns: Promise  
+- Resolve: UID of new user
+
+```javascript
+var testEventReport = {
+  type: "event",
+  student: "1234567",
+  event: "9876543321"
+}
+server.createReport(testEventReport).then(function(uid) {
+  console.log(uid, "created!")
+}).catch(function(reason) {
+  console.log("Event report was NOT created with reason", reason)
+})
+```
+
+## Modify Report
+Method: `modifyReport(uid, updatedReport)`
+
+Returns: Promise
+- Resolve: On success
+- Reject: Reason
+
+```javascript
+var testEventReport = {
+  type: "event",
+  student: "1234567",
+  event: "12343645"
+}
+
+var reportUid = ... //Let's pretend this is the UID returned from creating report
+
+server.modifyReport(testEventReportUid, testEventReport).then(function() {
+  console.log("Report modified!")
+}).catch(function(reason) {
+  console.log("Report NOT modified with reason", reason);
+})
+```
+
+## Get Report By UID
+Method: `getReportByUid(uid)`
+
+Returns: Promise
+- Resolve: Report object with passed in UID
+
+```javascript
+server.getReportByUid(testEventReportUid).then(function(report){
+  console.log("Report retrieved", report);
+}).catch(function(reason){
+  console.log("Report NOT retrieved with reason", reason);
+})
+```
+
+## Get All Reports
+Method: `getAllReports()`
+
+Returns: Promise
+- Resolve: All the report objects
+
+```javascript
+server.getAllReports().then(function(reports){
+  console.log("Reports retrieved", report);
+}).catch(function(reason) {
+  console.log("Report NOT retrieved with reason", reason);
+})
+```
+
+## Delete Report
+Method: `deleteReport(uid)`
+
+Returns: Promise
+```javascript
+server.deleteReport(testEventReportUid).then(function() {
+  console.log("Report deleted!")
+}).catch(function(reason) {
+  console.log("Report not deleted with reason", reason)
+})
+
 ```
