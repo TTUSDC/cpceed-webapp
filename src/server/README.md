@@ -5,26 +5,58 @@ API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
 ## Usage
 `require('PATH/TO/server.js')`
 
+# Contents
+## Objects
+- [User](#user)
+- [Reports](#report)
+
+
+
 # Objects
-## User example
+## User
 ```javascript
-"UID": {
-  approvalStatus: true,
-  email: "email@email.com",
-  firstName: "firstname",
-  lastName: "lastName",
-  points: 0,
-  role: "STUDENT",
-  studentId: "ID"
-},
+{
+  "user" : {
+    "approvalStatus" : BOOLEAN,
+    "email" : STRING,
+    "firstName" : STRING,
+    "lastName" : STRING,
+    "points" : NUMBER,
+    "role" : ENUM/STRING,
+    "studentId" : NUMBER
+  }
+}
+```
+
+## Report
+### Event
+```javascript
+{
+  "type" : ENUM/STRING,
+  "approvalStatus" : ENUM/STRING,
+  "student" : USER-UID,
+  "event" : EVENT-UID,
+}
+```
+
+### Other
+```javascript
+{
+  "type" : ENUM/STRING,
+  "approvalStatus" : ENUM/STRING,
+  "student" : USER-UID,
+  "category" : ENUM/STRING,
+  "datetime" : DATE-TIME STRING,
+  "location" : STRING,
+  "title" : STRING,
+  "description" : STRING
+}
 ```
 
 # Methods
 
-## login()
-Parameters:
-- email
-- password
+## Login
+Method: `login(email, password)`
 
 Returns:
 Promise, resolves with user object on success, rejects on failure.
@@ -40,8 +72,8 @@ server.login(email, password).then(function(user){
 })
 ```
 
-## getLoggedInUser()
-Parameters: None
+## Get Logged In User
+Method: `getLoggedInUser()`
 
 Returns: User object if logged in
 
@@ -52,8 +84,8 @@ if(user) console.log(user.firstName," is logged in!")
 else console.log("User not logged in!")
 ```
 
-## logout()
-Parameters: None
+## Logout
+Method: `logout()`
 
 Returns: None
 
