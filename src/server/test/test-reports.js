@@ -36,6 +36,18 @@ describe('reports', function() {
       })
     }),
 
+    describe('#getReportByUid(uid)', function(){
+      it('should return the created test event report.', function(done){
+        expect(testEventReportUid).to.not.be.undefined;
+        server.getReportByUid(testEventReportUid).then(function(report){
+          expect(report).to.equal(server.dummyData.reports[testEventReportUid])
+          done()
+        }).catch(function(reason){
+          done(reason)
+        })
+      })
+    }),
+
     describe('#deleteReport(uid)', function() {
       it('should delete a created event report', function(done) {
         expect(testEventReportUid).to.not.be.undefined;
@@ -47,4 +59,8 @@ describe('reports', function() {
         })
       })
     })
+
+
+
+
 })

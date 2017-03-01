@@ -22,3 +22,9 @@ exports.delete = function(uid){
     resolve();
   })
 }
+
+exports.getByUid = function(uid){
+  return new Promise(function(resolve, reject){
+    resolve(server.dummyData.reports[uid])
+  })
+}
