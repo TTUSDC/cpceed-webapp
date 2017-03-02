@@ -7,7 +7,7 @@ describe('events', function() {
     "datetime": "2017:05:20:09:00",
     "location": "United Supermarkets Arena",
     "title": "Graduation",
-    "description": "TTU Commencemnt for the College of Engineering"
+    "description": "TTU Commencement for the College of Engineering"
   }
 
   var testEventUid = undefined;
