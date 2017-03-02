@@ -1,36 +1,36 @@
-var utils = require('./utils.js')
-var exports = module.exports = {};
+import utils from './utils'
+import * as dummyData from '../../test/server/dummy-data'
 
-exports.create = function(newEvent){
+export function create(newEvent){
   return new Promise(function(resolve, reject){
     var uid = utils.getRandomString();
-    server.dummyData.events[uid] = newEvent;
+    dummyData.events[uid] = newEvent;
     resolve(uid);
   })
 }
 
-exports.modify = function(uid, updatedEvent){
+export function modify(uid, updatedEvent){
   return new Promise(function(resolve, reject){
-    server.dummyData.events[uid] = updatedEvent;
+    dummyData.events[uid] = updatedEvent;
     resolve();
   })
 }
 
-exports.delete = function(uid){
+export function remove(uid){
   return new Promise(function(resolve, reject){
-    server.dummyData.events[uid] = undefined;
+    dummyData.events[uid] = undefined;
     resolve();
   })
 }
 
-exports.getByUid = function(uid){
+export function getByUid(uid){
   return new Promise(function(resolve, reject){
-    resolve(server.dummyData.events[uid])
+    resolve(dummyData.events[uid])
   })
 }
 
-exports.getAll = function(){
+export function getAll(){
   return new Promise(function(resolve, reject){
-    resolve(server.dummyData.events);
+    resolve(dummyData.events);
   })
 }
