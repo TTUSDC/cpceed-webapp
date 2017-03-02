@@ -20,5 +20,6 @@ server = {
   getAllReports: reports.getAll,
 
   createEvent: events.create,
-  modifyEvent: events.modify
+  modifyEvent: events.modify,
+  deleteEvent: events.delete
 }

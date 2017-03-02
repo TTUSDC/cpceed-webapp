@@ -15,3 +15,10 @@ exports.modify = function(uid, updatedEvent){
     resolve();
   })
 }
+
+exports.delete = function(uid){
+  return new Promise(function(resolve, reject){
+    server.dummyData.events[uid] = undefined;
+    resolve();
+  })
+}

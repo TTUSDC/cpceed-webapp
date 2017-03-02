@@ -35,5 +35,17 @@ describe('events', function() {
         done(reason);
       })
     })
+  }),
+
+  describe('#deleteEvent(uid)', function(){
+    it('should delete the created event.', function(done){
+      expect(testEventUid).to.not.be.undefined;
+      server.deleteEvent(testEventUid).then(function(){
+        expect(server.dummyData.events[testEventUid]).to.be.undefined;
+        done();
+      }).catch(function(reason){
+        done(reason);
+      })
+    })
   })
 })
