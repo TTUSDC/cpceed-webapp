@@ -11,14 +11,22 @@ API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
 - [Reports](#report)
 
 ## Methods  
+### User Auth
 - [`login(email, password)`](#login)
 - [`getLoggedInUser()`](#get-logged-in-user)
 - [`logout()`](#logout)
+### Reports
 - [`createReport(newReport)`](#create-report)
 - [`modifyReport(uid, updatedReport)`](#modify-report)
 - [`getReportByUid(uid)`](#get-report-by-uid)
 - [`getAllReports()`](#get-all-reports)
 - [`deleteReport(uid)`](#delete-report)
+### Events
+- [`createEvent(newEvent)`](#create-event)
+- [`modifyEvent(uid, updatedEvent)`](#modify-event)
+- [`getEventByUid(uid)`](#get-event-by-uid)
+- [`getAllEvents()`](#get-all-events)
+- [`deleteEvent(uid)`](#delete-event)
 
 
 # Objects
