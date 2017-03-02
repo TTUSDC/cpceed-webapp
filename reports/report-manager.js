@@ -29,7 +29,28 @@ var createReport = function(reqData, locals, saveCallback) {
   }
   
   report.save(saveCallback); 
-}
+};
+
+var deleteReport = function(reportUid, locals, deleteCallback) {
+  EventReport.findById(reportUid, (err, report) => {
+    if (err) {
+      deleteCallback(err);
+      return;
+    }
+    
+    if (report == null) {
+      // TODO(jmtaber129): Better error handling when report can't be found.
+      deleteCallback({ message: "Report not found." });
+      return;
+    }
+    
+    // If the report's student UID does not match the user UID, and the user is not an
+    // admin, 'report' should not be deleted.
+    // TODO(jmtaber129): Check report's student UID and user UID, and add error handling.
+    
+    report.remove(deleteCallback);
+  });
+};
 
 var getReportById = function(reportUid, locals, queryCallback) {
   EventReport.findById(reportUid, (err, report) => {
@@ -44,7 +65,7 @@ var getReportById = function(reportUid, locals, queryCallback) {
     
     queryCallback(err, report);
   });
-}
+};
 
 var getAllReports = function(reqData, locals, queryCallback) {
   conditions = {};
@@ -83,6 +104,6 @@ var getAllReports = function(reqData, locals, queryCallback) {
     queryCallback(err, returnObject);
   });
   
-}
+};
 
-module.exports = { createReport, getReportById, getAllReports };
+module.exports = { createReport, deleteReport, getReportById, getAllReports };

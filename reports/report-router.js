@@ -26,6 +26,18 @@ reportRouter.post('/', (req, res) => {
   });
 });
 
+reportRouter.delete('/:uid', (req, res) => {
+  reportManager.deleteReport(req.params.uid, {}, (err, report) => {
+    if (err) {
+      // TODO(jmtaber129): Consider better error handling.
+      res.status(400).send(err).end();
+      return;
+    }
+    
+    res.status(204).end();
+  });
+});
+
 reportRouter.get('/:uid', (req, res) => {
   reportManager.getReportById(req.params.uid, {}, (err, report) => {
     if (err) {
@@ -56,6 +68,6 @@ reportRouter.get('/', (req, res) => {
     
     res.json(reports);
   });
-})
+});
 
 module.exports = { reportRouter };
