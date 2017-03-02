@@ -60,7 +60,7 @@ describe('reports', function() {
     }),
 
     describe('#deleteReport(uid)', function() {
-      it('should delete a created event report', function(done) {
+      it('should delete a created event report.', function(done) {
         expect(testEventReportUid).to.not.be.undefined;
         server.deleteReport(testEventReportUid).then(function() {
           expect(server.dummyData.reports[testEventReportUid]).to.be.undefined;
