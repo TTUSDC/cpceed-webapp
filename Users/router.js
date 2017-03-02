@@ -1,20 +1,20 @@
 var express = require('express');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:tits');
+mongoose.connect('mongodb://localhost:80085');
 var userModels = require('./userModels');
-var User = userModels.User;
-var Admin = userModels.Admin;
+var StudentModel = userModels.Student;
+var AdminModel = userModels.Admin;
 var userService = require('./service.js');
 var userRouter = express.Router();
 
 // Create User
 userRouter.post('/:uid', (req, res) => {
-    var response = userService.createUser(req.params.uid, req.body);
+    var response = userService.createUser(req.body);
 
     res.status(response.status).json(response.object);
 });
 
-// Modify User (as self/admin)
+// Modify User
 userRouter.put('/:uid', (req, res) => {
     var response = userService.modifyUser(req.params.uid, req.body);
 
