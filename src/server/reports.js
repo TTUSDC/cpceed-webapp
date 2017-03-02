@@ -1,36 +1,39 @@
-var utils = require('./utils.js')
-var exports = module.exports = {};
+import utils from './utils'
+import * as dummyData from '../../test/server/dummy-data'
 
-exports.create = function(newReport){
+//var utils = require('./utils.js')
+
+export function create(newReport){
   return new Promise(function(resolve, reject){
     var uid = utils.getRandomString();
-    server.dummyData.reports[uid] = newReport;
+    dummyData.reports[uid] = newReport;
     resolve(uid);
   })
 }
 
-exports.modify = function(uid, updatedReport){
+export function modify(uid, updatedReport){
   return new Promise(function(resolve, reject){
-    server.dummyData.reports[uid] = updatedReport;
-    resolve()
-  })
-}
-
-exports.delete = function(uid){
-  return new Promise(function(resolve, reject){
-    server.dummyData.reports[uid] = undefined;
+    dummyData.reports[uid] = updatedReport;
     resolve();
   })
 }
 
-exports.getByUid = function(uid){
+export function remove(uid){
   return new Promise(function(resolve, reject){
-    resolve(server.dummyData.reports[uid])
+    dummyData.reports[uid] = undefined;
+    resolve();
   })
 }
 
-exports.getAll = function(){
+
+export function getByUid(uid){
   return new Promise(function(resolve, reject){
-    resolve(server.dummyData.reports)
+    resolve(dummyData.reports[uid])
+  })
+}
+
+export function getAll(){
+  return new Promise(function(resolve, reject){
+    resolve(dummyData.reports)
   })
 }
