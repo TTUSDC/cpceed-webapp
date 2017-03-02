@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "webpack-dev-server --inline --content-base build/",
-    "build": "webpack"
+    "build": "webpack",
+    "test": "node node_modules/mocha/bin/mocha -C --recursive"
   },
   "repository": {
     "type": "git",
