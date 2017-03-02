@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --inline --content-base build/",
     "build": "webpack",
-    "test": "node node_modules/mocha/bin/mocha -C --recursive"
+    "test": "node node_modules/mocha/bin/mocha --compilers js:babel-core/register -C --recursive"
   },
   "repository": {
     "type": "git",
