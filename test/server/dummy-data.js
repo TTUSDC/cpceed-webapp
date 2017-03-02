@@ -35,11 +35,19 @@ module.exports = {
       studentId: "110451"
     }
   },
-  reports:{
-    "QdbGmX9bwaOTQWduYw" : {
+  reports: {
+    "QdbGmX9bwaOTQWduYw": {
       type: "event",
       student: "110451",
       event: "someevent"
+    }
+  },
+  events: {
+    "QWduYwX": {
+      "datetime": "2017:05:08:07:00",
+      "location": "Silicon Valley",
+      "title": "GTC",
+      "description": "GPU Technology Conference. The Largest and most important event of the year for GPU developers."
     }
   }
 }
