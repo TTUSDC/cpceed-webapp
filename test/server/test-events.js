@@ -49,6 +49,17 @@ describe('events', function() {
     })
   }),
 
+  describe('#getAllEvents()', function(){
+    it('should return all events.', function(done){
+      server.getAllEvents().then(function(events){
+        expect(events).to.equal(server.dummyData.events);
+        done();
+      }).catch(function(reason){
+        done(reason)
+      })
+    })
+  })
+
   describe('#deleteEvent(uid)', function(){
     it('should delete the created event.', function(done){
       expect(testEventUid).to.not.be.undefined;

@@ -22,5 +22,6 @@ server = {
   createEvent: events.create,
   modifyEvent: events.modify,
   deleteEvent: events.delete,
-  getEventByUid: events.getByUid
+  getEventByUid: events.getByUid,
+  getAllEvents: events.getAll
 }
