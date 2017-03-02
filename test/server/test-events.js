@@ -22,5 +22,18 @@ describe('events', function() {
         done(reason)
       })
     })
+  }),
+
+  describe('#modifyEvent(uid, updatedEvent)', function(){
+    it('should modify a created event.', function(done){
+      expect(testEventUid).to.not.be.undefined;
+      testEvent.title = "Commencement";
+      server.modifyEvent(testEventUid, testEvent).then(function(){
+        expect(server.dummyData.events[testEventUid]).to.equal(testEvent);
+        done();
+      }).catch(function(reason){
+        done(reason);
+      })
+    })
   })
 })

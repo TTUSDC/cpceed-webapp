@@ -19,5 +19,6 @@ server = {
   getReportByUid: reports.getByUid,
   getAllReports: reports.getAll,
 
-  createEvent: events.create
+  createEvent: events.create,
+  modifyEvent: events.modify
 }
