@@ -1,15 +1,16 @@
-module.exports = {
-  auth: {
+export let auth = {
     "patty.lastname@ttu.edu": "patty123",
     "john.doesnt@ttu.edu": "john234",
     "sally.does@ttu.edu": "324sally"
-  },
-  emailToUid: {
+  }
+
+export let emailToUid = {
     "patty.lastname@ttu.edu": "QveDEhTHWSgVbnL4NXrdD6rSvns1",
     "john.doesnt@ttu.edu": "hMXRXnHKQdbGmX9bwaZntRaJER03",
     "sally.does@ttu.edu": "k8fcP5IgEVcuVVaOTQWduYwheur1"
-  },
-  users: {
+  }
+
+export let users = {
     "QveDEhTHWSgVbnL4NXrdD6rSvns1": {
       email: "patty.lastname@ttu.edu",
       firstName: "Patty",
@@ -34,15 +35,17 @@ module.exports = {
       role: "STUDENT",
       studentId: "110451"
     }
-  },
-  reports: {
+  }
+
+export let reports = {
     "QdbGmX9bwaOTQWduYw": {
       type: "event",
       student: "110451",
       event: "someevent"
     }
-  },
-  events: {
+  }
+
+export let events = {
     "QWduYwX": {
       "datetime": "2017:05:08:07:00",
       "location": "Silicon Valley",
@@ -50,4 +53,3 @@ module.exports = {
       "description": "GPU Technology Conference. The Largest and most important event of the year for GPU developers."
     }
   }
-}
