@@ -1,27 +1,26 @@
-var auth = require('./user-auth.js')
-var reports = require('./reports.js')
-var events = require('./events.js')
+import * as auth from './user-auth'
+import * as reports from './reports'
+import * as events from './events'
+import * as dummyData from '../../test/server/dummy-data'
+import {errorMessages} from './error-messages'
 
-var dummyData = require('../../test/server/dummy-data.js')
 
-server = {
+export let server = {
   dummyData: dummyData,
-  errorMessages: {
-    invalidLogin: "Invalid user/password combination"
-  },
+  errorMessages: errorMessages,
   login: auth.login,
   logout: auth.logout,
   getLoggedInUser: auth.getLoggedInUser,
 
   createReport: reports.create,
   modifyReport: reports.modify,
-  deleteReport: reports.delete,
+  deleteReport: reports.remove,
   getReportByUid: reports.getByUid,
   getAllReports: reports.getAll,
 
   createEvent: events.create,
   modifyEvent: events.modify,
-  deleteEvent: events.delete,
+  deleteEvent: events.remove,
   getEventByUid: events.getByUid,
   getAllEvents: events.getAll
 }
