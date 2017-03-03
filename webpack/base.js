@@ -28,7 +28,7 @@ const base = {
     rules: [
       {
         test: /\.js?$/,
-        exclude: 'node_modules',
+        exclude: nodePath,
         loader: 'babel-loader'
       },
       {
@@ -76,7 +76,7 @@ const base = {
             loader: 'sass-loader',
             options: {
               outputStyle: 'compressed',
-              includePaths: 'node_modules'
+              includePaths: nodePath
             }
           }
         ]
