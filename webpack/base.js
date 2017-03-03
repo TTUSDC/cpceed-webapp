@@ -6,7 +6,7 @@ var buildPath = path.resolve(__dirname, '../build');
 
 var base = {
   output: {
-    path: 'build/',
+    path: buildPath,
     publicPath: '/',
     filename: "bundle.js"
   },

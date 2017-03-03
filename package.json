@@ -4,10 +4,10 @@
   "description": "Time logging app for the CPCEED program at Texas Tech University",
   "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --config webpack/dev --content-base build/",
-    "build": "webpack --config webpack/production.js",
-    "test": "mocha -C --recursive",
-    "test:build": "webpack --config webpack/test.js"
+    "start": "webpack-dev-server --env=dev --inline --content-base build/",
+    "build": "webpack --env=prod",
+    "build:test": "webpack --env=test",
+    "test": "mocha -C --recursive"
   },
   "repository": {
     "type": "git",
@@ -41,6 +41,6 @@
     "sass-loader": "4.1.1",
     "style-loader": "0.13.1",
     "webpack": "2.2.1",
-    "webpack-dev-server": "1.16.2"
+    "webpack-dev-server": "2.4.1"
   }
 }
