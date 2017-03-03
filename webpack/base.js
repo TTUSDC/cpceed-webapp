@@ -5,12 +5,6 @@ const appPath = path.resolve(__dirname, '../src');
 const buildPath = path.resolve(__dirname, '../build');
 
 const base = {
-  output: {
-    path: buildPath,
-    publicPath: '/',
-    filename: "bundle.js"
-  },
-
   // Allows for absolute paths from locations indicated in 'root'
   resolve: {
     modules: [
