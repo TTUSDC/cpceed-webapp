@@ -1,4 +1,4 @@
-import utils from './utils'
+import * as utils from './utils'
 import * as dummyData from '../../test/server/dummy-data'
 
 export function create(newReport) {
