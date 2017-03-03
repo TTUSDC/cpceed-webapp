@@ -23,7 +23,7 @@ const base = {
     /*
       Loaders for specific file endings. Each one can be composed
       of multiple other loaders. For example, the loader for css
-      files uses style-loader, css-loader, and resolve-url-loader.
+      files uses style-loader and css-loader.
     */
     rules: [
       {
@@ -35,9 +35,10 @@ const base = {
         // 'test' indicates the file type
         test: /\.css$/,
         /*
-          Each sub-loader is separated by a comma, queries are
-          indicated by question marks, and individual parts of
-          queries are separated by ampersands.
+          When there are multiple loaders, the ‘loader’ key is replaced by
+          the ‘use’ key. Each member of the ‘use’ array is an object
+          containing the ‘loader’ key and possibly the ‘options’ key. The
+          ‘options’ key is used to specify query parameters.
         */
         use: [
           {
