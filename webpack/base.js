@@ -1,18 +1,15 @@
-var path = require('path');
+const path = require('path');
 
-var nodePath = path.resolve(__dirname, '../node_modules');
-var appPath = path.resolve(__dirname, '../src');
-var buildPath = path.resolve(__dirname, '../build');
+const nodePath = path.resolve(__dirname, '../node_modules');
+const appPath = path.resolve(__dirname, '../src');
+const buildPath = path.resolve(__dirname, '../build');
 
-var base = {
+const base = {
   output: {
     path: buildPath,
     publicPath: '/',
     filename: "bundle.js"
   },
-
-  // Enables source maps that can be accessed in browser dev tools
-  devtool: 'source-map',
 
   // Allows for absolute paths from locations indicated in 'root'
   resolve: {

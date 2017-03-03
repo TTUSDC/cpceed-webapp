@@ -1,7 +1,9 @@
-var base = require('./base');
+const webpackMerge = require('webpack-merge');
 
-base.entry = './src/index.js';
+const base = require('./base.js');
 
-var production = base;
+const prod = webpackMerge(base, {
+  entry: './src/index.js'
+});
 
-module.exports = production;
+module.exports = prod;

@@ -1,7 +1,12 @@
-var base = require('./base');
+const webpackMerge = require('webpack-merge');
 
-base.entry = './src/index.js';
+const base = require('./base.js');
 
-var dev = base;
+const dev = webpackMerge(base, {
+  entry: './src/index.js',
+
+  // Enables source maps that can be accessed in browser dev tools
+  devtool: 'source-map',
+});
 
 module.exports = dev;
