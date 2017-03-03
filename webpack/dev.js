@@ -16,6 +16,13 @@ const dev = webpackMerge(base, {
 
   // Enables source maps that can be accessed in browser dev tools
   devtool: 'source-map',
+
+  devServer: {
+    port: 8080,
+    host: 'localhost',
+    inline: true,
+    contentBase: buildPath
+  }
 });
 
 module.exports = dev;
