@@ -1,12 +1,7 @@
 var expect = require("chai").expect;
-//var dummyData = require('./dummy-data.js')
-
-
+import * as errorMessages from '../../src/server/error-messages'
 import {server} from '../../src/server/server'
-
 import * as dummyData from './dummy-data'
-
-//require('../../src/server/server.js')
 
 describe('server', function() {
   describe('#login(email, password)', function() {
@@ -24,7 +19,7 @@ describe('server', function() {
           .then(function(data) {
             done("Should not have logged in");
           },function(reason) {
-            expect(reason).to.equal(server.errorMessages.invalidLogin)
+            expect(reason).to.equal(errorMessages.invalidLogin)
             done();
           }).catch(function(reason) {
             done(reason);

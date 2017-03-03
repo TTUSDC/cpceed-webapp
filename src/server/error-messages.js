@@ -1,4 +1,1 @@
-export let errorMessages = {
-  invalidLogin: "Invalid user/password combination"
-
-}
+export let invalidLogin = "Invalid user/password combination"

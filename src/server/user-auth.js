@@ -1,14 +1,16 @@
 import * as dummyData from '../../test/server/dummy-data'
-import {errorMessages}  from './error-messages'
+import * as errorMessages from './error-messages'
 
 var _currentUser = undefined;
-export function login(email, password){
+
+export function login(email, password) {
   return new Promise(function(resolve, reject) {
-    if(dummyData.auth[email] == password && password){
+    if(dummyData.auth[email] == password && password) {
       _currentUser = dummyData.users[dummyData.emailToUid[email]]
       resolve(_currentUser)
+    } else {
+      reject(errorMessages.invalidLogin)
     }
-    else reject(errorMessages.invalidLogin)
   })
 }
 
