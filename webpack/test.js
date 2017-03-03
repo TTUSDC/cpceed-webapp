@@ -1,9 +1,7 @@
-import base from 'base';
+var base = require('./base');
 
-base.push({
-  entry: '../test'
-});
+base.entry = './src/index.js';
 
-const test = base;
+var test = base;
 
-export default test;
+module.exports = test;

@@ -1,9 +1,10 @@
-import path from 'path';
+var path = require('path');
 
-var nodePath = path.join(__dirname, '../node_modules');
-var appPath = path.join(__dirname, '../src');
+var nodePath = path.resolve(__dirname, '../node_modules');
+var appPath = path.resolve(__dirname, '../src');
+var buildPath = path.resolve(__dirname, '../build');
 
-const base = {
+var base = {
   output: {
     path: 'build/',
     publicPath: '/',
@@ -30,8 +31,8 @@ const base = {
     rules: [
       {
         test: /\.js?$/,
-        exclude: /node_modules/,
-        loader: 'babel'
+        exclude: 'node_modules',
+        loader: 'babel-loader'
       },
       {
         // 'test' indicates the file type
@@ -76,7 +77,8 @@ const base = {
           {
             loader: 'sass-loader',
             options: {
-              outputStyle: 'compressed'
+              outputStyle: 'compressed',
+              includePaths: 'node_modules'
             }
           }
         ]
@@ -86,12 +88,7 @@ const base = {
         loader: 'file-loader'
       }
     ]
-  },
-  sassLoader: {
-    includePaths: [
-      './node_modules',
-    ]
   }
 };
 
-export default base;
+module.exports = base;

@@ -1,8 +1,8 @@
-import production from './webpack/production';
-import dev from './webpack/dev';
-import test from './webpack/test';
+var production = require('./webpack/production');
+var dev = require('./webpack/dev');
+var test = require('./webpack/test');
 
-const config = () => {
+function config() {
   switch(process.env.NODE_ENV) {
     case 'production':
       return production;
@@ -13,4 +13,4 @@ const config = () => {
   }
 };
 
-export default config;
+module.exports = config;
