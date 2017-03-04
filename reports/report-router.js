@@ -26,6 +26,18 @@ reportRouter.post('/', (req, res) => {
   });
 });
 
+reportRouter.put('/:uid', (req, res) => {
+  reportManager.modifyReport(req.params.uid, req.body, {}, (err, report) => {
+    if (err) {
+      // TODO(jmtaber129): Consider better error handling.
+      res.status(400).send(err).end();
+      return;
+    }
+    
+    res.status(200).json(report).end();
+  });
+});
+
 reportRouter.delete('/:uid', (req, res) => {
   reportManager.deleteReport(req.params.uid, {}, (err, report) => {
     if (err) {

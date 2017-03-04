@@ -31,6 +31,62 @@ var createReport = function(reqData, locals, saveCallback) {
   report.save(saveCallback); 
 };
 
+var modifyReport = function(reportUid, reqData, locals, saveCallback) {
+  OtherReport.findById(reportUid, (err, report) => {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+    
+    // If the report's student UID does not match the user UID, and the user is not an
+    // admin, the report should not be updated.
+    // TODO(jmtaber129): Check report's student UID and user UID, and add error handling.
+    
+    // Update fields by checking if the field in the request is defined and non-null,
+    // then setting the document field to the request field if it is.
+    
+    // Generic fields.
+    if (reqData.approvalStatus) {
+      report.approvalStatus = reqData.approvalStatus;
+    }
+    if (reqData.student) {
+      report.student = reqData.student;
+    }
+    
+    // Only update the type if the type hasn't already been set.
+    if (!report.type && reqData.type) {
+      report.type = reqData.type;
+    }
+    
+    if (report.type == 'event') {
+      // Fields specific to event reports.
+      if (reqData.event) {
+        report.event = reqData.event;
+      }
+    } else if (report.type == 'other') {
+      // Fields specific to other reports.
+      if (reqData.category) {
+        report.category = reqData.category;
+      }
+      if (reqData.datetime) {
+        report.datetime = reqData.datetime;
+      }
+      if (reqData.location) {
+        report.location = reqData.location;
+      }
+      if (reqData.title) {
+        report.title = reqData.title;
+      }
+      if (reqData.description) {
+        console.log("Updating description");
+        report.description = reqData.description;
+      }
+    }
+    
+    report.save(saveCallback);
+  });
+}
+
 var deleteReport = function(reportUid, locals, deleteCallback) {
   EventReport.findById(reportUid, (err, report) => {
     if (err) {
@@ -106,4 +162,4 @@ var getAllReports = function(reqData, locals, queryCallback) {
   
 };
 
-module.exports = { createReport, deleteReport, getReportById, getAllReports };
+module.exports = { createReport, modifyReport, deleteReport, getReportById, getAllReports };
