@@ -4,8 +4,12 @@
 
 ### Node ###
 
+# Logs
+*.log
+
 # Bundled files
-build/bundle.js
+build/*bundle.js
+build/*.map
 
 # Dependencies
 node_modules
