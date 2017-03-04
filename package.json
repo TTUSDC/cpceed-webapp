@@ -7,7 +7,7 @@
     "start": "webpack-dev-server --env=dev",
     "build": "webpack --env=prod",
     "build:test": "webpack --env=test",
-    "test": "mocha -C --recursive"
+    "test": "mocha --compilers js:babel-core/register -C --recursive"
   },
   "repository": {
     "type": "git",
