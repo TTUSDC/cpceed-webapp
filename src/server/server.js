@@ -4,7 +4,7 @@ import * as events from './events'
 import * as dummyData from '../../test/server/dummy-data'
 import errorMessages from './error-messages'
 
-export let server = {
+let server = {
   dummyData: dummyData,
   errorMessages: errorMessages,
   login: auth.login,
@@ -23,3 +23,5 @@ export let server = {
   getEventByUid: events.getByUid,
   getAllEvents: events.getAll
 }
+
+export default server;

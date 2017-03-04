@@ -54,7 +54,7 @@ export let events = {
     "title": "GTC",
     "description": "GPU Technology Conference. The Largest and most important event of the year for GPU developers."
   },
-  {
+  "SFSDVFDFHGQWduYwX":{
     "contact" : "creator",
     "creator" : "patty",
     "datetime" : "2017:11:24:08:00",
@@ -62,7 +62,7 @@ export let events = {
     "title" : "CPP Con",
     "description" : "CppCon is the annual, week-long face-to-face gathering for the entire C++ community. The conference is organized by the C++ community for the community."
   },
-  {
+  "asdfQWduYwzxvSFDX":{
     "contact" : "creator",
     "creator" : "patty",
     "datetime" : "2017:05:20:09:00",

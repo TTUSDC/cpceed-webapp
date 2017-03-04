@@ -1,6 +1,6 @@
 var expect = require("chai").expect;
 import * as errorMessages from '../../src/server/error-messages'
-import {server} from '../../src/server/server'
+import server from '../../src/server/server'
 import * as dummyData from './dummy-data'
 
 describe('server', function() {
