@@ -3,24 +3,28 @@ This component is to serve as an internal library for connecting to the [backend
 API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
 
 ## Usage
-`require('PATH/TO/server.js')`
+`import {server} from 'PATH/TO/server'`
 
 # Contents
+
 ## Objects
 - [User](#user)
 - [Reports](#report)
 
 ## Methods  
+
 ### User Auth
 - [`login(email, password)`](#login)
 - [`getLoggedInUser()`](#get-logged-in-user)
 - [`logout()`](#logout)
+
 ### Reports
 - [`createReport(newReport)`](#create-report)
 - [`modifyReport(uid, updatedReport)`](#modify-report)
 - [`getReportByUid(uid)`](#get-report-by-uid)
 - [`getAllReports()`](#get-all-reports)
 - [`deleteReport(uid)`](#delete-report)
+
 ### Events
 - [`createEvent(newEvent)`](#create-event)
 - [`modifyEvent(uid, updatedEvent)`](#modify-event)
