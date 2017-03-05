@@ -19,7 +19,7 @@ const dev = webpackMerge(base, {
 
   devServer: {
     port: 8080,
-    host: 'localhost',
+    host: '0.0.0.0',
     inline: true,
     contentBase: buildPath
   }
