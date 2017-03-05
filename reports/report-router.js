@@ -1,9 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
-var reportModels = require('./report-models');
 var reportManager = require('./report-manager');
-var EventReport = reportModels.EventReport;
-var OtherReport = reportModels.OtherReport;
 var reportRouter = express.Router();
 
 reportRouter.post('/', (req, res) => {
