@@ -12,7 +12,7 @@ var reportRouter = express.Router();
 reportRouter.post('/', (req, res) => {
   reportManager.createReport(req.body, {}, (err, report) => {
     if (err) {
-      // TODO(jmtaber129): Consider better error handling.
+      // TODO(jmtaber129): Better error handling.
       res.status(400).send(err).end();
       return;
     }
@@ -29,7 +29,7 @@ reportRouter.post('/', (req, res) => {
 reportRouter.put('/:uid', (req, res) => {
   reportManager.modifyReport(req.params.uid, req.body, {}, (err, report) => {
     if (err) {
-      // TODO(jmtaber129): Consider better error handling.
+      // TODO(jmtaber129): Better error handling.
       res.status(400).send(err).end();
       return;
     }
@@ -41,7 +41,7 @@ reportRouter.put('/:uid', (req, res) => {
 reportRouter.delete('/:uid', (req, res) => {
   reportManager.deleteReport(req.params.uid, {}, (err, report) => {
     if (err) {
-      // TODO(jmtaber129): Consider better error handling.
+      // TODO(jmtaber129): Better error handling.
       res.status(400).send(err).end();
       return;
     }
@@ -53,7 +53,7 @@ reportRouter.delete('/:uid', (req, res) => {
 reportRouter.get('/:uid', (req, res) => {
   reportManager.getReportById(req.params.uid, {}, (err, report) => {
     if (err) {
-      // TODO(jmtaber129): Consider better error handling.
+      // TODO(jmtaber129): Better error handling.
       res.status(400).send(err).end();
       return;
     }
@@ -73,7 +73,7 @@ reportRouter.get('/:uid', (req, res) => {
 reportRouter.get('/', (req, res) => {
   reportManager.getAllReports(req.params, {}, (err, reports) => {
     if (err) {
-      // TODO(jmtaber129): Consider better error handling.
+      // TODO(jmtaber129): Better error handling.
       res.status(400).send(err).end();
       return;
     }

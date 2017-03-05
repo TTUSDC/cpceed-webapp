@@ -156,7 +156,8 @@ var getReportById = (reportUid, locals, queryCallback) => {
  * @callback multipleReportsCallback
  * @param {Error} err - An error that occurred during the operation.  Null if no
  *     errors occurred.
- * @param {Report[]} report - An array of reports operated on.
+ * @param {Object.<string, Report>} reports - An object of reports with their
+ *     UIDs as keys.
  */
 
 /**
@@ -193,10 +194,6 @@ var getAllReports = (reqData, locals, queryCallback) => {
     returnObject = {};
 
     reports.forEach((report) => {
-      // TODO(jmtaber129): Check if the report's student UID matches the user
-      // UID, or if the user is an admin.  Otherwise, return without adding the
-      // report to 'returnObject'.
-
       returnObject[report.id] = report;
 
       // TODO(jmtaber129): Add point value to report in 'returnObject'.
@@ -215,6 +212,7 @@ var getAllReports = (reqData, locals, queryCallback) => {
  * @param {T} oldValue - A old value that is defined and non-null.
  * @return {T} The new value if it is defined and non-null.  The old value if
  *     the new value is undefined or null.
+ * @template T
  */
 var newIfPresent = (newValue, oldValue) => {
   if (newValue) {
