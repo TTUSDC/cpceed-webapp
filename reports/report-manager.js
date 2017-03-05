@@ -3,7 +3,24 @@ var Report = reportModels.Report;
 var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
 
-var createReport = (reqData, locals, saveCallback) => {
+/**
+ * Callback used by report CRUD methods that return only one report.
+ * @callback reportCallback
+ * @param {Error} err - An error that occurred during the operation.  Null if no
+ *     errors occurred.
+ * @param {Report} report - The report operated on.
+ */
+
+/**
+ * Creates a report with the fields in the request object, and calls a callback
+ * when the database save finishes.
+ * @param {Object} reqData - The request object representing the report to be
+ *     created.
+ * @param {Object} locals - An object containing the current request's local
+ *     variables.
+ * @param {reportCallback} createCallback - Called once the operation finishes.
+ */
+var createReport = (reqData, locals, createCallback) => {
   // TODO(jmtaber129): Check that the student UID matches the requesting user,
   // or the requesting user is an admin.
   var report;
@@ -27,13 +44,24 @@ var createReport = (reqData, locals, saveCallback) => {
     // TODO(jmtaber129): Error handling for invalid report types.
   }
 
-  report.save(saveCallback);
+  report.save(createCallback);
 };
 
-var modifyReport = (reportUid, reqData, locals, saveCallback) => {
+/**
+ * Modifies a specific report according to the fields in the request object, and
+ * calls a callback when the database save finishes.
+ * @param {string} reportUid - The UID corresponding to the report to be
+ *     modified.
+ * @param {Object} reqData - The request object containing the fields to be
+ *     modified.
+ * @param {Object} locals - An object containing the current request's local
+ *     variables.
+ * @param {reportCallback} modifyCallback - Called once the operation finishes.
+ */
+var modifyReport = (reportUid, reqData, locals, modifyCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
-      queryCallback(err);
+      modifyCallback(err);
       return;
     }
 
@@ -43,8 +71,7 @@ var modifyReport = (reportUid, reqData, locals, saveCallback) => {
     // handling.
 
     // Update fields by checking if the field in the request is defined and
-    // non-null,
-    // then setting the document field to the request field if it is.
+    // non-null, then setting the document field to the request field if it is.
 
     // Generic fields.
     report.approvalStatus =
@@ -65,10 +92,19 @@ var modifyReport = (reportUid, reqData, locals, saveCallback) => {
           newIfPresent(reqData.description, report.description);
     }
 
-    report.save(saveCallback);
+    report.save(modifyCallback);
   });
 };
 
+/**
+ * Deletes a specific report, and calls a callback once the database deletion
+ * finishes.
+ * @param {string} reportUid - The UID corresponding to the report to be
+ *     deleted.
+ * @param {Object} locals - An object containing the current request's local
+ *     variables.
+ * @param {reportCallback} deleteCallback - Called once the operation finishes.
+ */
 var deleteReport = (reportUid, locals, deleteCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
@@ -91,6 +127,13 @@ var deleteReport = (reportUid, locals, deleteCallback) => {
   });
 };
 
+/**
+ * Finds a specific report, and calls a callback once the report is found.
+ * @param {string} reportUid - The UID corresponding to the report to be found.
+ * @param {Object} locals - An object containing the current request's local
+ *     variables.
+ * @param {reportCallback} queryCallback - Called once the operation finishes.
+ */
 var getReportById = (reportUid, locals, queryCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
@@ -107,6 +150,23 @@ var getReportById = (reportUid, locals, queryCallback) => {
   });
 };
 
+/**
+ * Callback used by report CRUD methods that return multiple reports.
+ * @callback multipleReportsCallback
+ * @param {Error} err - An error that occurred during the operation.  Null if no
+ *     errors occurred.
+ * @param {Report} report - An array of reports operated on.
+ */
+
+/**
+ * Finds all reports, and calls a callback once all reports are found.
+ * @param {Object} reqData - An object containing additional search parameters
+ *     (not yet implemented).
+ * @param {Object} locals - An object containing the current request's local
+ *     variables.
+ * @param {multipleReportsCallback} queryCallback - Called once the operation
+ *     finishes.
+ */
 var getAllReports = (reqData, locals, queryCallback) => {
   conditions = {};
 
@@ -146,6 +206,15 @@ var getAllReports = (reqData, locals, queryCallback) => {
 
 };
 
+/** 
+ * If the new value is defined and non-null, returns the new value.  Otherwise,
+ * returns the old value.
+ * @param {T} newValue - A new value value that may or may not be defined and
+ *     non-null.
+ * @param {T} oldValue - A old value that is defined and non-null.
+ * @return {T} The new value if it is defined and non-null.  The old value if
+ *     the new value is undefined or null.
+ */
 var newIfPresent = (newValue, oldValue) => {
   if (newValue) {
     return newValue;
