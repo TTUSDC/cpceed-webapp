@@ -1,4 +1,5 @@
-var reportModels = require('./report-models')
+var reportModels = require('./report-models');
+var Report = reportModels.Report;
 var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
 
@@ -7,15 +8,13 @@ var createReport = function(reqData, locals, saveCallback) {
   // requesting user is an admin.
   var report;
   if (reqData.type == 'event') {
-    var report = new EventReport({
-      type: reqData.type,
+    report = new EventReport({
       approvalStatus: false,
       student: reqData.student,
       event: reqData.event,
     });
   } else if (reqData.type == 'other') {
-    var report = new OtherReport({
-      type: reqData.type,
+    report = new OtherReport({
       approvalStatus: false,
       student: reqData.student,
       category: reqData.category,
@@ -32,7 +31,7 @@ var createReport = function(reqData, locals, saveCallback) {
 };
 
 var modifyReport = function(reportUid, reqData, locals, saveCallback) {
-  OtherReport.findById(reportUid, (err, report) => {
+  Report.findById(reportUid, (err, report) => {
     if (err) {
       queryCallback(err);
       return;
@@ -51,11 +50,6 @@ var modifyReport = function(reportUid, reqData, locals, saveCallback) {
     }
     if (reqData.student) {
       report.student = reqData.student;
-    }
-    
-    // Only update the type if the type hasn't already been set.
-    if (!report.type && reqData.type) {
-      report.type = reqData.type;
     }
     
     if (report.type == 'event') {
@@ -88,7 +82,7 @@ var modifyReport = function(reportUid, reqData, locals, saveCallback) {
 }
 
 var deleteReport = function(reportUid, locals, deleteCallback) {
-  EventReport.findById(reportUid, (err, report) => {
+  Report.findById(reportUid, (err, report) => {
     if (err) {
       deleteCallback(err);
       return;
@@ -109,7 +103,7 @@ var deleteReport = function(reportUid, locals, deleteCallback) {
 };
 
 var getReportById = function(reportUid, locals, queryCallback) {
-  EventReport.findById(reportUid, (err, report) => {
+  Report.findById(reportUid, (err, report) => {
     if (err) {
       queryCallback(err);
       return;
@@ -139,7 +133,7 @@ var getAllReports = function(reqData, locals, queryCallback) {
   // Both report types are in the same collection, and querying a model queries the
   // entire collection, so querying one report model will return results for both report
   // types.
-  EventReport.find(conditions, (err, reports) => {
+  Report.find(conditions, (err, reports) => {
     if (err) {
       queryCallback(err);
       return;
