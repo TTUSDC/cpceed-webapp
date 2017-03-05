@@ -3,7 +3,7 @@ var Report = reportModels.Report;
 var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
 
-var createReport = function(reqData, locals, saveCallback) {
+var createReport = (reqData, locals, saveCallback) => {
   // TODO(jmtaber129): Check that the student UID matches the requesting user,
   // or the requesting user is an admin.
   var report;
@@ -30,7 +30,7 @@ var createReport = function(reqData, locals, saveCallback) {
   report.save(saveCallback);
 };
 
-var modifyReport = function(reportUid, reqData, locals, saveCallback) {
+var modifyReport = (reportUid, reqData, locals, saveCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
       queryCallback(err);
@@ -69,7 +69,7 @@ var modifyReport = function(reportUid, reqData, locals, saveCallback) {
   });
 };
 
-var deleteReport = function(reportUid, locals, deleteCallback) {
+var deleteReport = (reportUid, locals, deleteCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
       deleteCallback(err);
@@ -91,7 +91,7 @@ var deleteReport = function(reportUid, locals, deleteCallback) {
   });
 };
 
-var getReportById = function(reportUid, locals, queryCallback) {
+var getReportById = (reportUid, locals, queryCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
       queryCallback(err);
@@ -107,7 +107,7 @@ var getReportById = function(reportUid, locals, queryCallback) {
   });
 };
 
-var getAllReports = function(reqData, locals, queryCallback) {
+var getAllReports = (reqData, locals, queryCallback) => {
   conditions = {};
 
   // If the user is not an admin, limit the results to reports with the user's
@@ -146,12 +146,11 @@ var getAllReports = function(reqData, locals, queryCallback) {
 
 };
 
-var newIfPresent = function(newValue, oldValue) {
+var newIfPresent = (newValue, oldValue) => {
   if (newValue) {
     return newValue;
-  } else {
-    return oldValue;
   }
+  return oldValue;
 };
 
 module.exports = {createReport, modifyReport, deleteReport, getReportById,

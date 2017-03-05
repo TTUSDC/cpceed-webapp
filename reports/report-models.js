@@ -26,8 +26,4 @@ var EventReport = Report.discriminator('EventReport', eventReportSchema);
 
 var OtherReport = Report.discriminator('OtherReport', otherReportSchema);
 
-//var EventReport = mongoose.model('EventReport', eventReportSchema, 'reports');
-
-//var OtherReport = mongoose.model('OtherReport', otherReportSchema, 'reports');
-
 module.exports = { Report, EventReport, OtherReport };
