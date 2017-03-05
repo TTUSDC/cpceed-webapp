@@ -114,7 +114,7 @@ var deleteReport = (reportUid, locals, deleteCallback) => {
       return;
     }
 
-    if (report == null) {
+    if (!report) {
       // TODO(jmtaber129): Better error handling when report can't be found.
       deleteCallback({message: 'Report not found.'});
       return;
