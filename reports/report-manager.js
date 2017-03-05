@@ -216,10 +216,10 @@ var getAllReports = (reqData, locals, queryCallback) => {
  * @template T
  */
 var newIfPresent = (newValue, oldValue) => {
-  if (newValue) {
-    return newValue;
+  if (newValue == undefined || newValue == null) {
+    return oldValue;
   }
-  return oldValue;
+  return newValue;
 };
 
 module.exports = {createReport, modifyReport, deleteReport, getReportById,
