@@ -2,7 +2,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017');
+var MONGO_PORT = 27017;
+mongoose.connect('mongodb://localhost:' + MONGO_PORT);
 var user = require('./Users/router.js');
 var event = require('./Events/router.js');
 var report = require('./reports/report-router.js');

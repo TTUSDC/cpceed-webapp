@@ -3,8 +3,7 @@ var Schema = mongoose.Schema;
 
 var options = {discriminatorKey: 'type'};
 
-var reportSchema = new Schema(
-    {
+var reportSchema = new Schema({
       approvalStatus: Boolean,
       student: String,
     },
@@ -12,8 +11,7 @@ var reportSchema = new Schema(
 
 var eventReportSchema = new Schema({event: String}, options);
 
-var otherReportSchema = new Schema(
-    {
+var otherReportSchema = new Schema({
       category: String,
       datetime: Date,
       location: String,

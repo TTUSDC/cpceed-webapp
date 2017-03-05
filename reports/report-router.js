@@ -60,7 +60,7 @@ reportRouter.get('/:uid', (req, res) => {
       return;
     }
 
-    res.json(report);
+    res.status(200).json(report).end();
   });
 });
 
@@ -72,7 +72,7 @@ reportRouter.get('/', (req, res) => {
       return;
     }
 
-    res.json(reports);
+    res.status(200).json(reports).end();
   });
 });
 
