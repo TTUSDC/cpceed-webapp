@@ -51,13 +51,12 @@ var modifyReport = function(reportUid, reqData, locals, saveCallback) {
     if (reqData.student) {
       report.student = reqData.student;
     }
-    
-    if (report.type == 'event') {
+    if (report.type == EventReport.modelName) {
       // Fields specific to event reports.
       if (reqData.event) {
         report.event = reqData.event;
       }
-    } else if (report.type == 'other') {
+    } else if (report.type == OtherReport.modelName) {
       // Fields specific to other reports.
       if (reqData.category) {
         report.category = reqData.category;
@@ -72,7 +71,6 @@ var modifyReport = function(reportUid, reqData, locals, saveCallback) {
         report.title = reqData.title;
       }
       if (reqData.description) {
-        console.log("Updating description");
         report.description = reqData.description;
       }
     }
