@@ -1,9 +1,12 @@
 // BASE SETUP
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var MONGO_PORT = 27017;
+mongoose.connect('mongodb://localhost:' + MONGO_PORT);
 var user = require('./Users/router.js');
 var event = require('./Events/router.js');
-var report = require('./Reports/router.js');
+var report = require('./reports/report-router.js');
 var app = express();
 var port = process.env.PORT || 8080;
 

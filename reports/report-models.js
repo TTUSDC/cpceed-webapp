@@ -1,26 +1,29 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var eventReportSchema = new Schema({
-  type: String,
-  approvalStatus: Boolean,
-  student: String,
-  event: String,
-})
+var options = {discriminatorKey: 'type'};
+
+var reportSchema = new Schema({
+      approvalStatus: Boolean,
+      student: String,
+    },
+    options);
+
+var eventReportSchema = new Schema({event: String}, options);
 
 var otherReportSchema = new Schema({
-  type: String,
-  approvalStatus: Boolean,
-  student: String,
-  category: String,
-  datetime: Date,
-  location: String,
-  title: String,
-  description: String
-})
+      category: String,
+      datetime: Date,
+      location: String,
+      title: String,
+      description: String,
+    },
+    options);
 
-var EventReport = mongoose.model('EventReport', eventReportSchema, 'reports');
+var Report = mongoose.model('Report', reportSchema);
 
-var OtherReport = mongoose.model('OtherReport', otherReportSchema, 'reports');
+var EventReport = Report.discriminator('EventReport', eventReportSchema);
 
-module.exports = { EventReport, OtherReport };
+var OtherReport = Report.discriminator('OtherReport', otherReportSchema);
+
+module.exports = {Report, EventReport, OtherReport};
