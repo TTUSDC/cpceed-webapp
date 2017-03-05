@@ -6,8 +6,6 @@ var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
 var reportRouter = express.Router();
 
-// TODO(jmtaber129): Consider separating callbacks for 'reportManager' methods
-// between error and success cases.
 reportRouter.post('/', (req, res) => {
   reportManager.createReport(req.body, {}, (err, report) => {
     if (err) {
