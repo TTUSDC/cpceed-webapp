@@ -156,7 +156,7 @@ var getReportById = (reportUid, locals, queryCallback) => {
  * @callback multipleReportsCallback
  * @param {Error} err - An error that occurred during the operation.  Null if no
  *     errors occurred.
- * @param {Report} report - An array of reports operated on.
+ * @param {Report[]} report - An array of reports operated on.
  */
 
 /**
