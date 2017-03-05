@@ -4,7 +4,7 @@
   "description": "Time logging app for the CPCEED program at Texas Tech University",
   "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server --env=dev --host 0",
+    "start": "webpack-dev-server --env=dev",
     "build": "webpack --env=prod",
     "build:test": "webpack --env=test",
     "test": "mocha --compilers js:babel-core/register -C --recursive"
