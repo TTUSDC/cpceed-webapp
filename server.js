@@ -1,6 +1,8 @@
 // BASE SETUP
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017');
 var user = require('./Users/router.js');
 var event = require('./Events/router.js');
 var report = require('./reports/report-router.js');

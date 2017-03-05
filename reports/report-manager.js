@@ -42,7 +42,8 @@ var createReport = (reqData, locals, createCallback) => {
     });
   } else {
     // TODO(jmtaber129): Better error handling for invalid report types.
-    createCallback({message: "Invalid report type."})
+    createCallback({message: "Invalid report type."});
+    return;
   }
 
   report.save(createCallback);
