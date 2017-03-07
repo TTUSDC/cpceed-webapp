@@ -1,7 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:80085');
-var userModels = require('./userModels');
+mongoose.connect('mongodb://localhost:27017');
 var Student = userModels.Student;
 var Admin = userModels.Admin;
 var userService = require('./service.js');
@@ -18,7 +17,7 @@ userRouter.post('/', (req, res) => {
 userRouter.put('/:uid', (req, res) => {
   var response = userService.modifyUser(req.params.uid, req.body);
 
-  res.status(response.status).json(response.body);
+  res.status(response.status).json(response.object);
 });
 
 // Delete User.
