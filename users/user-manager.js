@@ -3,26 +3,26 @@ var userModels = require('./user-models.js');
 var Student = userModels.Student;
 var Admin = userModels.Admin;
 
-var createUser = (json) => {
-  if (json.role == 'Student') {
+var createUser = (reqData, createCallback) => {
+  if (reqData.role == 'Student') {
     // Create new student.
     var student = new Student({
       approvalStatus: false,
-      email: json.email,
-      firstName: json.firstName,
-      lastName: json.lastName,
+      email: reqData.email,
+      firstName: reqData.firstName,
+      lastName: reqData.lastName,
       points: 0,
       role: 'Student',
       studentId: 0
     });
   // TODO(ryanfaulkenberry100): Write student to database.
 
-  } else if (json.role == 'Admin') {
+  } else if (reqData.role == 'Admin') {
     // Create new admin.
     var admin = new Admin({
-      email: json.email,
-      firstName: json.firstName,
-      lastName: json.lastName,
+      email: reqData.email,
+      firstName: reqData.firstName,
+      lastName: reqData.lastName,
       role: 'Admin'
     });
 
@@ -32,12 +32,12 @@ var createUser = (json) => {
   return new response.ResponseObject(201, {"uid":"1", "url":"//www.google.com"});
 }
 
-var modifyUser = (id, json) => {
+var modifyUser = (userUid, reqData, modifyCallback) => {
   // TODO(ryanfaulkenberry100): Check if modifier is a user or an admin.
   if (/*modifying user is student*/ true) {
-    modifyUserAsSelf(id, json);
+    modifyUserAsSelf(userUid, reqData, modifyCallback);
   } else if (/*modifying user is admin*/ false) {
-    modifyUserAsAdmin(id, json);
+    modifyUserAsAdmin(userUid, reqData, modifyCallback);
   } else {
     // TODO(ryanfaulkenberry100): handle errors.
   }
@@ -45,20 +45,20 @@ var modifyUser = (id, json) => {
   return new response.ResponseObject(200, {"url":"//www.google.com"});
 }
 
-var deleteUser = (id) => {
+var deleteUser = (userUid) => {
   // TODO(ryanfaulkenberry100): Delete a user and remove console.log.
-  console.log(id);
+  console.log(userUid);
 
   return new response.ResponseObject(200, {"url":"//www.google.com"});
 }
 
-var getUser = (id) => {
+var getUser = (userUid) => {
   // Returns a user.
 
-
   // TODO(ryanfaulkenberry100): Find the user.
+
   var User = new Admin({
-    // Placeholder, not necessarily a student.
+    // Placeholder, not necessarily an admin.
     email: "nobody@gmail.com",
     firstName: "John",
     lastName: "Doe",
@@ -68,8 +68,7 @@ var getUser = (id) => {
   return new response.ResponseObject(200, User);
 }
 
-var modifyUserAsSelf = () => {}
-var modifyUserAsAdmin = () => {}
+var modifyUserAsSelf = (userUid, reqData, modifyCallback) => {}
+var modifyUserAsAdmin = (userUid, reqData, modifyCallback) => {}
 
-// Define your public methods here.
 module.exports = { createUser, modifyUser, deleteUser, getUser };
