@@ -1,8 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017');
-var Student = userModels.Student;
-var Admin = userModels.Admin;
 var userService = require('./service.js');
 var userRouter = express.Router();
 
