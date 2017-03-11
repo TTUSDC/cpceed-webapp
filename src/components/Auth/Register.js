@@ -295,6 +295,9 @@ class Register extends React.Component {
         passHandleSubmit = null;
       }
     }
+    if(this.props.waiting === true) {
+      passHandleSubmit = null;
+    }
 
     return (
       <Form

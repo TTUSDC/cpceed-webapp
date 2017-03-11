@@ -11,7 +11,8 @@ class AuthContainer extends React.Component {
     super(props);
     this.state = {
       logErr: '',
-      regErr: ''
+      regErr: '',
+      waiting: false
     };
 
     /*
@@ -24,19 +25,11 @@ class AuthContainer extends React.Component {
     this.handleLogin = this.handleLogin.bind(this);
   }
 
-  setRegErr(message) {
-    this.setState({
-      regErr: message
-    });
-  }
-
-  setLogErr(message) {
-    this.setState({
-      logErr: message
-    });
-  }
-
   handleRegister(data) {
+    this.setState({
+      waiting: true
+    });
+
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then((user) => {
         firebase.database().ref().child('users/' + user.uid).set({
@@ -60,11 +53,18 @@ class AuthContainer extends React.Component {
       })
       .catch((e) => {
         console.log(e.message);
-        this.setRegErr(e.message);
+        this.setState({
+          regErr: e.message,
+          waiting: false
+        });
       });
   }
 
   handleLogin(email, password) {
+    this.setState({
+      waiting: true
+    });
+
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
         const rootRef = firebase.database().ref();
@@ -83,7 +83,10 @@ class AuthContainer extends React.Component {
       })
       .catch((e) => {
         console.log(e.message);
-        this.setLogErr(e.message);
+        this.setState({
+          logErr: e.message,
+          waiting: false
+        });
       });
   }
 
@@ -94,7 +97,8 @@ class AuthContainer extends React.Component {
         handleLogin={this.handleLogin}
         authCancelled={this.props.authCancelled}
         regErr={this.state.regErr}
-        logErr={this.state.logErr} />
+        logErr={this.state.logErr}
+        waiting={this.state.waiting} />
     );
   }
 }

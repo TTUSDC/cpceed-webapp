@@ -41,6 +41,11 @@ class Login extends React.Component {
       );
     }
 
+    var passHandleSubmit = this.handleSubmit;
+    if(this.props.waiting === true) {
+      passHandleSubmit = null;
+    }
+
     return (
       <Form
         pad='medium'
@@ -68,7 +73,7 @@ class Login extends React.Component {
             label='Login'
             type='submit'
             primary={true}
-            onClick={this.handleSubmit}/>
+            onClick={passHandleSubmit}/>
         </Footer>
       </Form>
     );
