@@ -29,10 +29,21 @@ class Register extends React.Component {
       }
     };
 
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.inputChecking = this.inputChecking.bind(this);
+  }
+
+  handlePasswordChange(event) {
+    this.setState({
+      password: event.target.value,
+      confirmPass: '',
+      err: update(this.state.err, {
+        confirmErr: {$set: ''}
+      })
+    });
   }
 
   handleInputChange(event) {
@@ -316,7 +327,7 @@ class Register extends React.Component {
               type='password'
               value={this.state.password}
               onBlur={this.inputChecking}
-              onChange={this.handleInputChange}/>
+              onChange={this.handlePasswordChange}/>
           </FormField>
           <FormField
             label='Confirm Password'
