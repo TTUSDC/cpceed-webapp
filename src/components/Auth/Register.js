@@ -62,22 +62,28 @@ class Register extends React.Component {
     // This prevents a '?' from being appended to the URL
     event.preventDefault();
 
+    var err = [false, '', '', ''];
     if(this.state.email === '') {
+      err[1] = 'Please enter an email';
+      err[0] = true;
+    }
+
+    if(this.state.password === '') {
+      err[2] = 'Please enter a password';
+      err[0] = true;
+    }
+
+    if(this.state.studentID === '') {
+      err[3] = 'Please enter a student ID';
+      err[0] = true;
+    }
+
+    if(err[0] === true) {
       this.setState({
         err: update(this.state.err, {
-          emailErr: {$set: 'Please enter an email'}
-        })
-      });
-    } else if(this.state.password === '') {
-      this.setState({
-        err: update(this.state.err, {
-          passErr: {$set: 'Please enter a password'}
-        })
-      });
-    } else if(this.state.studentID === '') {
-      this.setState({
-        err: update(this.state.err, {
-          stuIDErr: {$set: 'Please enter a student ID'}
+          emailErr: {$set: err[1]},
+          passErr: {$set: err[2]},
+          stuIDErr: {$set: err[3]}
         })
       });
     } else {
