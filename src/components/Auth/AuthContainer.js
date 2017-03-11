@@ -27,7 +27,8 @@ class AuthContainer extends React.Component {
 
   handleRegister(data) {
     this.setState({
-      waiting: true
+      waiting: true,
+      regErr: ''
     });
 
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
@@ -62,7 +63,8 @@ class AuthContainer extends React.Component {
 
   handleLogin(email, password) {
     this.setState({
-      waiting: true
+      waiting: true,
+      logErr: ''
     });
 
     firebase.auth().signInWithEmailAndPassword(email, password)
