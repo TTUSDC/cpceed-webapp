@@ -33,6 +33,7 @@ class Register extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
     this.inputChecking = this.inputChecking.bind(this);
   }
 
@@ -111,6 +112,57 @@ class Register extends React.Component {
     }
   }
 
+  handleFocus(event) {
+    const name = event.target.name;
+
+    switch(name) {
+      case "email":
+        if(this.state.err.emailErr !== '') {
+          this.setState({
+            err: update(this.state.err, {
+              emailErr: {$set: ''}
+            })
+          });
+        }
+
+        break;
+      case "password":
+        if(this.state.err.passErr !== '') {
+          this.setState({
+            err: update(this.state.err, {
+              passErr: {$set: ''}
+            })
+          });
+        }
+
+        break;
+      case "confirmPass":
+        if(this.state.err.confirmErr !== '') {
+          this.setState({
+            err: update(this.state.err, {
+              confirmErr: {$set: ''}
+            })
+          });
+        }
+
+        break;
+      case "studentID":
+        if(this.state.err.stuIDErr !== '') {
+          this.setState({
+            err: update(this.state.err, {
+              stuIDErr: {$set: ''}
+            })
+          });
+        }
+
+        break;
+      default:
+        console.log("Create an onFocus handler for " + name);
+
+        break;
+    };
+  }
+
   inputChecking(event) {
     const name = event.target.name;
 
@@ -122,14 +174,6 @@ class Register extends React.Component {
               emailErr: {$set: 'Please use a TTU email address.'}
             })
           });
-        } else {
-          if(this.state.err.emailErr !== '') {
-            this.setState({
-              err: update(this.state.err, {
-                emailErr: {$set: ''}
-              })
-            });
-          }
         }
 
         break;
@@ -176,14 +220,6 @@ class Register extends React.Component {
               passErr: {$set: 'Please use at least one special character.'}
             })
           });
-        } else {
-          if(this.state.err.passErr !== '') {
-            this.setState({
-              err: update(this.state.err, {
-                passErr: {$set: ''}
-              })
-            });
-          }
         }
 
         break;
@@ -194,14 +230,6 @@ class Register extends React.Component {
               confirmErr: {$set: 'Please enter a matching password.'}
             })
           });
-        } else {
-          if(this.state.err.confirmErr !== '') {
-            this.setState({
-              err: update(this.state.err, {
-                confirmErr: {$set: ''}
-              })
-            });
-          }
         }
 
         break;
@@ -212,19 +240,11 @@ class Register extends React.Component {
               stuIDErr: {$set: 'Please use 8 numbers.'}
             })
           });
-        } else {
-          if(this.state.err.stuIDErr !== '') {
-            this.setState({
-              err: update(this.state.err, {
-                stuIDErr: {$set: ''}
-              })
-            });
-          }
         }
 
         break;
       default:
-        console.log("Create an input checking case for " + name);
+        console.log("Create an onBlur handler for " + name);
 
         break;
     };
@@ -248,6 +268,7 @@ class Register extends React.Component {
             type='text'
             value={this.state.studentID}
             onBlur={this.inputChecking}
+            onFocus={this.handleFocus}
             onChange={this.handleInputChange}/>
         </FormField>
       );
@@ -312,6 +333,7 @@ class Register extends React.Component {
               type='email'
               value={this.state.email}
               onBlur={this.inputChecking}
+              onFocus={this.handleFocus}
               onChange={this.handleInputChange}/>
           </FormField>
           <Paragraph>
@@ -327,6 +349,7 @@ class Register extends React.Component {
               type='password'
               value={this.state.password}
               onBlur={this.inputChecking}
+              onFocus={this.handleFocus}
               onChange={this.handlePasswordChange}/>
           </FormField>
           <FormField
@@ -337,6 +360,7 @@ class Register extends React.Component {
               type='password'
               value={this.state.confirmPass}
               onBlur={this.inputChecking}
+              onFocus={this.handleFocus}
               onChange={this.handleInputChange}/>
           </FormField>
           {errMessage}
