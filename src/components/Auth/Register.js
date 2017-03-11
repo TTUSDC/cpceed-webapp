@@ -50,7 +50,11 @@ class Register extends React.Component {
     const option = event.option;
 
     this.setState({
-      [name]: option
+      [name]: option,
+      studentID: '',
+      err: update(this.state.err, {
+        stuIDErr: {$set: ''}
+      })
     });
   }
 
