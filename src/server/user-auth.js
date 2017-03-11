@@ -1,20 +1,23 @@
-var dummyData = require('../../test/server/dummy-data.js')
-var exports = module.exports = {};
+import * as dummyData from '../../test/server/dummy-data'
+import * as errorMessages from './error-messages'
 
-exports.login = function(email, password) {
+var _currentUser = undefined;
+
+export function login(email, password) {
   return new Promise(function(resolve, reject) {
-    if(dummyData.auth[email] == password && password){
-      server._currentUser = dummyData.users[dummyData.emailToUid[email]]
-      resolve(server._currentUser)
+    if(dummyData.auth[email] == password && password) {
+      _currentUser = dummyData.users[dummyData.emailToUid[email]]
+      resolve(_currentUser)
+    } else {
+      reject(errorMessages.invalidLogin)
     }
-    else reject(server.errorMessages.invalidLogin)
   })
 }
 
-exports.logout = function() {
-  server._currentUser = null;
+export function logout() {
+  _currentUser = null;
 }
 
-exports.getLoggedInUser = function(){
-  return server._currentUser;
+export function getLoggedInUser() {
+  return _currentUser;
 }
