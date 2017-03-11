@@ -62,16 +62,36 @@ class Register extends React.Component {
     // This prevents a '?' from being appended to the URL
     event.preventDefault();
 
-    var data = {
-      email: this.state.email,
-      password: this.state.password,
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      studentID: this.state.studentID,
-      role: this.state.role
-    };
+    if(this.state.email === '') {
+      this.setState({
+        err: update(this.state.err, {
+          emailErr: {$set: 'Please enter an email'}
+        })
+      });
+    } else if(this.state.password === '') {
+      this.setState({
+        err: update(this.state.err, {
+          passErr: {$set: 'Please enter a password'}
+        })
+      });
+    } else if(this.state.studentID === '') {
+      this.setState({
+        err: update(this.state.err, {
+          stuIDErr: {$set: 'Please enter a student ID'}
+        })
+      });
+    } else {
+      var data = {
+        email: this.state.email,
+        password: this.state.password,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        studentID: this.state.studentID,
+        role: this.state.role
+      };
 
-    this.props.handleRegister(data);
+      this.props.handleRegister(data);
+    }
   }
 
   inputChecking(event) {
