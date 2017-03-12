@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import Layer from 'grommet/components/Layer';
 import Tabs from 'grommet/components/Tabs';
@@ -56,5 +56,20 @@ class Auth extends React.Component {
     );
   }
 }
+
+Auth.propTypes = {
+  handleRegister: PropTypes.func,
+  handleLogin: PropTypes.func,
+  authCancelled: PropTypes.func,
+  regErr: PropTypes.string,
+  logErr: PropTypes.string,
+  waiting: PropTypes.bool
+};
+
+Auth.defaultProps = {
+  regErr: '',
+  logErr: '',
+  waiting: false
+};
 
 export default Auth;

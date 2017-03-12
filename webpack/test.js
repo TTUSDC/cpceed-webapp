@@ -12,7 +12,13 @@ const test = webpackMerge(base, {
     filename: "test.bundle.js"
   },
 
-  entry: './test/index.js'
+  entry: './test/index.js',
+
+  externals: {
+    'react/addons': true,
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true
+  }
 });
 
 module.exports = test;
