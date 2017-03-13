@@ -102,6 +102,77 @@ export default describe("Register.js", () => {
     }
   );
 
+  it("Checks password onBlur, removes errors onFocus",
+    () => {
+      const wrapper = shallow(<Register />);
+      const passInput = wrapper.find({name: 'password'});
+      const event = {
+        target: {
+          name: 'password'
+        }
+      };
+
+      wrapper.setState({
+        password: 'å'
+      });
+
+      passInput.simulate('blur', event);
+      expect(wrapper.state().err.passErr).to
+        .equal('Please use only ASCII characters.');
+
+      wrapper.setState({
+        password: 'asdf'
+      });
+
+      passInput.simulate('blur', event);
+      expect(wrapper.state().err.passErr).to
+        .equal('Please use at least 8 characters.');
+
+      wrapper.setState({
+        password: 'asdfasdf'
+      });
+
+      passInput.simulate('blur', event);
+      expect(wrapper.state().err.passErr).to
+        .equal('Please use at least one uppercase letter.');
+
+      wrapper.setState({
+        password: 'ASDFASDF'
+      });
+
+      passInput.simulate('blur', event);
+      expect(wrapper.state().err.passErr).to
+        .equal('Please use at least one lowercase letter.');
+
+      wrapper.setState({
+        password: 'asdfaSdf'
+      });
+
+      passInput.simulate('blur', event);
+      expect(wrapper.state().err.passErr).to
+        .equal('Please use at least one number.');
+
+      wrapper.setState({
+        password: 'asdfaS3f'
+      });
+
+      passInput.simulate('blur', event);
+      expect(wrapper.state().err.passErr).to
+        .equal('Please use at least one special character.');
+
+      passInput.simulate('focus', event);
+      expect(wrapper.state().err.passErr).to.equal('');
+
+      wrapper.setState({
+        password: 'asdfaS3_'
+      });
+
+      passInput.simulate('blur', event);
+      expect(wrapper.state().err.passErr).to
+        .equal('');
+    }
+  );
+
   it("Displays server errors", () => {
     const regErr = 'Message';
     const wrapper = shallow(<Register regErr={regErr} />);
