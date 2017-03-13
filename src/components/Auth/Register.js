@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import update from 'immutability-helper';
 
 import Form from 'grommet/components/Form';
@@ -379,5 +379,16 @@ class Register extends React.Component {
     );
   }
 }
+
+Register.propTypes = {
+  handleRegister: PropTypes.func,
+  regErr: PropTypes.string,
+  waiting: PropTypes.bool
+};
+
+Register.defaultProps = {
+  regErr: '',
+  waiting: false
+};
 
 export default Register;
