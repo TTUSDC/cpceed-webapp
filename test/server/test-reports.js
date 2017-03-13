@@ -2,7 +2,7 @@ var expect = require("chai").expect;
 
 import server from '../../src/server/server'
 
-describe('reports', function() {
+export default describe('reports', function() {
   var testEventReport = {
     type: "event",
     student: "1234567",

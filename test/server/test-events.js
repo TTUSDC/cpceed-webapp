@@ -2,7 +2,7 @@ var expect = require("chai").expect;
 
 import server from '../../src/server/server'
 
-describe('events', function() {
+export default describe('events', function() {
   var testEvent = {
     "datetime": "2017:05:20:09:00",
     "location": "United Supermarkets Arena",
