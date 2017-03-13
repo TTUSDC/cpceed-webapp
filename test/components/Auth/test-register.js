@@ -237,6 +237,37 @@ export default describe("Register.js", () => {
     }
   );
 
+  it("Checks student ID onBlur, removes errors onFocus",
+    () => {
+      const wrapper = shallow(<Register />);
+      const input = wrapper.find({name: 'studentID'});
+      const event = {
+        target: {
+          name: 'studentID'
+        }
+      };
+
+      wrapper.setState({
+        studentID: '123456'
+      });
+
+      input.simulate('blur', event);
+      expect(wrapper.state().err.stuIDErr).to
+        .equal('Please use 8 numbers.');
+
+      input.simulate('focus', event);
+      expect(wrapper.state().err.stuIDErr).to.equal('');
+
+      wrapper.setState({
+        studentID: '12345678'
+      });
+
+      input.simulate('blur', event);
+      expect(wrapper.state().err.stuIDErr).to
+        .equal('');
+    }
+  );
+
   it("Displays server errors", () => {
     const regErr = 'Message';
     const wrapper = shallow(<Register regErr={regErr} />);
