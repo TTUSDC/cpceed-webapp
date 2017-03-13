@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 import Form from 'grommet/components/Form';
 import FormField from 'grommet/components/FormField';
@@ -79,5 +79,16 @@ class Login extends React.Component {
     );
   }
 }
+
+Login.propTypes = {
+  handleLogin: PropTypes.func,
+  logErr: PropTypes.string,
+  waiting: PropTypes.bool
+};
+
+Login.defaultProps = {
+  logErr: '',
+  waiting: false
+};
 
 export default Login;
