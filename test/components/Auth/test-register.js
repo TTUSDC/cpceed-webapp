@@ -204,6 +204,39 @@ export default describe("Register.js", () => {
     }
   );
 
+  it("Checks password confirmation onBlur, removes errors onFocus",
+    () => {
+      const wrapper = shallow(<Register />);
+      const input = wrapper.find({name: 'confirmPass'});
+      const event = {
+        target: {
+          name: 'confirmPass'
+        }
+      };
+
+      wrapper.setState({
+        password: 'test',
+        confirmPass: 'asdf'
+      });
+
+      input.simulate('blur', event);
+      expect(wrapper.state().err.confirmErr).to
+        .equal('Please enter a matching password.');
+
+      input.simulate('focus', event);
+      expect(wrapper.state().err.confirmErr).to.equal('');
+
+      wrapper.setState({
+        password: 'test',
+        confirmPass: 'test'
+      });
+
+      input.simulate('blur', event);
+      expect(wrapper.state().err.confirmErr).to
+        .equal('');
+    }
+  );
+
   it("Displays server errors", () => {
     const regErr = 'Message';
     const wrapper = shallow(<Register regErr={regErr} />);
