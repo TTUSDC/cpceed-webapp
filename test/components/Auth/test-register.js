@@ -83,6 +83,25 @@ export default describe("Register.js", () => {
     }
   );
 
+  it("Sets errors when submit is pressed and fields are empty",
+    () => {
+      const handleRegister = sinon.spy();
+      const wrapper = shallow(<Register handleRegister={handleRegister} />);
+      const event = {
+        preventDefault: () => {}
+      };
+
+      wrapper.find({label: 'Register'}).simulate('click', event);
+      expect(handleRegister.calledOnce).to.equal(false);
+
+      const err = wrapper.state().err;
+
+      expect(err.emailErr).to.equal('Please enter an email');
+      expect(err.passErr).to.equal('Please enter a password');
+      expect(err.stuIDErr).to.equal('Please enter a student ID');
+    }
+  );
+
   it("Displays server errors", () => {
     const regErr = 'Message';
     const wrapper = shallow(<Register regErr={regErr} />);
