@@ -1,1 +1,1 @@
-import testAuth from './components/Auth/test-auth.js';
+import componentTests from './components';

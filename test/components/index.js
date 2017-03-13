@@ -1,0 +1,1 @@
+import authTests from './Auth';
