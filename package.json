@@ -5,10 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "webpack-dev-server --env=dev",
-    "start:test": "mocha build/test.bundle.js",
     "build": "webpack --env=prod",
-    "build:test": "webpack --env=test",
-    "test": "mocha --compilers js:babel-core/register -C --recursive"
+    "test": "webpack --env=test && mocha build/test.bundle.js"
   },
   "repository": {
     "type": "git",
