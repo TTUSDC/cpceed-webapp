@@ -173,6 +173,37 @@ export default describe("Register.js", () => {
     }
   );
 
+  it("Checks email onBlur, removes errors onFocus",
+    () => {
+      const wrapper = shallow(<Register />);
+      const input = wrapper.find({name: 'email'});
+      const event = {
+        target: {
+          name: 'email'
+        }
+      };
+
+      wrapper.setState({
+        email: 'test@test.com'
+      });
+
+      input.simulate('blur', event);
+      expect(wrapper.state().err.emailErr).to
+        .equal('Please use a TTU email address.');
+
+      input.simulate('focus', event);
+      expect(wrapper.state().err.emailErr).to.equal('');
+
+      wrapper.setState({
+        email: 'test@ttu.edu'
+      });
+
+      input.simulate('blur', event);
+      expect(wrapper.state().err.emailErr).to
+        .equal('');
+    }
+  );
+
   it("Displays server errors", () => {
     const regErr = 'Message';
     const wrapper = shallow(<Register regErr={regErr} />);
