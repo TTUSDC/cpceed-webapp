@@ -9,6 +9,7 @@ import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
 
 import { AuthStates } from 'redux/actions.js';
+import logger from 'logger/logger.js';
 
 class Register extends React.Component {
   constructor(props) {
@@ -157,7 +158,7 @@ class Register extends React.Component {
 
         break;
       default:
-        console.log('Create an onFocus handler for ' + name);
+        logger.error('Create an onFocus handler for ' + name);
 
         break;
     };
@@ -244,7 +245,7 @@ class Register extends React.Component {
 
         break;
       default:
-        console.log('Create an onBlur handler for ' + name);
+        logger.error('Create an onBlur handler for ' + name);
 
         break;
     };
