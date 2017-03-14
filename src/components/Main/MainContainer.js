@@ -3,6 +3,7 @@ import * as firebase from "firebase";
 import { connect } from 'react-redux';
 
 import { setAuthState, AuthStates } from 'redux/actions.js';
+import logger from 'logger/logger.js';
 import Main from './Main.js';
 
 class MainContainer extends React.Component {
@@ -14,7 +15,7 @@ class MainContainer extends React.Component {
 
     if(user) {
       // Look for the type of the user (coordinator or student)
-      console.log("A user was already signed in");
+      logger.info('A user was already signed in');
 
       const rootRef = firebase.database().ref();
       const userRef = rootRef.child('users/' + user.uid + '/type');
@@ -23,7 +24,7 @@ class MainContainer extends React.Component {
       });
     } else {
       // User is a guest
-      console.log("No pre-existing users");
+      logger.info('No pre-existing users');
 
       this.props.dispatch(setAuthState(AuthStates.GUEST));
     }

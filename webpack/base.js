@@ -2,6 +2,7 @@ const path = require('path');
 
 const nodePath = path.resolve(__dirname, '../node_modules');
 const appPath = path.resolve(__dirname, '../src');
+const shimPath = path.resolve(__dirname, '../src/logger/empty-shim.js');
 
 const base = {
   // Allows for absolute paths from locations indicated in 'root'
@@ -9,7 +10,14 @@ const base = {
     modules: [
       nodePath,
       appPath
-    ]
+    ],
+    alias: {
+      'dtrace-provider': shimPath,
+      fs: shimPath,
+      'safe-json-stringify': shimPath,
+      mv: shimPath,
+      'source-map-support': shimPath
+    }
   },
 
   module: {

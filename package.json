@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/TTUSDC/CPCEEDWebApp#readme",
   "dependencies": {
+    "bunyan": "1.8.8",
     "firebase": "3.6.4",
     "grommet": "1.2.1",
     "immutability-helper": "2.1.2",
