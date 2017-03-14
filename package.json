@@ -6,8 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --env=dev",
     "build": "webpack --env=prod",
-    "build:test": "webpack --env=test",
-    "test": "mocha --compilers js:babel-core/register -C --recursive"
+    "test": "webpack --env=test && mocha build/test.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +21,7 @@
   "dependencies": {
     "firebase": "3.6.4",
     "grommet": "1.2.1",
+    "immutability-helper": "2.1.2",
     "react": "15.4.2",
     "react-dom": "15.4.2",
     "react-redux": "5.0.1",
@@ -35,10 +35,13 @@
     "babel-preset-react": "6.16.0",
     "chai": "3.5.0",
     "css-loader": "0.26.1",
+    "enzyme": "2.7.1",
     "file-loader": "0.9.0",
     "mocha": "3.2.0",
     "node-sass": "4.1.1",
+    "react-addons-test-utils": "15.4.2",
     "sass-loader": "4.1.1",
+    "sinon": "2.0.0-pre.6",
     "style-loader": "0.13.1",
     "webpack": "2.2.1",
     "webpack-dev-server": "2.4.1",

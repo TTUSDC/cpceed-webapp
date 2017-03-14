@@ -3,7 +3,7 @@ import * as errorMessages from '../../src/server/error-messages'
 import server from '../../src/server/server'
 import * as dummyData from './dummy-data'
 
-describe('server', function() {
+export default describe('server', function() {
   describe('#login(email, password)', function() {
     it('should login as an admin.', function(done) {
         var admin = dummyData.users["QveDEhTHWSgVbnL4NXrdD6rSvns1"];

@@ -6,10 +6,8 @@ export const AuthActionTypes = {
   COORDINATOR: 'SET_AUTH_COORDINATOR'
 };
 
-/*
-  Auth.js sets the database values for role, so AuthStates should be kept
-  in sync with it.
-*/
+
+// Register.js uses AuthStates to set the database values for role.
 export const AuthStates = {
   GUEST: 'guest',
   STUDENT: 'student',
