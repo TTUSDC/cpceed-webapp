@@ -157,7 +157,7 @@ class Register extends React.Component {
 
         break;
       default:
-        console.log("Create an onFocus handler for " + name);
+        console.log('Create an onFocus handler for ' + name);
 
         break;
     };
@@ -244,7 +244,7 @@ class Register extends React.Component {
 
         break;
       default:
-        console.log("Create an onBlur handler for " + name);
+        console.log('Create an onBlur handler for ' + name);
 
         break;
     };

@@ -44,7 +44,7 @@ class AuthContainer extends React.Component {
         })
       })
       .then(() => {
-        console.log("User was registered");
+        console.log('User was registered');
 
         this.props.dispatch(setAuthState(data.role));
 
@@ -74,7 +74,7 @@ class AuthContainer extends React.Component {
 
         userRef.once('value')
           .then((snapshot) => {
-            console.log("User was logged in");
+            console.log('User was logged in');
 
             this.props.dispatch(setAuthState(snapshot.val()));
 
