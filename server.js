@@ -4,9 +4,10 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var MONGO_PORT = 27017;
 mongoose.connect('mongodb://localhost:' + MONGO_PORT);
-var user = require('./Users/router.js');
-var event = require('./Events/router.js');
+var user = require('./users/router.js');
+var event = require('./events/router.js');
 var report = require('./reports/report-router.js');
+var auth = require('./auth/auth-router.js');
 var app = express();
 var port = process.env.PORT || 8080;
 
@@ -18,6 +19,7 @@ var router = express.Router();
 router.use('/users', user.userRouter);
 router.use('/events', event.eventRouter);
 router.use('/reports', report.reportRouter);
+router.use('/auth', auth.authRouter);
 
 app.use('/api', router);
 
