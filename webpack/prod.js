@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const path = require('path');
 
@@ -12,7 +13,14 @@ const prod = webpackMerge(base, {
     filename: "bundle.js"
   },
 
-  entry: './src/index.js'
+  entry: './src/index.js',
+
+  plugins: [
+    // Resolve global constant ENV to 'prod' during build
+    new webpack.DefinePlugin({
+      ENV: JSON.stringify('prod')
+    })
+  ]
 });
 
 module.exports = prod;

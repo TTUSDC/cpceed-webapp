@@ -12,6 +12,7 @@ const base = {
       appPath
     ],
     alias: {
+      // Ignore optional bunyan dependencies
       'dtrace-provider': shimPath,
       fs: shimPath,
       'safe-json-stringify': shimPath,
