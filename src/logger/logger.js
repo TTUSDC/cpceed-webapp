@@ -1,5 +1,6 @@
 import bunyan from 'bunyan';
 
+// Checks current build environment
 var envLevel = null;
 switch(ENV) {
   case 'prod':
@@ -15,6 +16,7 @@ switch(ENV) {
 var logger = bunyan.createLogger({
   name: 'CPCEED',
   stream: process.stdout,
+  // Sets the logging level depending on build environment
   level: envLevel
 });
 
