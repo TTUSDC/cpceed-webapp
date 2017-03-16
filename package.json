@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --env=dev",
     "build": "webpack --env=prod",
-    "test": "webpack --env=test && karma start karma.conf.js"
+    "test": "karma start karma.conf.js"
   },
   "repository": {
     "type": "git",
