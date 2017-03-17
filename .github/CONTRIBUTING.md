@@ -21,11 +21,31 @@ The resources page on our wiki has links to information on everything listed her
 3. Download the dependencies by running `npm install` when you're in the project directory.
 4. Visit the wiki at https://github.com/TTUSDC/CPCEEDWebApp/wiki to learn about the developer guidelines for this project.
 
+### Testing Your Changes
+
 Once you've started making changes, you'll need to make sure the app still runs properly.
 To use the testing server, do the following:
 
 1. Run `npm start` from the project directory.
 2. Enter `localhost:8080` into the URL bar of your browser to see the app.
+
+You should also run the unit tests to ensure the code is still functioning properly.
+To run the unit tests, do the following:
+
+1. Make sure you have Firefox installed. This project has the Karma test runner set up to use Firefox.
+2. Run `npm test` from the project directory.
+
+As you're writing application code, you should also be writing unit tests that can be used to ensure your code doesn't get broken.
+Unit tests go in `CPCEEDWebApp/test`, which follows the same structure as `CPCEEDWebApp/src`.
+You should put your tests in the `test` subdirectory that mirrors the `src` subdirectory where you wrote your application code.
+For example, unit tests for files in `src/components/Auth/` go in `test/components/Auth/`.
+You must make sure your tests are either included by `test/index.js` directly or included by an `index.js` file that is linked to `test/index.js` through other `include` statements.
+The testing libraries used in this project are as follows:
+
+1. Mocha: a test framework.
+2. Chai: for making assertions about tests.
+3. Sinon: for spying on, stubbing, or mocking functions.
+4. Enzyme: a library that allows React components to be tested effectively (primarily through shallow rendering).
 
 ## Coding Standards
 We use [Google's](https://google.github.io/styleguide/jsguide.html) JavaScript coding standards. The exception to this rule is when dealing with React components, for which we use [Airbnb's](https://github.com/airbnb/javascript/tree/master/react) naming standards.
