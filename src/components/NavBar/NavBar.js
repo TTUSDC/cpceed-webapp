@@ -6,6 +6,7 @@ import Title from 'grommet/components/Title';
 import Box from 'grommet/components/Box';
 import Menu from 'grommet/components/Menu';
 import MenuIcon from 'grommet/components/icons/base/Menu';
+import UserIcon from 'grommet/components/icons/base/User';
 import Anchor from 'grommet/components/Anchor';
 
 import { PermissionStates } from 'redux/actions.js';
@@ -64,12 +65,20 @@ class NavBar extends React.Component {
       );
     } else {
       authButton = (
-        <Button
-          label="Logout"
-          primary={true}
-          onClick={() => {
-            this.props.logout();
-          }}/>
+        <Menu
+          icon={<UserIcon />}
+          dropAlign={{"right": "right", "top": "top"}}>
+            <Anchor onClick={() => {
+              this.props.navigate('account/');
+            }}>
+              Account
+            </Anchor>
+            <Anchor onClick={() => {
+              this.props.logout();
+            }}>
+              Logout
+            </Anchor>
+        </Menu>
       );
     }
 
