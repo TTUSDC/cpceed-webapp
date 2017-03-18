@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 import { connect } from 'react-redux';
 
 import { setAuthState } from 'redux/actions.js';
+import logger from 'logger/logger.js';
 import Auth from './Auth.js';
 
 class AuthContainer extends React.Component {
@@ -44,7 +45,7 @@ class AuthContainer extends React.Component {
         })
       })
       .then(() => {
-        console.log('User was registered');
+        logger.info('User was registered');
 
         this.props.dispatch(setAuthState(data.role));
 
@@ -53,7 +54,7 @@ class AuthContainer extends React.Component {
         }
       })
       .catch((e) => {
-        console.log(e.message);
+        logger.error(e.message);
         this.setState({
           regErr: e.message,
           waiting: false
@@ -74,7 +75,7 @@ class AuthContainer extends React.Component {
 
         userRef.once('value')
           .then((snapshot) => {
-            console.log('User was logged in');
+            logger.info('User was logged in');
 
             this.props.dispatch(setAuthState(snapshot.val()));
 
@@ -84,7 +85,7 @@ class AuthContainer extends React.Component {
           });
       })
       .catch((e) => {
-        console.log(e.message);
+        logger.error(e.message);
         this.setState({
           logErr: e.message,
           waiting: false

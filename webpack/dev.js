@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const path = require('path');
 
@@ -22,7 +23,13 @@ const dev = webpackMerge(base, {
     host: '0.0.0.0',
     inline: true,
     contentBase: buildPath
-  }
+  },
+
+  plugins: [
+    new webpack.DefinePlugin({
+      ENV: JSON.stringify('dev')
+    })
+  ]
 });
 
 module.exports = dev;
