@@ -63,8 +63,18 @@ class NavBar extends React.Component {
     } else {
       authButton = (
         <Menu
-          icon={<UserIcon />}
-          dropAlign={{"right": "right", "top": "top"}}>
+          dropAlign={{"right": "right", "top": "top"}}
+          icon={
+            <Box
+              flex={true}
+              direction='row'
+              responsive={false}>
+              <Box pad={{horizontal: 'small'}}>
+                {this.props.user.firstName}
+              </Box>
+              <UserIcon />
+            </Box>
+          }>
             <Anchor onClick={() => {
               this.props.navigate('account/');
             }}>
