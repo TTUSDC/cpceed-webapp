@@ -9,7 +9,7 @@ import MenuIcon from 'grommet/components/icons/base/Menu';
 import UserIcon from 'grommet/components/icons/base/User';
 import Anchor from 'grommet/components/Anchor';
 
-import { PermissionStates } from 'redux/actions.js';
+import {AuthStates} from 'redux/actions.js';
 import AuthContainer from 'components/Auth/AuthContainer.js';
 
 class NavBar extends React.Component {
@@ -51,10 +51,7 @@ class NavBar extends React.Component {
       To do a simple compare of JavaScript objects, you must convert
       them to JSON form first.
     */
-    if(
-      JSON.stringify(this.props.permissions)
-      === JSON.stringify(PermissionStates.GUEST)
-    ) {
+    if(this.props.user.role === AuthStates.GUEST) {
       authButton = (
         <Button
           label="Sign In"

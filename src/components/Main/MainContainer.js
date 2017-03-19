@@ -1,8 +1,8 @@
 import React from 'react';
 import * as firebase from "firebase";
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { setAuthState, AuthStates } from 'redux/actions.js';
+import {setUserLogin} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import Main from './Main.js';
 
@@ -18,15 +18,10 @@ class MainContainer extends React.Component {
       logger.info('A user was already signed in');
 
       const rootRef = firebase.database().ref();
-      const userRef = rootRef.child('users/' + user.uid + '/type');
-      userRef.once('value').then((type) => {
-        this.props.dispatch(setAuthState(type.val()));
+      const userRef = rootRef.child('users/' + user.uid);
+      userRef.once('value').then((snapshot) => {
+        this.props.dispatch(setUserLogin(snapshot.val()));
       });
-    } else {
-      // User is a guest
-      logger.info('No pre-existing users');
-
-      this.props.dispatch(setAuthState(AuthStates.GUEST));
     }
   }
 
