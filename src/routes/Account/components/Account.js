@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Box from 'grommet/components/Box';
 import Tabs from 'grommet/components/Tabs';
 import Tab from 'grommet/components/Tab';
 
@@ -25,20 +26,25 @@ class Account extends React.Component {
 
   render() {
     return (
-      <Tabs
-        activeIndex={this.state.index}
-        justify='center'
-        responsive={false}
-        onActive={(event) => {
-          this.handleTabChange(event);
-        }}>
-        <Tab title='Profile'>
-          <ProfileContainer />
-        </Tab>
-        <Tab title='Security'>
-          <SecurityContainer />
-        </Tab>
-      </Tabs>
+      <Box
+        flex={true}
+        alignSelf='center'
+        size={{width: 'full'}}>
+        <Tabs
+          activeIndex={this.state.index}
+          justify='center'
+          responsive={false}
+          onActive={(event) => {
+            this.handleTabChange(event);
+          }}>
+          <Tab title='Profile'>
+            <ProfileContainer />
+          </Tab>
+          <Tab title='Security'>
+            <SecurityContainer />
+          </Tab>
+        </Tabs>
+      </Box>
     );
   }
 }
