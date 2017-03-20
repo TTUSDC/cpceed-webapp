@@ -2,7 +2,7 @@ import React from 'react';
 import * as firebase from "firebase";
 import {connect} from 'react-redux';
 
-import {setUserLogin} from 'redux/actions.js';
+import {setUserUpdate} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import Main from './Main.js';
 
@@ -20,7 +20,7 @@ class MainContainer extends React.Component {
       const rootRef = firebase.database().ref();
       const userRef = rootRef.child('users/' + user.uid);
       userRef.once('value').then((snapshot) => {
-        this.props.dispatch(setUserLogin(snapshot.val()));
+        this.props.dispatch(setUserUpdate(snapshot.val()));
       });
     }
   }

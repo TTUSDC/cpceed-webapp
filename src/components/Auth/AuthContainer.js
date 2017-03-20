@@ -3,7 +3,7 @@ import {withRouter} from 'react-router';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import {setUserLogin} from 'redux/actions.js';
+import {setUserUpdate} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import Auth from './Auth.js';
 
@@ -60,7 +60,7 @@ class AuthContainer extends React.Component {
       .then(() => {
         logger.info('User was registered');
 
-        this.props.dispatch(setUserLogin(userData));
+        this.props.dispatch(setUserUpdate(userData));
 
         if(this.props.authFinished) {
           this.props.authFinished();
@@ -90,7 +90,7 @@ class AuthContainer extends React.Component {
           .then((snapshot) => {
             logger.info('User was logged in');
 
-            this.props.dispatch(setUserLogin(snapshot.val()));
+            this.props.dispatch(setUserUpdate(snapshot.val()));
 
             if(this.props.authFinished) {
               this.props.authFinished();

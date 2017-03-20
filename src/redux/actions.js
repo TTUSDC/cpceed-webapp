@@ -34,7 +34,7 @@ export const PermissionStates = {
 
 // action creators
 
-export const setUserLogin = (user) => {
+export const setUserUpdate = (user) => {
   return {
     type: UserActionTypes.LOGIN,
     user
