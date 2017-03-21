@@ -30,23 +30,23 @@ class Account extends React.Component {
 
   render() {
     return (
-      <div>
-        <Header fixed={false} size='medium'>
-          <Box
-            justify='center'
-            flex={true}
-            direction='row'
-            responsive={false}
-            pad={{between: "small"}}>
-            <Button
-              label='Profile'
-              primary={false}
-              onClick={() => {this.navigate('/account/profile')}}/>
-            <Button
-              label='Security'
-              primary={false}
-              onClick={() => {this.navigate('/account/security')}}/>
-          </Box>
+      <Box>
+        <Header
+          fixed={false}
+          size='medium'
+          justify='center'
+          flex={true}
+          direction='row'
+          responsive={false}
+          pad={{between: "small"}}>
+          <Button
+            label='Profile'
+            primary={false}
+            onClick={() => {this.navigate('/account/profile')}}/>
+          <Button
+            label='Security'
+            primary={false}
+            onClick={() => {this.navigate('/account/security')}}/>
         </Header>
         <Box
           flex={true}
@@ -54,7 +54,7 @@ class Account extends React.Component {
           size={{width: 'full'}}>
           {this.props.children}
         </Box>
-      </div>
+      </Box>
     );
   }
 }
