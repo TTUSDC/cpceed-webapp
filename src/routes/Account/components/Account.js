@@ -1,12 +1,11 @@
 import React from 'react';
+import {withRouter} from 'react-router';
 
 import Box from 'grommet/components/Box';
-import Tabs from 'grommet/components/Tabs';
-import Tab from 'grommet/components/Tab';
+import Header from 'grommet/components/Header';
+import Button from 'grommet/components/Button';
 
 import RequireAuth from 'components/Auth/RequireAuth.js';
-import ProfileContainer from './ProfileContainer.js';
-import SecurityContainer from './SecurityContainer.js';
 
 class Account extends React.Component {
   constructor(props) {
@@ -16,6 +15,7 @@ class Account extends React.Component {
     };
 
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.navigate = this.navigate.bind(this);
   }
 
   handleTabChange(newIndex) {
@@ -24,27 +24,37 @@ class Account extends React.Component {
     });
   }
 
+  navigate(url) {
+    this.props.router.push(url);
+  }
+
   render() {
     return (
-      <Box
-        flex={true}
-        alignSelf='center'
-        size={{width: 'full'}}>
-        <Tabs
-          activeIndex={this.state.index}
-          justify='center'
-          responsive={false}
-          onActive={(event) => {
-            this.handleTabChange(event);
-          }}>
-          <Tab title='Profile'>
-            <ProfileContainer />
-          </Tab>
-          <Tab title='Security'>
-            <SecurityContainer />
-          </Tab>
-        </Tabs>
-      </Box>
+      <div>
+        <Header fixed={false} size='medium'>
+          <Box
+            justify='center'
+            flex={true}
+            direction='row'
+            responsive={false}
+            pad={{between: "small"}}>
+            <Button
+              label='Profile'
+              primary={false}
+              onClick={() => {this.navigate('/account/profile')}}/>
+            <Button
+              label='Security'
+              primary={false}
+              onClick={() => {this.navigate('/account/security')}}/>
+          </Box>
+        </Header>
+        <Box
+          flex={true}
+          align='center'
+          size={{width: 'full'}}>
+          {this.props.children}
+        </Box>
+      </div>
     );
   }
 }
@@ -54,4 +64,4 @@ const requiredState = {
 };
 
 // The permissions object is passed as the second argument to RequireAuth
-export default RequireAuth(Account, requiredState);
+export default withRouter(RequireAuth(Account, requiredState));
