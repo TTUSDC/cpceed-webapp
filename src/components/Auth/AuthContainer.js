@@ -3,7 +3,12 @@ import {withRouter} from 'react-router';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import {setUserUpdate} from 'redux/actions.js';
+import {
+  updateUser,
+  coordinator,
+  student,
+  AuthStates
+} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import Auth from './Auth.js';
 
@@ -32,26 +37,25 @@ class AuthContainer extends React.Component {
       regErr: ''
     });
 
-    const userData = {
-      approvalStatus: false,
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      points: {
-        career: 0,
-        community: 0,
-        firstother: 0,
-        firstworkshops: 0,
-        mentor: 0,
-        other: 0,
-        outreach: 0,
-        professor: 0,
-        staff: 0,
-        misc: 0
-      },
-      studentId: data.studentID,
-      role: data.role
+    var userData = {};
+    switch(data.role) {
+      case AuthStates.COORDINATOR:
+        userData = coordinator;
+
+        break;
+      case AuthStates.STUDENT:
+        userData = student;
+
+        userData.studentID = data.studentID;
+
+        break;
+      default:
+        logger.error('Unknown user role in AuthContainer.js');
     };
+
+    userData.email = data.email;
+    userData.firstName = data.firstName;
+    userData.lastName = data.lastName;
 
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then((user) => {
@@ -60,7 +64,7 @@ class AuthContainer extends React.Component {
       .then(() => {
         logger.info('User was registered');
 
-        this.props.dispatch(setUserUpdate(userData));
+        this.props.dispatch(updateUser(userData));
 
         if(this.props.authFinished) {
           this.props.authFinished();
@@ -90,7 +94,7 @@ class AuthContainer extends React.Component {
           .then((snapshot) => {
             logger.info('User was logged in');
 
-            this.props.dispatch(setUserUpdate(snapshot.val()));
+            this.props.dispatch(updateUser(snapshot.val()));
 
             if(this.props.authFinished) {
               this.props.authFinished();
