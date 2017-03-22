@@ -1,7 +1,7 @@
 // action types
 
 export const UserActionTypes = {
-  LOGIN: 'LOGIN',
+  UPDATE: 'UPDATE',
   LOGOUT: 'LOGOUT'
 };
 
@@ -32,17 +32,52 @@ export const PermissionStates = {
   }
 };
 
+export var coordinator = {
+  email: '',
+  firstName: '',
+  lastName: '',
+  role: AuthStates.COORDINATOR
+};
+
+export var student = {
+  approvalStatus: false,
+  email: '',
+  firstName: '',
+  lastName: '',
+  studentId: '',
+  points: {
+    career: 0,
+    community: 0,
+    firstother: 0,
+    firstworkshops: 0,
+    mentor: 0,
+    other: 0,
+    outreach: 0,
+    professor: 0,
+    staff: 0,
+    misc: 0
+  },
+  role: AuthStates.STUDENT
+};
+
+export var guest = {
+  role: AuthStates.GUEST
+};
+
 // action creators
 
-export const setUserUpdate = (user) => {
+export const updateUser = (user) => {
   return {
-    type: UserActionTypes.LOGIN,
+    type: UserActionTypes.UPDATE,
     user
   };
 }
 
-export const setUserLogout = () => {
+export const logoutUser = () => {
+  var user = guest;
+
   return {
-    type: UserActionTypes.LOGOUT
-  }
+    type: UserActionTypes.LOGOUT,
+    user
+  };
 }
