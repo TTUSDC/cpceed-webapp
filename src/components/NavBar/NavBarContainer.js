@@ -3,7 +3,7 @@ import {withRouter} from 'react-router';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import {setUserLogout} from 'redux/actions.js';
+import {logoutUser} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import NavBar from './NavBar.js';
 
@@ -40,7 +40,7 @@ class NavBarContainer extends React.Component {
         logger.info("User was signed out");
 
         // Set user to guest
-        this.props.dispatch(setUserLogout());
+        this.props.dispatch(logoutUser());
       })
       .catch((e) => {
         logger.error(e.message);

@@ -3,7 +3,7 @@ import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
 import Profile from './Profile.js';
-import {setUserUpdate} from 'redux/actions.js';
+import {updateUser} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 
 class ProfileContainer extends React.Component {
@@ -51,7 +51,7 @@ class ProfileContainer extends React.Component {
           newUser[key] = data[key];
         }
         // Update user in the redux store
-        this.props.dispatch(setUserUpdate(newUser));
+        this.props.dispatch(updateUser(newUser));
 
         this.setState({
           waiting: false
