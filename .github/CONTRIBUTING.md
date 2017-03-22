@@ -48,7 +48,7 @@ The testing libraries used in this project are as follows:
 4. Enzyme: a library that allows React components to be tested effectively (primarily through shallow rendering).
 
 ## Coding Standards
-We use [Google's](https://google.github.io/styleguide/jsguide.html) JavaScript coding standards. The exception to this rule is when dealing with React components, for which we use [Airbnb's](https://github.com/airbnb/javascript/tree/master/react) naming standards.
+We use [Airbnb's](https://github.com/airbnb/javascript) JavaScript style guide
 
 Notable Aspects:
 
