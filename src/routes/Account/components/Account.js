@@ -14,14 +14,7 @@ class Account extends React.Component {
       index: 0
     };
 
-    this.handleTabChange = this.handleTabChange.bind(this);
     this.navigate = this.navigate.bind(this);
-  }
-
-  handleTabChange(newIndex) {
-    this.setState({
-      index: newIndex
-    });
   }
 
   navigate(url) {
