@@ -20,15 +20,15 @@ export const AuthStates = {
 export const PermissionStates = {
   GUEST: {
     viewActivity: false,
-    viewAccount: false
+    viewSettings: false
   },
   STUDENT: {
     viewActivity: true,
-    viewAccount: true
+    viewSettings: true
   },
   COORDINATOR: {
     viewActivity: true,
-    viewAccount: true
+    viewSettings: true
   }
 };
 

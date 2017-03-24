@@ -76,9 +76,9 @@ class NavBar extends React.Component {
             </Box>
           }>
             <Anchor onClick={() => {
-              this.props.navigate('account/');
+              this.props.navigate('settings/');
             }}>
-              Account
+              Settings
             </Anchor>
             <Anchor onClick={() => {
               this.props.logout();

@@ -1,10 +1,10 @@
 import React from 'react';
 import * as firebase from 'firebase';
 
-import Security from './Security.js';
+import Account from './Account.js';
 import logger from 'logger/logger.js';
 
-class SecurityContainer extends React.Component {
+class AccountContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,7 +40,7 @@ class SecurityContainer extends React.Component {
 
   render() {
     return (
-      <Security
+      <Account
         handleSubmit={this.handleSubmit}
         waiting={this.state.waiting}
         secErr={this.state.secErr}/>
@@ -48,4 +48,4 @@ class SecurityContainer extends React.Component {
   }
 }
 
-export default SecurityContainer;
+export default AccountContainer;

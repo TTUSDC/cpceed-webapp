@@ -7,7 +7,7 @@ import Button from 'grommet/components/Button';
 
 import RequireAuth from 'components/Auth/RequireAuth.js';
 
-class Account extends React.Component {
+class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,11 +35,11 @@ class Account extends React.Component {
           <Button
             label='Profile'
             primary={false}
-            onClick={() => {this.navigate('/account/profile')}}/>
+            onClick={() => {this.navigate('/settings/profile')}}/>
           <Button
-            label='Security'
+            label='Account'
             primary={false}
-            onClick={() => {this.navigate('/account/security')}}/>
+            onClick={() => {this.navigate('/settings/account')}}/>
         </Header>
         <Box
           flex={true}
@@ -53,8 +53,8 @@ class Account extends React.Component {
 }
 
 const requiredState = {
-  viewAccount: true
+  viewSettings: true
 };
 
 // The permissions object is passed as the second argument to RequireAuth
-export default withRouter(RequireAuth(Account, requiredState));
+export default withRouter(RequireAuth(Settings, requiredState));

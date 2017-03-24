@@ -4,7 +4,7 @@ import { Route, IndexRedirect } from 'react-router';
 import MainContainer from './components/Main/MainContainer';
 import eventsRoute from './routes/Events';
 import activityRoute from './routes/Activity';
-import accountRoute from './routes/Account';
+import settingsRoute from './routes/Settings';
 
 const appRoute = (
   // Sets the path and primary component for this route
@@ -15,7 +15,7 @@ const appRoute = (
     {/* Set the children of the primary component */}
     {eventsRoute}
     {activityRoute}
-    {accountRoute}
+    {settingsRoute}
   </Route>
 );
 

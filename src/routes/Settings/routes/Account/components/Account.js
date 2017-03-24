@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import update from 'immutability-helper';
 
 import Form from 'grommet/components/Form';
+import Heading from 'grommet/components/Heading';
 import FormField from 'grommet/components/FormField';
 import Paragraph from 'grommet/components/Paragraph';
 import Footer from 'grommet/components/Footer';
@@ -10,7 +11,7 @@ import Button from 'grommet/components/Button';
 import {checkPass, checkConfirm} from 'components/Auth/verify.js';
 import logger from 'logger/logger.js';
 
-class Security extends React.Component {
+class Account extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -80,7 +81,7 @@ class Security extends React.Component {
 
         break;
       default:
-        logger.error('Create an onFocus handler in Security.js for ' + name);
+        logger.error('Create an onFocus handler in Account.js for ' + name);
 
         break;
     };
@@ -112,7 +113,7 @@ class Security extends React.Component {
 
         break;
       default:
-        logger.error('Create an onBlur handler in Security.js for ' + name);
+        logger.error('Create an onBlur handler in Account.js for ' + name);
 
         break;
     };
@@ -142,6 +143,9 @@ class Security extends React.Component {
         plain={false}
         onSubmit={passHandleSubmit}>
         <fieldset>
+          <Heading tag='h2'>
+            Change Password
+          </Heading>
           <Paragraph>
             Your password should use at least 8 characters. It should
             contain only ASCII text, with at least one uppercase, one
@@ -183,15 +187,15 @@ class Security extends React.Component {
   }
 }
 
-Security.propTypes = {
+Account.propTypes = {
   handleSubmit: PropTypes.func,
   secErr: PropTypes.string,
   waiting: PropTypes.bool
 };
 
-Security.defaultProps = {
+Account.defaultProps = {
   secErr: '',
   waiting: false
 };
 
-export default Security;
+export default Account;
