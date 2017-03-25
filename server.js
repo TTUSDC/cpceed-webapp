@@ -1,11 +1,9 @@
 // BASE SETUP
 const express = require('express');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo')(session);
-const passport = require('passport');
+const morgan = require('morgan');
 
 /** router **/
 const user = require('./Users/router.js');
@@ -15,9 +13,6 @@ const auth = require('./auth/auth-router.js');
 
 /** load environment variables from .env file **/
 dotenv.load({ path: '.env.example' });
-
-/** passport config **/
-const passportConfig = require('./config/passport');
 
 /** express server **/
 const app = express();
@@ -35,20 +30,9 @@ mongoose.connection.on('error', (err) => {
 /** express configuration **/
 const port = process.env.PORT || 3000;
 app.set('port', port);
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-  resave: true,
-  saveUninitialized: true,
-  secret: process.env.SESSION_SECRET,
-  store: new MongoStore({
-    url: mongoURL,
-    autoReconnect: true,
-    clear_interval: 3600
-  })
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(morgan('dev'));
 
 /** app routes **/
 const router = express.Router();
@@ -57,11 +41,8 @@ router.use('/events', event.eventRouter);
 router.use('/reports', report.reportRouter);
 router.use('/auth', auth.router);
 
+//app.use(auth.verify);
 app.use('/api', router);
-
-/** error handler**/
-/// const errorHandler = require('errorhandler');
-//app.use(errorHandler());
 
 /** start express server **/
 app.listen(port, () => {

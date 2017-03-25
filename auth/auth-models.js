@@ -1,33 +1,46 @@
-const bcrypt = require('bcrypt-nodejs');
-const crypto = require('crypto');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
-  password: String,
-});
+/** set up user model **/
+const authSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  admin: {
+    type: Boolean,
+    required: false
+  }
+}, { timestamps: true });
 
-/** hash middleware **/
-userSchema.pre('save', (next) => {
+authSchema.pre('save', function (next) {
   const user = this;
+
   if (!user.isModified('password')) { return next(); }
-  bcrypt.genSalt(10, (err, salt) => {
+
+  bcrypt.genSalt(process.env.SALT, (err, salt) => {
     if (err) { return next(err); }
+
     bcrypt.hash(user.password, salt, null, (err, hash) => {
       if (err) { return next(err); }
+
       user.password = hash;
       next();
     });
   });
 });
 
-/** validate user's password **/
-userSchema.methods.comparePassword = (candidatePassword, cb) => {
+authSchema.methods.comparePassword = function (candidatePassword, next) {
   bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-    cb(err, isMatch);
+    next(err, isMatch);
   });
-};
+}
 
-const AuthUser = mongoose.model('AuthUser', userSchema);
+const AuthUser = mongoose.model('AuthUser', authSchema);
 
 module.exports = AuthUser;

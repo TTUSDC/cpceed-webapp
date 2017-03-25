@@ -1,73 +1,65 @@
-const bluebird = require('bluebird');
-const crypto = bluebird.promisifyAll(require('crypto'));
-const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const AuthUser = require('./auth-models');
 
-const login = (req, res, next) => {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('password', 'Password cannot be blank').notEmpty();
-  req.sanitize('email').normalizeEmail({ remove_dots: false });
+const login = (email, password, next) => {
+  AuthUser.findOne({ email: email }, (err, user) => {
+    if (err) { next(err); }
+    else if (!user) { next('Auth failed'); }
+    else {
+      user.comparePassword(password, (err, isMatch) => {
+        if (err) { next(err); }
+        else {
+          var token = jwt.sign(user, process.env.SECRET, {
+            expiresIn: 60*60*24
+          });
 
-  const errors = req.validationErrors();
-  if (errors) {
-    req.flash('errors', errors);
-    return res.redirect('/auth');
-  }
-
-  passport.authenticate('local', (err, user, info) => {
-    if (err) { return next(err); }
-    if (!user) {
-      req.flash('errors', info);
-      return res.redirect('/login');
+          next(null, token);
+        }
+      });
     }
-
-    req.logIn(user, (err) => {
-      if (err) { return next(err); }
-      req.flash('success', { msg: 'success' });
-      res.redirect(req.session.returnTo || '/');
-    });
-  })(req, res, next);
+  });
 };
 
 const logout = (req, res) => {
-  req.logout();
-  res.redirect('/');
+
 };
 
-const create = (req, res, next) => {
-  req.assert('email', 'Email is not valid').isEmail();
-  req.assert('password', 'Password must be at least 4 characters long').len(4);
-  req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
-  req.sanitize('email').normalizeEmail({ remove_dots: false });
-
-  const errors = req.validationErrors();
-
-  if (errors) {
-    req.flash('errors', errors);
-    return res.redirect('/signup');
-  }
-
-  const user = new AuthUser({
-    email: req.body.email,
-    password: req.body.password
+const create = (email, password, next) => {
+  var user = new AuthUser({
+    email: email,
+    password: password
   });
 
-  AuthUser.findOne({ email: req.body.email }, (err, existingUser) => {
-    if (err) { return next(err); }
-    if (existingUser) {
-      req.flash('errors', { msg: 'Account with that email address already exists.' });
-      return res.redirect('/signup');
+  AuthUser.findOne({ email: email }, (err, existingUser) => {
+    if (err) { next(err); }
+    else if (existingUser) {
+      next('Account with that email address already exists.');
     }
-    user.save((err) => {
-      if (err) { return next(err); }
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-        res.redirect('/');
-      });
-    });
+    else {
+      user.save((err) => { next(err); });
+    }
   });
 };
 
-module.exports = { login, logout, create };
+const verify = (req, res, next) => {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+  if (token) {
+    jwt.verify(token, process.env.SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: 'Auth failed.' });
+      }
+      else {
+        req.decoded = decoded;
+        next();
+      }
+    });
+  }
+  else {
+    return res.status(403).send({
+      message: 'No token provided.'
+    });
+  }
+};
+
+module.exports = { login, logout, create, verify };
