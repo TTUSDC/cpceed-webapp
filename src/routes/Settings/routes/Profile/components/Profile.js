@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import update from 'immutability-helper';
 
+import Box from 'grommet/components/Box';
 import Form from 'grommet/components/Form';
 import FormField from 'grommet/components/FormField';
 import Footer from 'grommet/components/Footer';
@@ -115,46 +116,51 @@ class Profile extends React.Component {
     }
 
     return (
-      <Form
-        pad='medium'
-        plain={false}
-        onSubmit={passHandleSubmit}>
-        <fieldset>
-          <FormField label='First Name'>
-            <input
-              name='firstName'
-              type='text'
-              value={this.state.firstName}
-              onChange={this.handleInputChange}/>
-          </FormField>
-          <FormField label='Last Name'>
-            <input
-              name='lastName'
-              type='text'
-              value={this.state.lastName}
-              onChange={this.handleInputChange}/>
-          </FormField>
-          <FormField
-            label='Email'
-            error={this.state.err.email}>
-            <input
-              name='email'
-              type='email'
-              value={this.state.email}
-              onBlur={this.inputChecking}
-              onFocus={this.handleFocus}
-              onChange={this.handleInputChange}/>
-          </FormField>
-          {errMessage}
-        </fieldset>
-        <Footer size='small'>
-          <Button
-            label='Submit'
-            type='submit'
-            primary={true}
-            onClick={passHandleSubmit}/>
-        </Footer>
-      </Form>
+      <Box
+        flex={true}
+        align='center'
+        size={{width: 'full'}}>
+        <Form
+          pad='medium'
+          plain={false}
+          onSubmit={passHandleSubmit}>
+          <fieldset>
+            <FormField label='First Name'>
+              <input
+                name='firstName'
+                type='text'
+                value={this.state.firstName}
+                onChange={this.handleInputChange}/>
+            </FormField>
+            <FormField label='Last Name'>
+              <input
+                name='lastName'
+                type='text'
+                value={this.state.lastName}
+                onChange={this.handleInputChange}/>
+            </FormField>
+            <FormField
+              label='Email'
+              error={this.state.err.email}>
+              <input
+                name='email'
+                type='email'
+                value={this.state.email}
+                onBlur={this.inputChecking}
+                onFocus={this.handleFocus}
+                onChange={this.handleInputChange}/>
+            </FormField>
+            {errMessage}
+          </fieldset>
+          <Footer size='small'>
+            <Button
+              label='Submit'
+              type='submit'
+              primary={true}
+              onClick={passHandleSubmit}/>
+          </Footer>
+        </Form>
+      </Box>
     );
   }
 }

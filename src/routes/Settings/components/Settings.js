@@ -41,12 +41,7 @@ class Settings extends React.Component {
             primary={false}
             onClick={() => {this.navigate('/settings/account')}}/>
         </Header>
-        <Box
-          flex={true}
-          align='center'
-          size={{width: 'full'}}>
-          {this.props.children}
-        </Box>
+        {this.props.children}
       </Box>
     );
   }
