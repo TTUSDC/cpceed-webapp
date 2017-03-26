@@ -1,1 +1,1 @@
-export let invalidLogin = "Invalid user/password combination"
+export const invalidLogin = 'Invalid user/password combination';

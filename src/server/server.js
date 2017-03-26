@@ -1,12 +1,12 @@
-import * as auth from './user-auth'
-import * as reports from './reports'
-import * as events from './events'
-import * as dummyData from '../../test/server/dummy-data'
-import errorMessages from './error-messages'
+import * as auth from './user-auth';
+import * as reports from './reports';
+import * as events from './events';
+import * as dummyData from '../../test/server/dummy-data';
+import errorMessages from './error-messages';
 
-let server = {
-  dummyData: dummyData,
-  errorMessages: errorMessages,
+const server = {
+  dummyData,
+  errorMessages,
   login: auth.login,
   logout: auth.logout,
   getLoggedInUser: auth.getLoggedInUser,
@@ -21,7 +21,7 @@ let server = {
   modifyEvent: events.modify,
   deleteEvent: events.remove,
   getEventByUid: events.getByUid,
-  getAllEvents: events.getAll
-}
+  getAllEvents: events.getAll,
+};
 
 export default server;

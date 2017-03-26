@@ -1,17 +1,17 @@
-import * as dummyData from '../../test/server/dummy-data'
-import * as errorMessages from './error-messages'
+import * as dummyData from '../../test/server/dummy-data';
+import * as errorMessages from './error-messages';
 
-var _currentUser = undefined;
+let _currentUser;
 
 export function login(email, password) {
-  return new Promise(function(resolve, reject) {
-    if(dummyData.auth[email] == password && password) {
-      _currentUser = dummyData.users[dummyData.emailToUid[email]]
-      resolve(_currentUser)
+  return new Promise((resolve, reject) => {
+    if (dummyData.auth[email] === password && password) {
+      _currentUser = dummyData.users[dummyData.emailToUid[email]];
+      resolve(_currentUser);
     } else {
-      reject(errorMessages.invalidLogin)
+      reject(errorMessages.invalidLogin);
     }
-  })
+  });
 }
 
 export function logout() {
