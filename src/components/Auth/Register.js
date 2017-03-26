@@ -202,7 +202,7 @@ class Register extends React.Component {
     var studentIDField = null;
     if(this.state.role === 'student') {
       studentIDdesc = (
-        <Paragraph>
+        <Paragraph margin='none'>
           Don't include the R before your student ID number.
         </Paragraph>
       );
@@ -261,20 +261,6 @@ class Register extends React.Component {
           </FormField>
           {studentIDdesc}
           {studentIDField}
-          <FormField label='First Name'>
-            <input
-              name='firstName'
-              type='text'
-              value={this.state.firstName}
-              onChange={this.handleInputChange}/>
-          </FormField>
-          <FormField label='Last Name'>
-            <input
-              name='lastName'
-              type='text'
-              value={this.state.lastName}
-              onChange={this.handleInputChange}/>
-          </FormField>
           <FormField
             label='Email'
             error={this.state.err.emailErr}>
@@ -286,7 +272,7 @@ class Register extends React.Component {
               onFocus={this.handleFocus}
               onChange={this.handleInputChange}/>
           </FormField>
-          <Paragraph>
+          <Paragraph margin='none'>
             Your password should use at least 8 characters. It should
             contain only ASCII text, with at least one uppercase, one
             lowercase, one number, and one special character.
@@ -311,6 +297,20 @@ class Register extends React.Component {
               value={this.state.confirmPass}
               onBlur={this.inputChecking}
               onFocus={this.handleFocus}
+              onChange={this.handleInputChange}/>
+          </FormField>
+          <FormField label='First Name'>
+            <input
+              name='firstName'
+              type='text'
+              value={this.state.firstName}
+              onChange={this.handleInputChange}/>
+          </FormField>
+          <FormField label='Last Name'>
+            <input
+              name='lastName'
+              type='text'
+              value={this.state.lastName}
               onChange={this.handleInputChange}/>
           </FormField>
           {errMessage}
