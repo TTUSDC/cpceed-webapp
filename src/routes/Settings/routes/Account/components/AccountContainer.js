@@ -25,7 +25,9 @@ class AccountContainer extends React.Component {
     this.handleEmail = this.handleEmail.bind(this);
   }
 
-  handlePassword(password) {
+  handlePassword(password, old) {
+    // TODO (Nils) utilize the old password
+
     this.setState({
       waiting: update(this.state.waiting, {
         password: {$set: true}

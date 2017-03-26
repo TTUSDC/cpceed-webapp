@@ -22,6 +22,7 @@ class Account extends React.Component {
     this.state = {
       password: '',
       confirm: '',
+      old: '',
       email: this.props.user.email,
       err: {
         password: '',
@@ -61,7 +62,7 @@ class Account extends React.Component {
   handlePassword(event) {
     // This prevents a '?' from being appended to the URL
     event.preventDefault();
-    this.props.handlePassword(this.state.password);
+    this.props.handlePassword(this.state.password, this.state.old);
   }
 
   handleEmail(event) {
@@ -196,6 +197,11 @@ class Account extends React.Component {
           plain={false}
           onSubmit={passPassword}>
           <fieldset>
+            <Paragraph margin='none'>
+              Your password should use at least 8 characters. It should
+              contain only ASCII text, with at least one uppercase, one
+              lowercase, one number, and one special character.
+            </Paragraph>
             <FormField
               label='Password'
               error={this.state.err.password}>
@@ -218,11 +224,14 @@ class Account extends React.Component {
                 onFocus={this.handleFocus}
                 onChange={this.handleInputChange}/>
             </FormField>
-            <Paragraph>
-              Your password should use at least 8 characters. It should
-              contain only ASCII text, with at least one uppercase, one
-              lowercase, one number, and one special character.
-            </Paragraph>
+            <FormField
+              label='Old Password'>
+              <input
+                name='old'
+                type='password'
+                value={this.state.old}
+                onChange={this.handleInputChange}/>
+            </FormField>
             {passwordMessage}
           </fieldset>
           <Footer size='small'>
@@ -241,6 +250,10 @@ class Account extends React.Component {
           plain={false}
           onSubmit={passEmail}>
           <fieldset>
+            <Paragraph margin='none'>
+              You use your email to login, so make sure to use your new one
+              on your next visit.
+            </Paragraph>
             <FormField
               label='Email'
               error={this.state.err.email}>
