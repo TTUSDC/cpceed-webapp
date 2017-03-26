@@ -73,7 +73,7 @@ class AccountContainer extends React.Component {
 
     user.updateEmail(email)
       .then(() => {
-        userRef.update({
+        return userRef.update({
           email: email
         });
       })

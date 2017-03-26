@@ -59,7 +59,8 @@ class AuthContainer extends React.Component {
 
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then((user) => {
-        firebase.database().ref().child('users/' + user.uid).set(userData)
+        return firebase.database().ref().child('users/' + user.uid)
+          .set(userData);
       })
       .then(() => {
         logger.info('User was registered');
