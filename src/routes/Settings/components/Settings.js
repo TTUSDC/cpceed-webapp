@@ -51,5 +51,11 @@ const requiredState = {
   viewSettings: true
 };
 
+/*
+  Testing components wrapped in HOCs is slightly more complicated than
+  normal. Since each component is tested in a vacuum the HOC won't work
+  properly. So you have to have a pure export for testing purposes.
+*/
+export { Settings };
 // The permissions object is passed as the second argument to RequireAuth
 export default withRouter(RequireAuth(Settings, requiredState));
