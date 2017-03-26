@@ -26,16 +26,6 @@ class ProfileContainer extends React.Component {
     var user = firebase.auth().currentUser;
     const userRef = firebase.database().ref().child('users/' + user.uid);
 
-    if('email' in data) {
-      user.updateEmail(data.email)
-        .then(() => {
-          logger.info('Email was updated');
-        })
-        .catch((e) => {
-          logger.error(e.message);
-        });
-    }
-
     userRef.update(data)
       .then(() => {
         logger.info('User data was updated');
@@ -71,7 +61,6 @@ class ProfileContainer extends React.Component {
       <Profile
         lastName={this.props.user.lastName}
         firstName={this.props.user.firstName}
-        email={this.props.user.email}
         proErr={this.state.proErr}
         waiting={this.state.waiting}
         handleSubmit={this.handleSubmit}/>
