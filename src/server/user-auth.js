@@ -1,23 +1,22 @@
-import * as dummyData from '../../test/server/dummy-data';
-import * as errorMessages from './error-messages';
-
-let _currentUser;
+import * as firebase from 'firebase';
 
 export function login(email, password) {
   return new Promise((resolve, reject) => {
-    if (dummyData.auth[email] === password && password) {
-      _currentUser = dummyData.users[dummyData.emailToUid[email]];
-      resolve(_currentUser);
-    } else {
-      reject(errorMessages.invalidLogin);
-    }
+    firebase.auth().signInWithEmailAndPassword(email, password).then((user) => {
+      const ref = firebase.database().ref().child(`users/${user.uid}/role`);
+      ref.once('value').then((snapshot) => {
+        resolve(snapshot.val());
+      });
+    }).catch((err) => {
+      reject(err);
+    });
   });
 }
 
 export function logout() {
-  _currentUser = null;
+  return firebase.auth().signOut();
 }
 
 export function getLoggedInUser() {
-  return _currentUser;
+  return firebase.auth().currentUser;
 }
