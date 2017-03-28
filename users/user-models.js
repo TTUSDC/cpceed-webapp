@@ -1,35 +1,39 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var options = {discriminatorKey: 'type'};
+
+var userSchema = new Schema({
+      firstName: String,
+      lastName: String,
+      email: String,
+      role: String,
+    },
+    options);
+
 var studentSchema = new Schema({
-  approvalStatus: Boolean,
-  email: String,
-  firstName: String,
-  lastName: String,
-  points: {
-    career: Number,
-    community: Number,
-    firstother: Number,
-    firstworkshops: Number,
-    mentor: Number,
-    other: Number,
-    outreach: Number,
-    professor: Number,
-    staff: Number,
-    misc: Number
-  },
-  role: String,
-  studentId: String
-});
+      approvalStatus: Boolean,
+      points: {
+        career: Number,
+        community: Number,
+        firstother: Number,
+        firstworkshops: Number,
+        mentor: Number,
+        other: Number,
+        outreach: Number,
+        professor: Number,
+        staff: Number,
+        misc: Number
+      },
+      studentId: String,
+    },
+    options);
 
-var adminSchema = new Schema({
-  email: String,
-  firstName: String,
-  lastName: String,
-  role: String
-});
+var adminSchema = new Schema({}, options);
 
-var Student = mongoose.model('Student', studentSchema, 'users');
-var Admin = mongoose.model('Admin', adminSchema, 'users');
+var User = mongoose.model('User', userSchema);
+
+var Student = User.discriminator('Student', studentSchema);
+var Admin = User.discriminator('Admin', adminSchema);
 
 module.exports = { Student, Admin };

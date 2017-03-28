@@ -4,32 +4,47 @@ var Student = userModels.Student;
 var Admin = userModels.Admin;
 
 var createUser = (reqData, createCallback) => {
+  var user;
   if (reqData.role == 'Student') {
     // Create new student.
-    var student = new Student({
+    user = new Student({
       approvalStatus: false,
       email: reqData.email,
       firstName: reqData.firstName,
       lastName: reqData.lastName,
-      points: 0,
+      points: {
+        career: 0,
+        community: 0,
+        firstother: 0,
+        firstworkshops: 0,
+        mentor: 0,
+        other: 0,
+        outreach: 0,
+        professor: 0,
+        staff: 0,
+        misc: 0
+      },
       role: 'Student',
-      studentId: 0
+      studentId: reqData.studentId
     });
-  // TODO(ryanfaulkenberry100): Write student to database.
 
   } else if (reqData.role == 'Admin') {
     // Create new admin.
-    var admin = new Admin({
+    user = new Admin({
       email: reqData.email,
       firstName: reqData.firstName,
       lastName: reqData.lastName,
       role: 'Admin'
     });
 
-  // TODO(ryanfaulkenberry100): Write admin to database.
+  } else {
+  // TODO(ryanfaulkenberry100): Handle error case where role is incorrect.
   }
 
+  // TODO(ryanfaulkenberry100): Write user to database.
+
   return new response.ResponseObject(201, {"uid":"1", "url":"//www.google.com"});
+  // TODO(ryanfaulkenberry100): Return actual data
 }
 
 var modifyUser = (userUid, reqData, modifyCallback) => {
@@ -43,6 +58,7 @@ var modifyUser = (userUid, reqData, modifyCallback) => {
   }
 
   return new response.ResponseObject(200, {"url":"//www.google.com"});
+  // TODO(ryanfaulkenberry100): Return actual data
 }
 
 var deleteUser = (userUid) => {
@@ -50,15 +66,15 @@ var deleteUser = (userUid) => {
   console.log(userUid);
 
   return new response.ResponseObject(200, {"url":"//www.google.com"});
+  // TODO(ryanfaulkenberry100): Return actual data
 }
 
 var getUser = (userUid) => {
   // Returns a user.
 
-  // TODO(ryanfaulkenberry100): Find the user.
-
+  // TODO(ryanfaulkenberry100): Find the user, remove User var below
   var User = new Admin({
-    // Placeholder, not necessarily an admin.
+    // Placeholder
     email: "nobody@gmail.com",
     firstName: "John",
     lastName: "Doe",
@@ -66,6 +82,7 @@ var getUser = (userUid) => {
   });
 
   return new response.ResponseObject(200, User);
+  // TODO(ryanfaulkenberry100): Return actual data
 }
 
 var modifyUserAsSelf = (userUid, reqData, modifyCallback) => {}

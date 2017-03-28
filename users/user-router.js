@@ -1,5 +1,4 @@
 var express = require('express');
-var mongoose = require('mongoose');
 var userManager = require('./user-manager.js');
 var userRouter = express.Router();
 
@@ -15,7 +14,7 @@ userRouter.put('/:uid', (req, res) => {
       res.status(400).send(err).end();
       return;
     }
-  res.status(200).json(response.object);
+    res.status(200).json(response.object);
   });
 });
 
