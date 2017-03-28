@@ -46,7 +46,7 @@ class AuthContainer extends React.Component {
       case AuthStates.STUDENT:
         userData = student;
 
-        userData.studentID = data.studentID;
+        userData.studentId = data.studentId;
 
         break;
       default:

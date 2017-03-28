@@ -84,12 +84,9 @@ class Register extends React.Component {
       role: this.state.role
     };
 
-    switch(data.role) {
-      case AuthStates.STUDENT:
-        data.studentID = this.state.studentID;
-
-        break;
-    };
+    if(data.role === AuthStates.STUDENT) {
+      data.studentId = this.state.studentID;
+    }
 
     this.props.handleRegister(data);
   }
