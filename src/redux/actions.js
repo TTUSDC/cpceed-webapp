@@ -1,11 +1,9 @@
 // action types
 
-export const AuthActionTypes = {
-  GUEST: 'SET_AUTH_GUEST',
-  STUDENT: 'SET_AUTH_STUDENT',
-  COORDINATOR: 'SET_AUTH_COORDINATOR'
+export const UserActionTypes = {
+  UPDATE: 'UPDATE',
+  LOGOUT: 'LOGOUT'
 };
-
 
 // Register.js uses AuthStates to set the database values for role.
 export const AuthStates = {
@@ -21,35 +19,65 @@ export const AuthStates = {
 */
 export const PermissionStates = {
   GUEST: {
-    viewActivity: false
+    viewActivity: false,
+    viewSettings: false
   },
   STUDENT: {
-    viewActivity: true
+    viewActivity: true,
+    viewSettings: true
   },
   COORDINATOR: {
-    viewActivity: true
+    viewActivity: true,
+    viewSettings: true
   }
+};
+
+export var coordinator = {
+  email: '',
+  firstName: '',
+  lastName: '',
+  role: AuthStates.COORDINATOR
+};
+
+export var student = {
+  approvalStatus: false,
+  email: '',
+  firstName: '',
+  lastName: '',
+  studentId: '',
+  points: {
+    career: 0,
+    community: 0,
+    firstother: 0,
+    firstworkshops: 0,
+    mentor: 0,
+    other: 0,
+    outreach: 0,
+    professor: 0,
+    staff: 0,
+    misc: 0
+  },
+  role: AuthStates.STUDENT
+};
+
+export var guest = {
+  role: AuthStates.GUEST
 };
 
 // action creators
 
-export const setAuthState = (authState) => {
-  switch(authState) {
-    case AuthStates.GUEST:
-      return {
-        type: AuthActionTypes.GUEST
-      };
-    case AuthStates.STUDENT:
-      return {
-        type: AuthActionTypes.STUDENT
-      };
-    case AuthStates.COORDINATOR:
-      return {
-        type: AuthActionTypes.COORDINATOR
-      };
-    default:
-      return {
-        type: AuthActionTypes.GUEST
-      };
+export const updateUser = (user) => {
+  return {
+    type: UserActionTypes.UPDATE,
+    user
   };
-};
+}
+
+export const logoutUser = () => {
+  var user = guest;
+
+  return {
+    type: UserActionTypes.LOGOUT,
+    user
+  };
+}

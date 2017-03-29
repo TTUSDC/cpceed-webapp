@@ -8,7 +8,8 @@ import Paragraph from 'grommet/components/Paragraph';
 import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
 
-import { AuthStates } from 'redux/actions.js';
+import {AuthStates} from 'redux/actions.js';
+import {checkEmail, checkPass, checkConfirm, checkID} from './verify.js';
 import logger from 'logger/logger.js';
 
 class Register extends React.Component {
@@ -75,42 +76,19 @@ class Register extends React.Component {
     // This prevents a '?' from being appended to the URL
     event.preventDefault();
 
-    var err = [false, '', '', ''];
-    if(this.state.email === '') {
-      err[1] = 'Please enter an email';
-      err[0] = true;
+    var data = {
+      email: this.state.email,
+      password: this.state.password,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      role: this.state.role
+    };
+
+    if(data.role === AuthStates.STUDENT) {
+      data.studentId = this.state.studentID;
     }
 
-    if(this.state.password === '') {
-      err[2] = 'Please enter a password';
-      err[0] = true;
-    }
-
-    if(this.state.studentID === '') {
-      err[3] = 'Please enter a student ID';
-      err[0] = true;
-    }
-
-    if(err[0] === true) {
-      this.setState({
-        err: update(this.state.err, {
-          emailErr: {$set: err[1]},
-          passErr: {$set: err[2]},
-          stuIDErr: {$set: err[3]}
-        })
-      });
-    } else {
-      var data = {
-        email: this.state.email,
-        password: this.state.password,
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        studentID: this.state.studentID,
-        role: this.state.role
-      };
-
-      this.props.handleRegister(data);
-    }
+    this.props.handleRegister(data);
   }
 
   handleFocus(event) {
@@ -166,82 +144,47 @@ class Register extends React.Component {
 
   inputChecking(event) {
     const name = event.target.name;
+    var value = null;
 
     switch(name) {
       case "email":
-        if(/@ttu.edu$/.test(this.state.email) !== true) {
-          this.setState({
-            err: update(this.state.err, {
-              emailErr: {$set: 'Please use a TTU email address.'}
-            })
-          });
-        }
+        value = checkEmail(this.state.email);
+
+        this.setState({
+          err: update(this.state.err, {
+            emailErr: {$set: value}
+          })
+        });
 
         break;
       case "password":
-        if(/^[\x00-\x7F]+$/.test(this.state.password) !== true) {
-          // ASCII only
-          this.setState({
-            err: update(this.state.err, {
-              passErr: {$set: 'Please use only ASCII characters.'}
-            })
-          });
-        } else if(this.state.password.length < 8) {
-          // 8 characters long
-          this.setState({
-            err: update(this.state.err, {
-              passErr: {$set: 'Please use at least 8 characters.'}
-            })
-          });
-        } else if(/[A-Z]/.test(this.state.password) !== true) {
-          // 1 uppercase
-          this.setState({
-            err: update(this.state.err, {
-              passErr: {$set: 'Please use at least one uppercase letter.'}
-            })
-          });
-        } else if(/[a-z]/.test(this.state.password) !== true) {
-          // 1 lowercase
-          this.setState({
-            err: update(this.state.err, {
-              passErr: {$set: 'Please use at least one lowercase letter.'}
-            })
-          });
-        } else if(/[0-9]/.test(this.state.password) !== true) {
-          // 1 number
-          this.setState({
-            err: update(this.state.err, {
-              passErr: {$set: 'Please use at least one number.'}
-            })
-          });
-        } else if(/[^A-Za-z0-9]/.test(this.state.password) !== true) {
-          // 1 special character
-          this.setState({
-            err: update(this.state.err, {
-              passErr: {$set: 'Please use at least one special character.'}
-            })
-          });
-        }
+        value = checkPass(this.state.password);
+
+        this.setState({
+          err: update(this.state.err, {
+            passErr: {$set: value}
+          })
+        });
 
         break;
       case "confirmPass":
-        if(this.state.password !== this.state.confirmPass) {
-          this.setState({
-            err: update(this.state.err, {
-              confirmErr: {$set: 'Please enter a matching password.'}
-            })
-          });
-        }
+        value = checkConfirm(this.state.password, this.state.confirmPass);
+
+        this.setState({
+          err: update(this.state.err, {
+            confirmErr: {$set: value}
+          })
+        });
 
         break;
       case "studentID":
-        if(/^[0-9]{8}$/.test(this.state.studentID) !== true) {
-          this.setState({
-            err: update(this.state.err, {
-              stuIDErr: {$set: 'Please use 8 numbers.'}
-            })
-          });
-        }
+        value = checkID(this.state.studentID);
+
+        this.setState({
+          err: update(this.state.err, {
+            stuIDErr: {$set: value}
+          })
+        });
 
         break;
       default:
@@ -256,7 +199,7 @@ class Register extends React.Component {
     var studentIDField = null;
     if(this.state.role === 'student') {
       studentIDdesc = (
-        <Paragraph>
+        <Paragraph margin='none'>
           Don't include the R before your student ID number.
         </Paragraph>
       );
@@ -315,20 +258,6 @@ class Register extends React.Component {
           </FormField>
           {studentIDdesc}
           {studentIDField}
-          <FormField label='First Name'>
-            <input
-              name='firstName'
-              type='text'
-              value={this.state.firstName}
-              onChange={this.handleInputChange}/>
-          </FormField>
-          <FormField label='Last Name'>
-            <input
-              name='lastName'
-              type='text'
-              value={this.state.lastName}
-              onChange={this.handleInputChange}/>
-          </FormField>
           <FormField
             label='Email'
             error={this.state.err.emailErr}>
@@ -340,7 +269,7 @@ class Register extends React.Component {
               onFocus={this.handleFocus}
               onChange={this.handleInputChange}/>
           </FormField>
-          <Paragraph>
+          <Paragraph margin='none'>
             Your password should use at least 8 characters. It should
             contain only ASCII text, with at least one uppercase, one
             lowercase, one number, and one special character.
@@ -365,6 +294,20 @@ class Register extends React.Component {
               value={this.state.confirmPass}
               onBlur={this.inputChecking}
               onFocus={this.handleFocus}
+              onChange={this.handleInputChange}/>
+          </FormField>
+          <FormField label='First Name'>
+            <input
+              name='firstName'
+              type='text'
+              value={this.state.firstName}
+              onChange={this.handleInputChange}/>
+          </FormField>
+          <FormField label='Last Name'>
+            <input
+              name='lastName'
+              type='text'
+              value={this.state.lastName}
               onChange={this.handleInputChange}/>
           </FormField>
           {errMessage}
