@@ -6,9 +6,10 @@ import Title from 'grommet/components/Title';
 import Box from 'grommet/components/Box';
 import Menu from 'grommet/components/Menu';
 import MenuIcon from 'grommet/components/icons/base/Menu';
+import UserIcon from 'grommet/components/icons/base/User';
 import Anchor from 'grommet/components/Anchor';
 
-import { PermissionStates } from 'redux/actions.js';
+import {AuthStates} from 'redux/actions.js';
 import AuthContainer from 'components/Auth/AuthContainer.js';
 
 class NavBar extends React.Component {
@@ -50,10 +51,7 @@ class NavBar extends React.Component {
       To do a simple compare of JavaScript objects, you must convert
       them to JSON form first.
     */
-    if(
-      JSON.stringify(this.props.permissions)
-      === JSON.stringify(PermissionStates.GUEST)
-    ) {
+    if(this.props.user.role === AuthStates.GUEST) {
       authButton = (
         <Button
           label="Sign In"
@@ -64,12 +62,30 @@ class NavBar extends React.Component {
       );
     } else {
       authButton = (
-        <Button
-          label="Logout"
-          primary={true}
-          onClick={() => {
-            this.props.logout();
-          }}/>
+        <Menu
+          dropAlign={{"right": "right", "top": "top"}}
+          icon={
+            <Box
+              flex={true}
+              direction='row'
+              responsive={false}>
+              <Box pad={{horizontal: 'small'}}>
+                {this.props.user.firstName}
+              </Box>
+              <UserIcon />
+            </Box>
+          }>
+            <Anchor onClick={() => {
+              this.props.navigate('settings/');
+            }}>
+              Settings
+            </Anchor>
+            <Anchor onClick={() => {
+              this.props.logout();
+            }}>
+              Logout
+            </Anchor>
+        </Menu>
       );
     }
 

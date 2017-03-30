@@ -1,9 +1,9 @@
 import React from 'react';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 import * as firebase from 'firebase';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { setAuthState, AuthStates } from 'redux/actions.js';
+import {logoutUser} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import NavBar from './NavBar.js';
 
@@ -39,8 +39,8 @@ class NavBarContainer extends React.Component {
       .then(() => {
         logger.info("User was signed out");
 
-        // Set permissions to guest
-        this.props.dispatch(setAuthState(AuthStates.GUEST));
+        // Set user to guest
+        this.props.dispatch(logoutUser());
       })
       .catch((e) => {
         logger.error(e.message);
@@ -58,22 +58,22 @@ class NavBarContainer extends React.Component {
         from NavBar.js, the context switches back to NavBarContainer.js.
       */
       <NavBar
-        permissions={this.props.permissions}
+        user={this.props.user}
         navigate={this.navigate}
         logout={this.logout}/>
     );
   }
 }
 
-// Used by mapStateToProps to get permissions from the redux store
-const getPermissions = (permissions) => {
-  return permissions;
+// Used by mapStateToProps to get the current user from the redux store
+const getUser = (user) => {
+  return user;
 }
 
-// Used by connect to map permissions to this.props.permissions
+// Used by connect to map user to this.props.user
 const mapStateToProps = (state) => {
   return {
-    permissions: getPermissions(state.permissions)
+    user: getUser(state.user)
   }
 }
 

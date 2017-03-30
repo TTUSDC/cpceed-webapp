@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router';
 
 import AuthContainer from './AuthContainer.js';
 
@@ -27,7 +27,7 @@ const requireAuth = (WrappedComponent, requiredState) => {
           continue;
         }
 
-        if(this.props.permissions[key] !== requiredState[key]) {
+        if(this.props.user.permissions[key] !== requiredState[key]) {
           authorized = false;
           break;
         }
@@ -44,13 +44,13 @@ const requireAuth = (WrappedComponent, requiredState) => {
     }
   }
 
-  const getPermissions = (permissions) => {
-    return permissions;
+  const getUser = (user) => {
+    return user;
   }
 
   const mapStateToProps = (state) => {
     return {
-      permissions: getPermissions(state.permissions)
+      user: getUser(state.user)
     }
   }
 

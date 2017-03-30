@@ -1,9 +1,14 @@
-import React, { PropTypes } from 'react';
-import { withRouter } from 'react-router';
+import React, {PropTypes} from 'react';
+import {withRouter} from 'react-router';
 import * as firebase from 'firebase';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { setAuthState } from 'redux/actions.js';
+import {
+  updateUser,
+  coordinator,
+  student,
+  AuthStates
+} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import Auth from './Auth.js';
 
@@ -32,22 +37,35 @@ class AuthContainer extends React.Component {
       regErr: ''
     });
 
+    var userData = {};
+    switch(data.role) {
+      case AuthStates.COORDINATOR:
+        userData = coordinator;
+
+        break;
+      case AuthStates.STUDENT:
+        userData = student;
+
+        userData.studentId = data.studentId;
+
+        break;
+      default:
+        logger.error('Unknown user role in AuthContainer.js');
+    };
+
+    userData.email = data.email;
+    userData.firstName = data.firstName;
+    userData.lastName = data.lastName;
+
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then((user) => {
-        firebase.database().ref().child('users/' + user.uid).set({
-          approvalStatus: false,
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          points: 0,
-          studentId: data.studentID,
-          role: data.role
-        })
+        return firebase.database().ref().child('users/' + user.uid)
+          .set(userData);
       })
       .then(() => {
         logger.info('User was registered');
 
-        this.props.dispatch(setAuthState(data.role));
+        this.props.dispatch(updateUser(userData));
 
         if(this.props.authFinished) {
           this.props.authFinished();
@@ -71,13 +89,13 @@ class AuthContainer extends React.Component {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
         const rootRef = firebase.database().ref();
-        const userRef = rootRef.child('users/' + user.uid + '/role');
+        const userRef = rootRef.child('users/' + user.uid);
 
         userRef.once('value')
           .then((snapshot) => {
             logger.info('User was logged in');
 
-            this.props.dispatch(setAuthState(snapshot.val()));
+            this.props.dispatch(updateUser(snapshot.val()));
 
             if(this.props.authFinished) {
               this.props.authFinished();
