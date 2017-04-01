@@ -21,5 +21,6 @@ router.use('/reports', report.reportRouter);
 
 app.use('/api', router);
 
-app.listen(port);
+const server = app.listen(port);
 console.log('Listening on port ' + port);
+module.exports = server;
