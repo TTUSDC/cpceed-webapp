@@ -9,7 +9,6 @@ const server = {
   errorMessages,
   login: auth.login,
   logout: auth.logout,
-  getLoggedInUser: auth.getLoggedInUser,
 
   createReport: reports.create,
   modifyReport: reports.modify,
