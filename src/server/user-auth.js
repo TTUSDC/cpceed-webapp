@@ -1,10 +1,16 @@
+import { store } from 'App';
+import { updateUser } from 'redux/actions';
 import * as firebase from 'firebase';
+import logger from 'logger/logger.js';
 
 export function login(email, password) {
   return new Promise((resolve, reject) => {
     firebase.auth().signInWithEmailAndPassword(email, password).then((user) => {
-      const ref = firebase.database().ref().child(`users/${user.uid}/role`);
-      ref.once('value').then((snapshot) => {
+      const rootRef = firebase.database().ref();
+      const userRef = rootRef.child(`users/${user.uid}`);
+      userRef.once('value').then((snapshot) => {
+        store.dispatch(updateUser(snapshot.val()));
+        logger.info(snapshot.val());
         resolve(snapshot.val());
       });
     }).catch((err) => {
