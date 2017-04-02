@@ -1,7 +1,7 @@
 import { store } from 'App';
 import { updateUser, logoutUser } from 'redux/actions';
 import * as firebase from 'firebase';
-import logger from 'logger/logger.js';
+// import logger from 'logger/logger.js';
 
 export function login(email, password) {
   return new Promise((resolve, reject) => {
@@ -27,8 +27,4 @@ export function logout() {
       resolve();
     }).catch((err) => { reject(err); });
   });
-}
-
-export function getLoggedInUser() {
-  return firebase.auth().currentUser;
 }

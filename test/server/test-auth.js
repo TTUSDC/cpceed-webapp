@@ -2,7 +2,7 @@
 import server from 'server/server.js';
 import { store } from 'App.js';
 import { AuthStates } from 'redux/actions';
-//import logger from 'logger/logger.js';
+// import logger from 'logger/logger.js';
 
 const user38257001 = {
   studentId: '38257001',
@@ -13,7 +13,20 @@ const user38257001 = {
 
 const expect = require('chai').expect;
 
-export default describe('Auth', () => {
+export default describe('Server API: Auth', () => {
+  describe('initial state', () => {
+    /*
+     * The purpose of these tests is not to test the code of user-auth, but to
+     * test certain assumptions that other tests here make.
+     * If one of these tests fails, that means that an assumption a test here
+     * makes and relies on may no longer be valid.
+     */
+    it('should be in GUEST mode', (done) => {
+      const reduxUser = store.getState().user;
+      expect(reduxUser.role).to.equal(AuthStates.GUEST);
+      done();
+    });
+  });
   describe('#login(email,password)', () => {
     it('should login to account', (done) => {
       const testUser = user38257001;
