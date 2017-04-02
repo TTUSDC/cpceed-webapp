@@ -1,5 +1,5 @@
 import { store } from 'App';
-import { updateUser } from 'redux/actions';
+import { updateUser, logoutUser } from 'redux/actions';
 import * as firebase from 'firebase';
 import logger from 'logger/logger.js';
 
@@ -9,8 +9,9 @@ export function login(email, password) {
       const rootRef = firebase.database().ref();
       const userRef = rootRef.child(`users/${user.uid}`);
       userRef.once('value').then((snapshot) => {
-        store.dispatch(updateUser(snapshot.val()));
-        logger.info(snapshot.val());
+        const userData = snapshot.val();
+        userData.uid = user.uid;
+        store.dispatch(updateUser(userData));
         resolve(snapshot.val());
       });
     }).catch((err) => {
@@ -20,7 +21,12 @@ export function login(email, password) {
 }
 
 export function logout() {
-  return firebase.auth().signOut();
+  return new Promise((resolve, reject) => {
+    firebase.auth().signOut().then(() => {
+      store.dispatch(logoutUser());
+      resolve();
+    }).catch((err) => { reject(err); });
+  });
 }
 
 export function getLoggedInUser() {
