@@ -1,4 +1,3 @@
-// BASE SETUP
 const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
@@ -45,9 +44,9 @@ router.use('/auth', auth.router);
 app.use('/api', router);
 
 /** start express server **/
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log('App is running at %d in %s mode', port, app.get('env'));
   console.log('  Press ctrl-c to stop\n');
 });
 
-module.exports = app;
+module.exports = server;
