@@ -8,5 +8,8 @@ module.exports = {
   "plugins": ["chai-friendly"],
   "rules": {
     "chai-friendly/no-unused-expressions": 2,
+    "import/no-extraneous-dependencies": 0,
+    "import/extensions": 0,
+    "import/no-unresolved": 0,
   }
 };
