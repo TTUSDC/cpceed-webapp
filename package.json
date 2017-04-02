@@ -17,7 +17,7 @@
     "mockgoose": "^5.3.2"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -C",
+    "test": "./node_modules/.bin/mocha --recursive -C",
     "start": "node src/server.js"
   },
   "repository": {
