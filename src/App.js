@@ -20,4 +20,5 @@ const App = () => (
   </Provider>
 );
 
+export {store};
 export default App;
