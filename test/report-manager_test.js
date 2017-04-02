@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 var assert = require('assert');
 mockgoose(mongoose);
 
-var reportManager = require('../reports/report-manager');
-var reportModels = require('../reports/report-models');
+var reportManager = require('../src/reports/report-manager');
+var reportModels = require('../src/reports/report-models');
 var Report = reportModels.Report;
 var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
