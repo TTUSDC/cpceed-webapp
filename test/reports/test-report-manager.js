@@ -10,11 +10,16 @@ var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
 
 describe('reportManager', () => {
+  before( (done) => {
+    mongoose.connect('', done);
+  });
   beforeEach( (done) => {
-    mongoose.connect('', () => {
-      mockgoose.reset();
-      done();
-    });
+    mockgoose.reset();
+    done();
+  });
+  
+  after( (done) => {
+    mongoose.unmock(done);
   });
   
   describe('#createReport', () => {
