@@ -18,7 +18,7 @@ router.post('/', (req, res) => {
   });
 });
 
-router.delete('/', manager.logout);
+router.delete('/', manager.verify, manager.logout);
 
 router.post('/create/', (req, res) => {
   manager.create(req.body.email, req.body.password, (err) => {

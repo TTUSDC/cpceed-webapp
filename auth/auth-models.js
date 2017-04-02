@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-/** set up user model **/
+/** set up auth user model **/
 const authSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -35,12 +35,29 @@ authSchema.pre('save', function (next) {
   });
 });
 
-authSchema.methods.comparePassword = function (candidatePassword, next) {
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
+authSchema.methods.comparePassword = function (password, next) {
+  bcrypt.compare(password, this.password, (err, isMatch) => {
     next(err, isMatch);
   });
-}
+};
+
+// Set up session model
+const sessionSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true
+  },
+  token: {
+    type: String,
+    required: true
+  }
+});
+
+sessionSchema.methods.compareTokens = function (token, next) {
+  next(token === this.token);
+};
 
 const AuthUser = mongoose.model('AuthUser', authSchema);
+const Session = mongoose.model('Session', sessionSchema);
 
-module.exports = AuthUser;
+module.exports = { AuthUser, Session };
