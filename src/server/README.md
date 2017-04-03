@@ -52,7 +52,7 @@ As this is still a work in progress, see the server tests for usage examples.
 ## Server
 Holds initialization functions.
 
-## Init
+### Init
 Method: `init()`
 Returns: None
 
@@ -64,7 +64,7 @@ init();
 
 ## User Authentication
 
-## Login
+### Login
 Method: `login(email, password)`
 
 Returns: Promise  
@@ -82,7 +82,7 @@ login(email, password).then(function(user){
 })
 ```
 
-## Logout  
+### Logout  
 
 Method: `logout()`
 
