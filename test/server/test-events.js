@@ -1,6 +1,6 @@
 var expect = require("chai").expect;
 
-import server from '../../src/server/server'
+import { events as server } from '../../src/server/server'
 
 export default describe('events', function() {
   var testEvent = {

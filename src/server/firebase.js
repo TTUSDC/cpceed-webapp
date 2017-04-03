@@ -6,10 +6,7 @@ const firebaseConfig = {
   databaseURL: 'https://testing-project-a5d42.firebaseio.com/',
 };
 
-
-const init = () => {
+export default function init() {
   firebase.initializeApp(firebaseConfig);
-};
+}
 
-
-export default init;

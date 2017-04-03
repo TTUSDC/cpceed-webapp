@@ -1,5 +1,4 @@
-// import init from 'server/firebase.js';
-import server from 'server/server.js';
+import { auth } from 'server/server';
 import { store } from 'App.js';
 import { AuthStates } from 'redux/actions';
 // import logger from 'logger/logger.js';
@@ -30,7 +29,7 @@ export default describe('Server API: Auth', () => {
   describe('#login(email,password)', () => {
     it('should login to account', (done) => {
       const testUser = user38257001;
-      server.login(testUser.email, testUser.password).then((user) => {
+      auth.login(testUser.email, testUser.password).then((user) => {
         expect(user.studentId).to.equal(testUser.studentId);
         const reduxUser = store.getState().user;
         expect(reduxUser.studentId).to.equal(testUser.studentId);
@@ -44,9 +43,9 @@ export default describe('Server API: Auth', () => {
   describe('#logout()', () => {
     it('should login then logout of account', (done) => {
       const testUser = user38257001;
-      server.login(testUser.email, testUser.password).then((user) => {
+      auth.login(testUser.email, testUser.password).then((user) => {
         expect(user.studentId).to.equal(testUser.studentId);
-        server.logout().then(() => {
+        auth.logout().then(() => {
           const reduxUser = store.getState().user;
           expect(reduxUser.role).to.equal(AuthStates.GUEST);
           done();
