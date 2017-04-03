@@ -11,7 +11,7 @@ init();
 
 // store holds the redux store that allows app-wide state to be shared
 const store = createStore(cpceedApp);
-// logger.info('SERVER', init);
+
 const App = () => (
   // Provider shares store with components joined by connect()
   <Provider store={store}>
