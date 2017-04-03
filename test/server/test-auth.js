@@ -1,7 +1,7 @@
-import { auth } from 'server/server';
 import { store } from 'App.js';
 import { AuthStates } from 'redux/actions';
 // import logger from 'logger/logger.js';
+import { login, logout } from 'server/user-auth';
 
 const user38257001 = {
   studentId: '38257001',
@@ -29,7 +29,7 @@ export default describe('Server API: Auth', () => {
   describe('#login(email,password)', () => {
     it('should login to account', (done) => {
       const testUser = user38257001;
-      auth.login(testUser.email, testUser.password).then((user) => {
+      login(testUser.email, testUser.password).then((user) => {
         expect(user.studentId).to.equal(testUser.studentId);
         const reduxUser = store.getState().user;
         expect(reduxUser.studentId).to.equal(testUser.studentId);
@@ -43,9 +43,9 @@ export default describe('Server API: Auth', () => {
   describe('#logout()', () => {
     it('should login then logout of account', (done) => {
       const testUser = user38257001;
-      auth.login(testUser.email, testUser.password).then((user) => {
+      login(testUser.email, testUser.password).then((user) => {
         expect(user.studentId).to.equal(testUser.studentId);
-        auth.logout().then(() => {
+        logout().then(() => {
           const reduxUser = store.getState().user;
           expect(reduxUser.role).to.equal(AuthStates.GUEST);
           done();

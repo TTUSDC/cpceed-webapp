@@ -1,9 +1,12 @@
-// import * as from './user-auth';
-// import * as reports from './reports';
-// import * as events from './events';
-// import * as dummyData from '../../test/server/dummy-data';
-// import errorMessages from './error-messages';
-import * as auth from 'server/user-auth';
+import * as firebase from 'firebase';
 
-export { auth };
-export * from 'server/firebase';
+const firebaseConfig = {
+  apiKey: 'AIzaSyCtMk74zXBsAYRYIzamcyRXyGDFP3vKXhA',
+  authDomain: 'testing-project-a5d42.firebaseapp.com',
+  databaseURL: 'https://testing-project-a5d42.firebaseio.com/',
+};
+
+export default function init() {
+  firebase.initializeApp(firebaseConfig);
+}
+
