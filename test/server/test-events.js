@@ -1,5 +1,8 @@
 import * as firebase from 'firebase';
-import { create as createEvent } from 'server/events';
+import {
+  create as createEvent,
+  modify as modifyEvent,
+} from 'server/events';
 // import logger from 'logger/logger';
 import connectWithAuth from './core/utils';
 
@@ -44,6 +47,24 @@ export default describe('events', () => {
           done();
         }).catch((err) => { done(err); });
       });
+    }).timeout(10000);
+  });
+  describe('#modify(uid, updatedEvent)', () => {
+    it('should modify an existing event.', (done) => {
+      createEvent(testEvent).then((uid) => {
+        createdEvents.push(uid);
+        const updatedEvent = testEvent;
+        updatedEvent.title = 'UPDATED EVENT';
+        modifyEvent(uid, updatedEvent).then((updatedUid) => {
+          expect(updatedUid).to.equal(uid);
+          const eventRef = eventsRef.child(uid);
+          eventRef.once('value').then((snapshot) => {
+            const eventData = snapshot.val();
+            expect(eventData).to.deep.equal(updatedEvent);
+            done();
+          });
+        });
+      }).catch((err) => { done(err); });
     }).timeout(10000);
   });
 });
