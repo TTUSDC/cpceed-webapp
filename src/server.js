@@ -5,8 +5,8 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 
 /** router **/
-const user = require('./Users/router.js');
-const event = require('./Events/router.js');
+const user = require('./users/user-router.js');
+const event = require('./events/router.js');
 const report = require('./reports/report-router.js');
 const auth = require('./auth/auth-router.js');
 
