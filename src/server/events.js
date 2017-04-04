@@ -37,7 +37,10 @@ export function remove(uid) {
 
 export function getByUid(uid) {
   return new Promise((resolve, reject) => {
-    resolve(dummyData.events[uid]);
+    const getEventRef = eventsRef.child(uid);
+    getEventRef.once('value').then((snapshot) => {
+      resolve(snapshot.val());
+    }).catch((err) => { reject(err); });
   });
 }
 

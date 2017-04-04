@@ -3,8 +3,9 @@ import {
   create as createEvent,
   modify as modifyEvent,
   remove as removeEvent,
+  getByUid as getEventByUid,
 } from 'server/events';
-import logger from 'logger/logger';
+// import logger from 'logger/logger';
 import connectWithAuth from './core/utils';
 
 const expect = require('chai').expect;
@@ -71,12 +72,24 @@ export default describe('events', () => {
   describe('#remove(uid)', () => {
     it('should remove an existing event.', (done) => {
       createEvent(testEvent).then((uid) => {
+        createdEvents.push(uid);
         removeEvent(uid).then(() => {
           const eventRef = eventsRef.child(uid);
           eventRef.once('value').then((snapshot) => {
             expect(snapshot.val()).to.be.null;
             done();
           });
+        });
+      }).catch((err) => { done(err); });
+    });
+  });
+  describe('#getByUid(uid)', () => {
+    it('should return an existing event by UID.', (done) => {
+      createEvent(testEvent).then((uid) => {
+        createdEvents.push(uid);
+        getEventByUid(uid).then((receivedEvent) => {
+          expect(receivedEvent).to.deep.equal(testEvent);
+          done();
         });
       }).catch((err) => { done(err); });
     });
