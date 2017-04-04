@@ -12,9 +12,10 @@ const authSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  admin: {
-    type: Boolean,
-    required: false
+  role: {
+    type: String,
+    enum: ['STUDENT', 'COORDINATOR'],
+    required: true
   }
 }, { timestamps: true });
 
@@ -47,6 +48,7 @@ authSchema.methods.comparePassword = function (password, next) {
 const sessionSchema = new mongoose.Schema({
   email: {
     type: String,
+    unique: true,
     required: true
   },
   token: {

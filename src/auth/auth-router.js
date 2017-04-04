@@ -21,15 +21,9 @@ router.post('/', (req, res) => {
 router.delete('/', manager.verify, manager.logout);
 
 router.post('/create/', (req, res) => {
-  manager.create(req.body.email, req.body.password, (err) => {
+  manager.create(req.body.email, req.body.password, req.body.role, (err) => {
     if (err) { res.status(400).send(err).end(); }
-    else {
-      console.log({
-        message: 'user created'
-      });
-
-      res.status(201).end();
-    }
+    else { res.status(201).end(); }
   });
 });
 

@@ -68,10 +68,11 @@ const changePassword = (email, password, next) => {
  * @param {function} next - The callback function to run after this function
   *     finishes.
  */
-const create = (email, password, next) => {
+const create = (email, password, role,  next) => {
   var user = new AuthUser({
     email: email,
-    password: password
+    password: password,
+    role: role
   });
 
   AuthUser.findOne({ email: email }, (err, existingUser) => {
@@ -79,9 +80,7 @@ const create = (email, password, next) => {
     else if (existingUser) {
       next('Account with that email address already exists.');
     }
-    else {
-      user.save((err) => { next(err); });
-    }
+    else { user.save((err) => { next(err); }); }
   });
 };
 
