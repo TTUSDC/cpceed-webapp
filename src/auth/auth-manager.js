@@ -157,4 +157,4 @@ const verify = (req, res, next) => {
   }
 };
 
-module.exports = { login, logout, create, verify };
+module.exports = { create, login, logout, verify };

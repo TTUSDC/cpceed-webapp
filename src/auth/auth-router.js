@@ -4,6 +4,10 @@ const manager = require('./auth-manager');
 const router = express.Router();
 
 /** hook up the routes **/
+router.get('/', manager.verify, (req, res) => {
+  res.status(201).json({ req.decoded.role }).end();
+});
+
 router.post('/', (req, res) => {
   manager.login(req.body.email, req.body.password, (err, token) => {
     if (err) {
