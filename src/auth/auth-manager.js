@@ -11,21 +11,45 @@ const Session = require('./auth-models').Session;
  */
 const login = (email, password, next) => {
   AuthUser.findOne({ email: email }, (err, user) => {
-    if (err) { next(err); }
-    else if (!user) { next('Auth failed'); }
+    if (err) {
+      next(err);
+    }
+    else if (!user) {
+      next('Auth failed');
+    }
     else {
       user.comparePassword(password, (err, isMatch) => {
-        if (err) { next(err); }
+        if (err) {
+          next(err);
+        }
         else {
-          // Create a JWT and return it to the client.
-          var token = jwt.sign(user, process.env.SECRET, {
-            expiresIn: 60*60*24
+          Session.findOne({ email: email }, (err, session) => {
+            if (err) {
+              next(err);
+            }
+            else if (session) {
+              next(null, session.token);
+            }
+            else {
+              // Create a JWT.
+              const jwtData = { email: email, role: user.role };
+              jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (err, token) => {
+                if (err) {
+                  next(err);
+                }
+                else {
+                  // Save the session to the DB.
+                  const session = new Session({
+                    email: email,
+                    token: token
+                  });
+                  session.save((err) => { next(err); });
+
+                  next(null, token);
+                }
+              });
+            }
           });
-
-          // TODO(the-pat): Save the token to mongoose
-
-
-          next(null, token);
         }
       });
     }
@@ -41,7 +65,9 @@ const login = (email, password, next) => {
 const logout = (email, next) => {
   // Delete the session from the DB.
   Session.findOne({ email: email }, (err, session) => {
-    if (err) { next(err); }
+    if (err) {
+      next(err);
+    }
     else if (session) {
       session.remove(next);
     }
@@ -76,11 +102,15 @@ const create = (email, password, role,  next) => {
   });
 
   AuthUser.findOne({ email: email }, (err, existingUser) => {
-    if (err) { next(err); }
+    if (err) {
+      next(err);
+    }
     else if (existingUser) {
       next('Account with that email address already exists.');
     }
-    else { user.save((err) => { next(err); }); }
+    else {
+      user.save((err) => { next(err); });
+    }
   });
 };
 
@@ -97,14 +127,21 @@ const verify = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
       if (err) {
-        return res.status(401).json({ message: 'Auth failed.' });
+        res.status(401).json({ message: 'Auth failed.' }).end();
       }
       else {
         Session.findOne({ email: decoded.email }, (err, session) => {
-          if (err) { next(err); }
+          if (err) {
+            next(err);
+          }
+          else if (!session) {
+            res.status(404).json({ message: 'Auth failed.' }).end();
+          }
           else {
-            session.compareTokens(decoded.token, (isMatch) => {
-              if (isMatch) { return res.status(401).json({ message: 'Auth failed.' }); }
+            session.compareToken(token, (isMatch) => {
+              if (!isMatch) {
+                res.status(401).json({ message: 'Auth failed.' }).end();
+              }
               else {
                 req.decoded = decoded;
                 next();
@@ -116,7 +153,7 @@ const verify = (req, res, next) => {
     });
   }
   else {
-    return res.status(403).send({ message: 'No token provided.' });
+    res.status(403).send({ message: 'No token provided.' }).end();
   }
 };
 

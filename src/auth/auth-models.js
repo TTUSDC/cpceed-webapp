@@ -57,7 +57,7 @@ const sessionSchema = new mongoose.Schema({
   }
 });
 
-sessionSchema.methods.compareTokens = function (token, next) {
+sessionSchema.methods.compareToken = function (token, next) {
   next(token === this.token);
 };
 
