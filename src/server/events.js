@@ -1,6 +1,5 @@
-import logger from 'logger/logger';
+// import logger from 'logger/logger';
 import * as firebase from 'firebase';
-import * as dummyData from '../../test/server/dummy-data';
 
 const eventsRef = firebase.database().ref().child('events');
 
@@ -46,6 +45,8 @@ export function getByUid(uid) {
 
 export function getAll() {
   return new Promise((resolve, reject) => {
-    resolve(dummyData.events);
+    eventsRef.once('value').then((snapshot) => {
+      resolve(snapshot.val());
+    }).catch((err) => { reject(err); });
   });
 }

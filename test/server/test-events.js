@@ -4,6 +4,7 @@ import {
   modify as modifyEvent,
   remove as removeEvent,
   getByUid as getEventByUid,
+  getAll as getAllEvents,
 } from 'server/events';
 // import logger from 'logger/logger';
 import connectWithAuth from './core/utils';
@@ -93,5 +94,17 @@ export default describe('events', () => {
         });
       }).catch((err) => { done(err); });
     });
+  });
+  describe('#getAll()', () => {
+    it('should return all existing events.', (done) => {
+      createEvent(testEvent).then((uid) => {
+        createEvent(testEvent).then((uid2) => {
+          getAllEvents().then((events) => {
+            expect(events).to.contain.all.keys([uid, uid2]);
+            done();
+          });
+        });
+      }).catch((err) => { done(err); });
+    }).timeout(10000);
   });
 });
