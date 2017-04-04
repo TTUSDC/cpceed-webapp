@@ -2,8 +2,9 @@ import * as firebase from 'firebase';
 import {
   create as createEvent,
   modify as modifyEvent,
+  remove as removeEvent,
 } from 'server/events';
-// import logger from 'logger/logger';
+import logger from 'logger/logger';
 import connectWithAuth from './core/utils';
 
 const expect = require('chai').expect;
@@ -66,5 +67,18 @@ export default describe('events', () => {
         });
       }).catch((err) => { done(err); });
     }).timeout(10000);
+  });
+  describe('#remove(uid)', () => {
+    it('should remove an existing event.', (done) => {
+      createEvent(testEvent).then((uid) => {
+        removeEvent(uid).then(() => {
+          const eventRef = eventsRef.child(uid);
+          eventRef.once('value').then((snapshot) => {
+            expect(snapshot.val()).to.be.null;
+            done();
+          });
+        });
+      }).catch((err) => { done(err); });
+    });
   });
 });

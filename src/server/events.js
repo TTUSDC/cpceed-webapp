@@ -1,4 +1,4 @@
-// import logger from 'logger/logger';
+import logger from 'logger/logger';
 import * as firebase from 'firebase';
 import * as dummyData from '../../test/server/dummy-data';
 
@@ -26,8 +26,12 @@ export function modify(uid, updatedEvent) {
 
 export function remove(uid) {
   return new Promise((resolve, reject) => {
-    dummyData.events[uid] = undefined;
-    resolve();
+    const removeEventRef = eventsRef.child(uid);
+    removeEventRef.remove().then(() => {
+      resolve();
+    }).catch((err) => {
+      reject(err);
+    });
   });
 }
 
