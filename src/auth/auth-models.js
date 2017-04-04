@@ -21,12 +21,14 @@ const authSchema = new mongoose.Schema({
 authSchema.pre('save', function (next) {
   const user = this;
 
+  // If the password is not modified,
+  // continue saving the user.
   if (!user.isModified('password')) { return next(); }
 
-  bcrypt.genSalt(process.env.SALT, (err, salt) => {
+  bcrypt.genSalt(Number(process.env.SALT), (err, salt) => {
     if (err) { return next(err); }
 
-    bcrypt.hash(user.password, salt, null, (err, hash) => {
+    bcrypt.hash(user.password, salt, (err, hash) => {
       if (err) { return next(err); }
 
       user.password = hash;
