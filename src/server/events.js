@@ -1,11 +1,15 @@
-import * as util from './utils';
+import logger from 'logger/logger';
+import * as firebase from 'firebase';
 import * as dummyData from '../../test/server/dummy-data';
 
 export function create(newEvent) {
   return new Promise((resolve, reject) => {
-    const uid = util.getRandomString();
-    dummyData.events[uid] = newEvent;
-    resolve(uid);
+    const eventsRef = firebase.database().ref().child('events');
+    const newEventRef = eventsRef.push();
+    newEventRef.set(newEvent).then((err) => {
+      if (err) reject(err);
+      resolve(newEventRef.key);
+    });
   });
 }
 
