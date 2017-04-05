@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-/** set up auth user model **/
+// Set up AuthUser model.
 const authSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -22,8 +22,7 @@ const authSchema = new mongoose.Schema({
 authSchema.pre('save', function (next) {
   const user = this;
 
-  // If the password is not modified,
-  // continue saving the user.
+  // If the password is not modified, continue saving the user.
   if (!user.isModified('password')) { return next(); }
 
   bcrypt.genSalt(Number(process.env.SALT), (err, salt) => {
@@ -44,7 +43,7 @@ authSchema.methods.comparePassword = function (password, next) {
   });
 };
 
-// Set up session model
+// Set up session model.
 const sessionSchema = new mongoose.Schema({
   email: {
     type: String,

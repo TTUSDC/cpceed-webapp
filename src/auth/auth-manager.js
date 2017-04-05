@@ -3,49 +3,49 @@ const AuthUser = require('./auth-models').AuthUser;
 const Session = require('./auth-models').Session;
 
 /**
+ * Callback for sending the response to the client.
+ *
+ * @function loginResponse
+ * @param {(string|Object)} err - The error.
+ * @param {string} token - The JWT token.
+ */
+
+/**
  * Given a valid email/password, generates and returns a JWT.
  * @param {string} email - The user's email address.
  * @param {string} password - The user's password.
- * @param {function} next - The callback function to run after this function
+ * @param {loginResponse} next - The callback function to run after this function
  *     finishes.
  */
 const login = (email, password, next) => {
   AuthUser.findOne({ email: email }, (err, user) => {
     if (err) {
       next(err);
-    }
-    else if (!user) {
+    } else if (!user) {
       next('Auth failed');
-    }
-    else {
+    } else {
       user.comparePassword(password, (err, isMatch) => {
         if (err) {
           next(err);
-        }
-        else {
+        } else {
           Session.findOne({ email: email }, (err, session) => {
             if (err) {
               next(err);
-            }
-            else if (session) {
+            } else if (session) {
               next(null, session.token);
-            }
-            else {
+            } else {
               // Create a JWT.
               const jwtData = { email: email, role: user.role };
               jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (err, token) => {
                 if (err) {
                   next(err);
-                }
-                else {
+                } else {
                   // Save the session to the DB.
                   const session = new Session({
                     email: email,
                     token: token
                   });
-                  session.save((err) => { next(err); });
-
-                  next(null, token);
+                  session.save((err) => { next(err, token); });
                 }
               });
             }
@@ -57,9 +57,17 @@ const login = (email, password, next) => {
 };
 
 /**
+ * Callback for sending the response to the client.
+ *
+ * @function logoutResponse
+ * @param {(string|Object)} err - The error.
+ * @param {string} err.message - The error message.
+ */
+
+/**
  * Delete the user's JWT from the DB.
  * @param {string} email - The user's email address.
- * @param {function} next - The callback function to run after this function
+ * @param {logoutResponse} next - The callback function to run after this function
  *     finishes.
  */
 const logout = (email, next) => {
@@ -67,19 +75,23 @@ const logout = (email, next) => {
   Session.findOne({ email: email }, (err, session) => {
     if (err) {
       next(err);
-    }
-    else if (session) {
+    } else if (session) {
       session.remove(next);
-    }
-    else { next(); }
+    } else { next(); }
   });
 };
+
+/**
+ * Callback for sending the response to the client.
+ *
+ * @function changePasswordResponse
+ */
 
 /**
  * Delete the user's JWT from the DB.
  * @param {string} email - The user's email address.
  * @param {string} newPassword - The user's new password.
- * @param {function} next - The callback function to run after this function
+ * @param {changePasswordResponse} next - The callback function to run after this function
   *     finishes.
  */
 const changePassword = (email, password, next) => {
@@ -88,10 +100,17 @@ const changePassword = (email, password, next) => {
 }
 
 /**
+ * Callback for sending the response to the client.
+ *
+ * @function createResponse
+ * @param {(string|Object)} err - The error.
+ */
+
+/**
  * Given an email/password, create an AuthUser.
  * @param {string} email - The user's email address.
  * @param {string} password - The user's password.
- * @param {function} next - The callback function to run after this function
+ * @param {createResponse} next - The callback function to run after this function
   *     finishes.
  */
 const create = (email, password, role,  next) => {
@@ -104,22 +123,20 @@ const create = (email, password, role,  next) => {
   AuthUser.findOne({ email: email }, (err, existingUser) => {
     if (err) {
       next(err);
-    }
-    else if (existingUser) {
+    } else if (existingUser) {
       next('Account with that email address already exists.');
-    }
-    else {
+    } else {
       user.save((err) => { next(err); });
     }
   });
 };
 
 /**
- * Verify the JWT.
+ * Middleware to verify the JWT.
+ * For valid tokens, a `decoded` object is added to the request object.
  * @param {Object} req - The request object.
- * @param {Obeject} res - The response object.
- * @param {function} next - The callback function to run after this function
- *     finishes.
+ * @param {Object} res - The response object.
+ * @param {function} next - Invoke the next middleware or route.
  */
 const verify = (req, res, next) => {
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -127,22 +144,18 @@ const verify = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
       if (err) {
-        res.status(401).json({ message: 'Auth failed.' }).end();
-      }
-      else {
+        next('Auth failed.');
+      } else {
         Session.findOne({ email: decoded.email }, (err, session) => {
           if (err) {
             next(err);
-          }
-          else if (!session) {
-            res.status(404).json({ message: 'Auth failed.' }).end();
-          }
-          else {
+          } else if (!session) {
+            next('Auth failed.');
+          } else {
             session.compareToken(token, (isMatch) => {
               if (!isMatch) {
-                res.status(401).json({ message: 'Auth failed.' }).end();
-              }
-              else {
+                next('Auth failed.');
+              } else {
                 req.decoded = decoded;
                 next();
               }
@@ -151,9 +164,8 @@ const verify = (req, res, next) => {
         });
       }
     });
-  }
-  else {
-    res.status(403).send({ message: 'No token provided.' }).end();
+  } else {
+    next('No token provided.');
   }
 };
 
