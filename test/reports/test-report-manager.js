@@ -160,7 +160,7 @@ describe('reportManager', () => {
               assert.equal(err, null);
               assert.equal(deletedReport.student, eventReport.student);
               assert.equal(deletedReport.event, eventReport.event);
-              
+
               Report.findById(createdReport.id, {}, (err, foundReport) => {
                 assert.equal(foundReport, null);
                 done();
@@ -168,7 +168,7 @@ describe('reportManager', () => {
             });
       });
     });
-    
+
     it('should delete the other report', (done) => {
       var otherReport = new OtherReport({
         student: 'John Doe',
@@ -181,7 +181,7 @@ describe('reportManager', () => {
               assert.equal(err, null);
               assert.equal(deletedReport.student, otherReport.student);
               assert.equal(deletedReport.location, otherReport.location);
-              
+
               Report.findById(createdReport.id, {}, (err, foundReport) => {
                 assert.equal(foundReport, null);
                 done();
@@ -192,74 +192,77 @@ describe('reportManager', () => {
   });
 
   describe('#getReportById', () => {
-    it('should pass the event report with the given id to the callback', (done) => {
-      var eventReport = new EventReport({
-        student: 'John Doe',
-        event: 'someEventUid',
-      });
-      eventReport.save((err, createdReport) => {
-        assert.equal(err, null);
-        reportManager.getReportById(
-            createdReport.id, {}, (err, foundReport) => {
-              assert.equal(err, null);
-              assert.equal(foundReport.student, eventReport.student);
-              assert.equal(foundReport.event, eventReport.event);
-              done();
-            });
-      });
-    });
-    
-    it('should pass the other report with the given id to the callback', (done) => {
-      var otherReport = new OtherReport({
-        student: 'John Doe',
-        location: 'EC203',
-      });
-      otherReport.save((err, createdReport) => {
-        assert.equal(err, null);
-        reportManager.getReportById(
-            createdReport.id, {}, (err, foundReport) => {
-              assert.equal(err, null);
-              assert.equal(foundReport.student, otherReport.student);
-              assert.equal(foundReport.location, otherReport.location);
-              done();
-            });
-      });
-    });
+    it('should pass the event report with the given id to the callback',
+       (done) => {
+         var eventReport = new EventReport({
+           student: 'John Doe',
+           event: 'someEventUid',
+         });
+         eventReport.save((err, createdReport) => {
+           assert.equal(err, null);
+           reportManager.getReportById(
+               createdReport.id, {}, (err, foundReport) => {
+                 assert.equal(err, null);
+                 assert.equal(foundReport.student, eventReport.student);
+                 assert.equal(foundReport.event, eventReport.event);
+                 done();
+               });
+         });
+       });
+
+    it('should pass the other report with the given id to the callback',
+       (done) => {
+         var otherReport = new OtherReport({
+           student: 'John Doe',
+           location: 'EC203',
+         });
+         otherReport.save((err, createdReport) => {
+           assert.equal(err, null);
+           reportManager.getReportById(
+               createdReport.id, {}, (err, foundReport) => {
+                 assert.equal(err, null);
+                 assert.equal(foundReport.student, otherReport.student);
+                 assert.equal(foundReport.location, otherReport.location);
+                 done();
+               });
+         });
+       });
   });
 
   describe('#getAllReports', () => {
-    it('should pass an event report and other report to the callback', (done) => {
-      var report1 = new EventReport({
-        student: 'John Doe',
-        event: 'someEventUid',
-      });
-      var report2 = new OtherReport({
-        student: 'Jane Doe',
-        title: 'Some report',
-      });
-      report1.save((err, expectedReport1) => {
-        assert.equal(err, null);
-        report2.save((err, expectedReport2) => {
-          assert.equal(err, null);
-          reportManager.getAllReports({}, {}, (err, reports) => {
-            assert.equal(err, null);
-            assert.equal(Object.keys(reports).length, 2);
-            
-            var actualReport1 = reports[expectedReport1.id];
-            var actualReport2 = reports[expectedReport2.id];
-            
-            assert.equal(actualReport1.type, 'EventReport');
-            assert.equal(actualReport1.student, report1.student);
-            assert.equal(actualReport1.event, report1.event);
-            assert.equal(actualReport2.type, 'OtherReport');
-            assert.equal(actualReport2.student, report2.student);
-            assert.equal(actualReport2.title, report2.title);
-            
-            done();
-          });
-        });
-      });
-    });
+    it('should pass an event report and other report to the callback',
+       (done) => {
+         var report1 = new EventReport({
+           student: 'John Doe',
+           event: 'someEventUid',
+         });
+         var report2 = new OtherReport({
+           student: 'Jane Doe',
+           title: 'Some report',
+         });
+         report1.save((err, expectedReport1) => {
+           assert.equal(err, null);
+           report2.save((err, expectedReport2) => {
+             assert.equal(err, null);
+             reportManager.getAllReports({}, {}, (err, reports) => {
+               assert.equal(err, null);
+               assert.equal(Object.keys(reports).length, 2);
+
+               var actualReport1 = reports[expectedReport1.id];
+               var actualReport2 = reports[expectedReport2.id];
+
+               assert.equal(actualReport1.type, 'EventReport');
+               assert.equal(actualReport1.student, report1.student);
+               assert.equal(actualReport1.event, report1.event);
+               assert.equal(actualReport2.type, 'OtherReport');
+               assert.equal(actualReport2.student, report2.student);
+               assert.equal(actualReport2.title, report2.title);
+
+               done();
+             });
+           });
+         });
+       });
   });
 
 });
