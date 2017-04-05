@@ -35,17 +35,14 @@ describe('reportManager', () => {
         assert.equal(err, null);
         assert.equal(createdReport.type, 'EventReport');
         assert.equal(createdReport.approvalStatus, false);
-        assert.equal(createdReport.student, 'John Doe');
-        assert.equal(createdReport.event, 'someEventUid');
-        assert.equal(createdReport.approvalStatus, false);
+        assert.equal(createdReport.student, eventReport.student);
+        assert.equal(createdReport.event, eventReport.event);
         
         Report.findById(createdReport.id, (err, report) => {
-          assert.equal(err, null);
           assert.equal(report.type, 'EventReport');
-          assert.equal(createdReport.approvalStatus, false);
-          assert.equal(report.student, 'John Doe');
-          assert.equal(report.event, 'someEventUid');
           assert.equal(report.approvalStatus, false);
+          assert.equal(report.student, eventReport.student);
+          assert.equal(report.event, eventReport.event);
           done();
         });
         
@@ -66,21 +63,21 @@ describe('reportManager', () => {
         assert.equal(err, null);
         assert.equal(createdReport.type, 'OtherReport');
         assert.equal(createdReport.approvalStatus, false);
-        assert.equal(createdReport.student, 'John Doe');
-        assert.equal(createdReport.category, 'Some category');
-        assert.equal(new Date(createdReport.datetime).getTime(), new Date('Apr 04 2017').getTime());
-        assert.equal(createdReport.location, 'EC203');
-        assert.equal(createdReport.description, 'Some report description');
+        assert.equal(createdReport.student, otherReport.student);
+        assert.equal(createdReport.category, otherReport.category);
+        assert.equal(new Date(createdReport.datetime).getTime(), new Date(otherReport.datetime).getTime());
+        assert.equal(createdReport.location, otherReport.location);
+        assert.equal(createdReport.description, otherReport.description);
         
         Report.findById(createdReport.id, (err, report) => {
           assert.equal(err, null);
           assert.equal(createdReport.type, 'OtherReport');
           assert.equal(createdReport.approvalStatus, false);
-          assert.equal(createdReport.student, 'John Doe');
-          assert.equal(createdReport.category, 'Some category');
+          assert.equal(createdReport.student, otherReport.student);
+          assert.equal(createdReport.category, otherReport.category);
           assert.equal(new Date(createdReport.datetime).getTime(), new Date('Apr 04 2017').getTime());
-          assert.equal(createdReport.location, 'EC203');
-          assert.equal(createdReport.description, 'Some report description');
+          assert.equal(createdReport.location, otherReport.location);
+          assert.equal(createdReport.description, otherReport.description);
           done();
         });
       });
@@ -93,18 +90,18 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       });
-      var updatedEventReportObject = {
+      var updatedEventReport = {
         student: 'Jane Doe',
         approvalStatus: true,
       };
       originalEventReport.save((err, createdReport) => {
         assert.equal(err, null);
-        reportManager.modifyReport(createdReport.id, updatedEventReportObject, {}, (err, updatedReport) => {
+        reportManager.modifyReport(createdReport.id, updatedEventReport, {}, (err, updatedReport) => {
           assert.equal(err, null);
           assert.equal(updatedReport.type, 'EventReport');
-          assert.equal(updatedReport.student, 'Jane Doe');
-          assert.equal(updatedReport.approvalStatus, true);
-          assert.equal(updatedReport.event, 'someEventUid');
+          assert.equal(updatedReport.student, updatedEventReport.student);
+          assert.equal(updatedReport.approvalStatus, updatedEventReport.approvalStatus);
+          assert.equal(updatedReport.event, originalEventReport.event);
           done();
         });
       });
@@ -118,22 +115,22 @@ describe('reportManager', () => {
         location: 'EC203',
         description: 'Some report description',
       });
-      var updatedOtherReportObject = {
+      var updatedOtherReport = {
         student: 'Jane Doe',
         approvalStatus: true,
         location: 'EC204',
       };
       originalOtherReport.save((err, createdReport) => {
         assert.equal(err, null);
-        reportManager.modifyReport(createdReport.id, updatedOtherReportObject, {}, (err, updatedReport) => {
+        reportManager.modifyReport(createdReport.id, updatedOtherReport, {}, (err, updatedReport) => {
           assert.equal(err, null);
           assert.equal(updatedReport.type, 'OtherReport');
-          assert.equal(updatedReport.student, 'Jane Doe');
-          assert.equal(updatedReport.approvalStatus, true);
-          assert.equal(updatedReport.category, 'Some category');
-          assert.equal(new Date(updatedReport.datetime).getTime(), new Date('Apr 04 2017').getTime());
-          assert.equal(updatedReport.location, 'EC204');
-          assert.equal(updatedReport.description, 'Some report description');
+          assert.equal(updatedReport.student, updatedOtherReport.student);
+          assert.equal(updatedReport.approvalStatus, updatedOtherReport.approvalStatus);
+          assert.equal(updatedReport.category, originalOtherReport.category);
+          assert.equal(new Date(updatedReport.datetime).getTime(), new Date(originalOtherReport.datetime).getTime());
+          assert.equal(updatedReport.location, updatedOtherReport.location);
+          assert.equal(updatedReport.description, originalOtherReport.description);
           done();
         });
       });
