@@ -2,9 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const morgan = require('morgan');
 
-/** router **/
+/** routers **/
 const user = require('./users/user-router.js');
 const event = require('./events/router.js');
 const report = require('./reports/report-router.js');
@@ -31,7 +30,6 @@ const port = process.env.PORT || 3000;
 app.set('port', port);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(morgan('dev'));
 
 /** app routes **/
 const router = express.Router();
