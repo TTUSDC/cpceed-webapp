@@ -25,7 +25,6 @@ describe('reportManager', () => {
   after((done) => { mongoose.unmock(done); });
 
   describe('#createReport', () => {
-
     it('should pass a created event report to the callback', (done) => {
       const eventReport = {
         type: 'event',
@@ -33,6 +32,7 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       };
+      
       reportManager.createReport(eventReport, {}, (err, createdReport) => {
         assert.equal(err, null);
         assert.equal(createdReport.type, 'EventReport');
@@ -48,7 +48,6 @@ describe('reportManager', () => {
           assert.equal(foundReport.event, eventReport.event);
           done();
         });
-
       });
     });
 
@@ -62,6 +61,7 @@ describe('reportManager', () => {
         location: 'EC203',
         description: 'Some report description',
       };
+      
       reportManager.createReport(otherReport, {}, (err, createdReport) => {
         assert.equal(err, null);
         assert.equal(createdReport.type, 'OtherReport');
@@ -97,10 +97,12 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       });
+      
       const updatedEventReport = {
         student: 'Jane Doe',
         approvalStatus: true,
       };
+      
       originalEventReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.modifyReport(
@@ -128,11 +130,13 @@ describe('reportManager', () => {
         location: 'EC203',
         description: 'Some report description',
       });
+      
       const updatedOtherReport = {
         student: 'Jane Doe',
         approvalStatus: true,
         location: 'EC204',
       };
+      
       originalOtherReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.modifyReport(
@@ -167,6 +171,7 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       });
+      
       eventReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.deleteReport(
@@ -188,6 +193,7 @@ describe('reportManager', () => {
         student: 'John Doe',
         location: 'EC203',
       });
+      
       otherReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.deleteReport(
@@ -212,6 +218,7 @@ describe('reportManager', () => {
            student: 'John Doe',
            event: 'someEventUid',
          });
+      
          eventReport.save((err, createdReport) => {
            assert.equal(err, null);
            reportManager.getReportById(
@@ -249,10 +256,12 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       });
+      
       const report2 = new OtherReport({
         student: 'Jane Doe',
         title: 'Some report',
       });
+      
       report1.save((err, expectedReport1) => {
         assert.equal(err, null);
         report2.save((err, expectedReport2) => {
