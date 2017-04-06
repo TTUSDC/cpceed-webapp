@@ -10,7 +10,13 @@ const EventReport = reportModels.EventReport;
 const OtherReport = reportModels.OtherReport;
 
 describe('reportManager', () => {
+  // Mockgoose doesn't start the mock until after 'mongoose.connect()' is
+  // called.
+  // TODO(jmtaber129): Find a version of mockgoose that works and doesn't
+  // print to console each time 'mongoose.connect()' is called.
   before((done) => { mongoose.connect('', done); });
+  
+  // Clear out the mocked database before each test case.
   beforeEach((done) => {
     mockgoose.reset();
     done();
@@ -34,11 +40,12 @@ describe('reportManager', () => {
         assert.equal(createdReport.student, eventReport.student);
         assert.equal(createdReport.event, eventReport.event);
 
-        Report.findById(createdReport.id, (err, report) => {
-          assert.equal(report.type, 'EventReport');
-          assert.equal(report.approvalStatus, false);
-          assert.equal(report.student, eventReport.student);
-          assert.equal(report.event, eventReport.event);
+        Report.findById(createdReport.id, (err, foundReport) => {
+          assert.equal(err, null);
+          assert.equal(foundReport.type, 'EventReport');
+          assert.equal(foundReport.approvalStatus, false);
+          assert.equal(foundReport.student, eventReport.student);
+          assert.equal(foundReport.event, eventReport.event);
           done();
         });
 
@@ -67,17 +74,17 @@ describe('reportManager', () => {
         assert.equal(createdReport.location, otherReport.location);
         assert.equal(createdReport.description, otherReport.description);
 
-        Report.findById(createdReport.id, (err, report) => {
+        Report.findById(createdReport.id, (err, foundReport) => {
           assert.equal(err, null);
-          assert.equal(createdReport.type, 'OtherReport');
-          assert.equal(createdReport.approvalStatus, false);
-          assert.equal(createdReport.student, otherReport.student);
-          assert.equal(createdReport.category, otherReport.category);
+          assert.equal(foundReport.type, 'OtherReport');
+          assert.equal(foundReport.approvalStatus, false);
+          assert.equal(foundReport.student, otherReport.student);
+          assert.equal(foundReport.category, otherReport.category);
           assert.equal(
-              new Date(createdReport.datetime).getTime(),
+              new Date(foundReport.datetime).getTime(),
               new Date('Apr 04 2017').getTime());
-          assert.equal(createdReport.location, otherReport.location);
-          assert.equal(createdReport.description, otherReport.description);
+          assert.equal(foundReport.location, otherReport.location);
+          assert.equal(foundReport.description, otherReport.description);
           done();
         });
       });
@@ -97,14 +104,14 @@ describe('reportManager', () => {
       originalEventReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.modifyReport(
-            createdReport.id, updatedEventReport, {}, (err, updatedReport) => {
+            createdReport.id, updatedEventReport, {}, (err, actualUpdatedReport) => {
               assert.equal(err, null);
-              assert.equal(updatedReport.type, 'EventReport');
-              assert.equal(updatedReport.student, updatedEventReport.student);
+              assert.equal(actualUpdatedReport.type, 'EventReport');
+              assert.equal(actualUpdatedReport.student, updatedEventReport.student);
               assert.equal(
-                  updatedReport.approvalStatus,
+                  actualUpdatedReport.approvalStatus,
                   updatedEventReport.approvalStatus);
-              assert.equal(updatedReport.event, originalEventReport.event);
+              assert.equal(actualUpdatedReport.event, originalEventReport.event);
               done();
             });
       });
@@ -126,21 +133,21 @@ describe('reportManager', () => {
       originalOtherReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.modifyReport(
-            createdReport.id, updatedOtherReport, {}, (err, updatedReport) => {
+            createdReport.id, updatedOtherReport, {}, (err, actualUpdatedReport) => {
               assert.equal(err, null);
-              assert.equal(updatedReport.type, 'OtherReport');
-              assert.equal(updatedReport.student, updatedOtherReport.student);
+              assert.equal(actualUpdatedReport.type, 'OtherReport');
+              assert.equal(actualUpdatedReport.student, updatedOtherReport.student);
               assert.equal(
-                  updatedReport.approvalStatus,
+                  actualUpdatedReport.approvalStatus,
                   updatedOtherReport.approvalStatus);
               assert.equal(
-                  updatedReport.category, originalOtherReport.category);
+                  actualUpdatedReport.category, originalOtherReport.category);
               assert.equal(
-                  new Date(updatedReport.datetime).getTime(),
+                  new Date(actualUpdatedReport.datetime).getTime(),
                   new Date(originalOtherReport.datetime).getTime());
-              assert.equal(updatedReport.location, updatedOtherReport.location);
+              assert.equal(actualUpdatedReport.location, updatedOtherReport.location);
               assert.equal(
-                  updatedReport.description, originalOtherReport.description);
+                  actualUpdatedReport.description, originalOtherReport.description);
               done();
             });
       });
