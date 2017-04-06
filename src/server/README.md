@@ -1,13 +1,13 @@
 # Server API
-This component is comprised of several modules to server as an internal library for connecting to the [backend
-API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
 
-Currently, this README will only show method signatures as a reference for what is provided here.
-As this is still a work in progress, see the server tests for usage examples. 
+This component is comprised of several modules to server as an internal library for connecting to the [backend API](https://github.com/TTUSDC/CPCEEDWebAppBackend).
 
+Currently, this README will only show method signatures as a reference for what is provided here. As this is still a work in progress, see the server tests for usage examples.
 
 # Objects
+
 ## User
+
 ```javascript
 {
   "user" : {
@@ -15,7 +15,18 @@ As this is still a work in progress, see the server tests for usage examples.
     "email" : STRING,
     "firstName" : STRING,
     "lastName" : STRING,
-    "points" : NUMBER,
+    "points" : {
+      "career" : NUMBER,
+      "community" : NUMBER,
+      "firstother" : NUMBER,
+      "firstworkshops" : NUMBER,
+      "mentor" : NUMBER,
+      "other" : NUMBER,
+      "outreach" : NUMBER,
+      "professor" : NUMBER,
+      "staff" :NUMBER,
+      "misc": NUMBER,
+    },
     "role" : ENUM/STRING,
     "studentId" : STRING
   }
@@ -23,7 +34,9 @@ As this is still a work in progress, see the server tests for usage examples.
 ```
 
 ## Report
+
 ### Event
+
 ```javascript
 {
   "type" : ENUM/STRING,
@@ -34,6 +47,7 @@ As this is still a work in progress, see the server tests for usage examples.
 ```
 
 ### Other
+
 ```javascript
 {
   "type" : ENUM/STRING,
@@ -47,16 +61,18 @@ As this is still a work in progress, see the server tests for usage examples.
 }
 ```
 
-
 # Modules
+
 ## Server
+
 Holds initialization functions.
 
 ### Init
-Method: `init()`
-Returns: None
+
+Method: `init()` Returns: None
 
 #### Example
+
 ```javascript
 import init from 'server/server';
 init();
@@ -65,12 +81,15 @@ init();
 ## User Authentication
 
 ### Login
+
 Method: `login(email, password)`
 
-Returns: Promise  
+Returns: Promise
+
 - Resolve: user object on success
 
 #### Example
+
 ```javascript
 import { login } from 'server/user-auth';
 var email = "test.person@email.com"
@@ -82,15 +101,15 @@ login(email, password).then(function(user){
 })
 ```
 
-### Logout  
+### Logout
 
 Method: `logout()`
 
 Returns: None
 
 #### Example
+
 ```javascript
 import { logout } from 'server/user-auth';
 logout();
 ```
-
