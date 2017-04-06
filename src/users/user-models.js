@@ -1,39 +1,88 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
 
-var options = {discriminatorKey: 'type'};
+const options = { discriminatorKey: 'type' };
+const pointOption = {
+  type: Number,
+  required: true,
+  default: 0
+};
 
-var userSchema = new Schema({
-      firstName: String,
-      lastName: String,
-      email: String,
-      role: String,
-    },
-    options);
+const userSchema = new Schema({
+  firstName: String,
+  lastName: String,
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ['Student', 'Admin'],
+    required: true
+  },
+  isApproved: {
+    type: Boolean,
+    required:true,
+    default: false
+  }
+}, options);
 
-var studentSchema = new Schema({
-      approvalStatus: Boolean,
+userSchema.pre('save', function (next) {
+  const user = this;
+
+  // If the password is not modified, continue saving the user.
+  if (!user.isModified('password')) { return next(); }
+
+  bcrypt.genSalt(Number(process.env.SALT), (err, salt) => {
+    if (err) { return next(err); }
+
+    bcrypt.hash(user.password, salt, (err, hash) => {
+      if (err) { return next(err); }
+
+      user.password = hash;
+      next();
+    });
+  });
+});
+
+userSchema.methods.comparePassword = function (password, next) {
+  bcrypt.compare(password, this.password, (err, isMatch) => {
+    next(err, isMatch);
+  });
+};
+
+const studentSchema = new Schema({
       points: {
-        career: Number,
-        community: Number,
-        firstother: Number,
-        firstworkshops: Number,
-        mentor: Number,
-        other: Number,
-        outreach: Number,
-        professor: Number,
-        staff: Number,
-        misc: Number
+        career: pointOption,
+        community: pointOption,
+        firstother: pointOption,
+        firstworkshops: pointOption,
+        mentor: pointOption,
+        other: pointOption,
+        outreach: pointOption,
+        professor: pointOption,
+        staff: pointOption,
+        misc: pointOption
       },
-      studentId: String,
+      studentId: {
+        type: String,
+        unique: true,
+        require: true
+      }
     },
     options);
 
-var adminSchema = new Schema({}, options);
+const adminSchema = new Schema({}, options);
 
-var User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
-var Student = User.discriminator('Student', studentSchema);
-var Admin = User.discriminator('Admin', adminSchema);
+const Student = User.discriminator('Student', studentSchema);
+const Admin = User.discriminator('Admin', adminSchema);
 
-module.exports = { Student, Admin };
+module.exports = { Student, Admin, User };

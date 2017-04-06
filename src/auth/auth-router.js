@@ -1,15 +1,20 @@
 const express = require('express');
+const authRouter = express.Router();
 
-const manager = require('./auth-manager');
-const router = express.Router();
+const authManager = require('./auth-manager');
 
-// Hook up the routes.
-router.get('/', manager.verify, (req, res) => {
-  res.status(201).json({ role: req.decoded.role }).end();
+// Get the current User's role.
+authRouter.get('/', authManager.verify, (req, res) => {
+  if (!req.decoded) {
+    res.status(400).send('Auth failed.').end();
+  } else {
+    res.status(201).json({ role: req.decoded.role }).end();
+  }
 });
 
-router.post('/', (req, res) => {
-  manager.login(req.body.email, req.body.password, (err, token) => {
+// Log the User in (uses same token across all devices).
+authRouter.post('/', (req, res) => {
+  authManager.login(req.body.email, req.body.password, (err, token) => {
     if (err) {
       res.status(400).send(err).end();
     } else {
@@ -18,24 +23,34 @@ router.post('/', (req, res) => {
   });
 });
 
-router.delete('/', manager.verify, (req, res) => {
-  manager.logout(req.decoded.email, (err) => {
-    if (err) {
-      res.status(400).send(err).end();
-    } else {
-      res.status(201).end();
-    }
-  });
+// Log the User out of all devices.
+authRouter.delete('/', authManager.verify, (req, res) => {
+  if (!req.decoded) {
+    res.status(400).send('Auth failed.').end();
+  } else {
+    authManager.logout(req.decoded.email, (err) => {
+      if (err) {
+        res.status(500).send(err).end();
+      } else {
+        res.status(201).end();
+      }
+    });
+  }
 });
 
-router.post('/create/', (req, res) => {
-  manager.create(req.body.email, req.body.password, req.body.role, (err) => {
-    if (err) {
-      res.status(400).send(err).end();
-    } else {
-      res.status(201).end();
-    }
-  });
+// Mark the User as approved.
+authRouter.post('/approve/', authManager.verify, (req, res) => {
+  if (!req.decoded || req.decoded.role !== 'Admin' || !req.decoded.isApproved) {
+    res.status(400).send('User not authorized.').end();
+  } else {
+    authManager.approve(req.body.email, (err) => {
+      if (err) {
+        res.status(500).send(err).end();
+      } else {
+        res.status(201).end();
+      }
+    });
+  }
 });
 
-module.exports = { router, verify: manager.verify }
+module.exports = { router: authRouter }

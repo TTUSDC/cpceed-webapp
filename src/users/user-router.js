@@ -1,11 +1,21 @@
-var express = require('express');
-var userManager = require('./user-manager.js');
-var userRouter = express.Router();
+const express = require('express');
+const userRouter = express.Router();
 
+const userManager = require('./user-manager.js');
+
+// Create User.
 userRouter.post('/', (req, res) => {
-  var response = userManager.createUser(req.body);
-
-  res.status(201).json(response.object);
+  userManager.createUser(req.body, (err, id) => {
+    if (err) {
+      res.status(500).json(err).end();
+    } else if (id) {
+      // A student was created.
+      res.status(201).json({ studentId: id }).end();
+    } else {
+      // An admin was created.
+      res.status(201).end();
+    }
+  });
 });
 
 userRouter.put('/:uid', (req, res) => {

@@ -3,49 +3,74 @@ var userModels = require('./user-models.js');
 var Student = userModels.Student;
 var Admin = userModels.Admin;
 
-var createUser = (reqData, createCallback) => {
-  var user;
-  if (reqData.role == 'Student') {
-    // Create new student.
-    user = new Student({
-      approvalStatus: false,
-      email: reqData.email,
-      firstName: reqData.firstName,
-      lastName: reqData.lastName,
-      points: {
-        career: 0,
-        community: 0,
-        firstother: 0,
-        firstworkshops: 0,
-        mentor: 0,
-        other: 0,
-        outreach: 0,
-        professor: 0,
-        staff: 0,
-        misc: 0
-      },
-      role: 'Student',
-      studentId: reqData.studentId
+/**
+ * Callback for sending the response to the client.
+ *
+ * @function createResponse
+ * @param {(string|Object)} err - The error.
+ * @param {Number} id - The student ID.
+ */
+
+/**
+ * Given User information, create a User.
+ * @param {Object} data - The request body data.
+ * @param {String} data.role - The user role.
+ * @param {String} data.email - The user email address.
+ * @param {String} data.password - The user password.
+ * @param {createResponse} next - The callback function to run after this function
+  *     finishes.
+ */
+const createUser = (data, next) => {
+  // Ensure the required data is available.
+  if (!data || !data.role || !data.email || !data.password ||
+      (data.role === 'Student' && !data.studentId)) {
+    next('Required parameters not found.');
+  } else if (data.role === 'Student') {
+    // Create a student
+    const user = new Student({
+      email: data.email,
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      role: data.role,
+      studentId: data.studentId
     });
 
-  } else if (reqData.role == 'Admin') {
-    // Create new admin.
-    user = new Admin({
-      email: reqData.email,
-      firstName: reqData.firstName,
-      lastName: reqData.lastName,
-      role: 'Admin'
+    // Search for possible duplicate student.
+    Student.findOne({ email: user.email, studentId: user.studentId }, (err, existingUser) => {
+      if (err) {
+        next(err);
+      } else if (existingUser) {
+        next('Account with that email address or student id already exists.');
+      } else {
+        user.save((err) => { next(err, user.studentId); });
+      }
+    });
+  } else if (data.role === 'Admin') {
+    // Create an admin
+    const user = new Admin({
+      email: data.email,
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      role: data.role
     });
 
+    // Search for possible duplicate admin.
+    Admin.findOne({ email: user.email }, (err, existingUser) => {
+      if (err) {
+        next(err);
+      } else if (existingUser) {
+        next('Account with that email address already exists');
+      } else {
+        // TODO(ryanfaulkenberry100): Does the admin need an ID?
+        user.save((err) => { next(err); });
+      }
+    });
   } else {
-  // TODO(ryanfaulkenberry100): Handle error case where role is incorrect.
+    next('Valid role not provided.');
   }
-
-  // TODO(ryanfaulkenberry100): Write user to database.
-
-  return new response.ResponseObject(201, {"uid":"1", "url":"//www.google.com"});
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
+};
 
 var modifyUser = (userUid, reqData, modifyCallback) => {
   // TODO(ryanfaulkenberry100): Check if modifier is a user or an admin.

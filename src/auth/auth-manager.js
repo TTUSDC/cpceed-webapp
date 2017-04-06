@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const AuthUser = require('./auth-models').AuthUser;
+const User = require('../users/user-models').User;
 const Session = require('./auth-models').Session;
 
 /**
@@ -18,7 +18,7 @@ const Session = require('./auth-models').Session;
  *     finishes.
  */
 const login = (email, password, next) => {
-  AuthUser.findOne({ email: email }, (err, user) => {
+  User.findOne({ email: email }, (err, user) => {
     if (err) {
       next(err);
     } else if (!user) {
@@ -35,7 +35,11 @@ const login = (email, password, next) => {
               next(null, session.token);
             } else {
               // Create a JWT.
-              const jwtData = { email: email, role: user.role };
+              const jwtData = {
+                email: email,
+                role: user.role,
+                isApproved: user.isApproved
+              };
               jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (err, token) => {
                 if (err) {
                   next(err);
@@ -102,30 +106,22 @@ const changePassword = (email, password, next) => {
 /**
  * Callback for sending the response to the client.
  *
- * @function createResponse
+ * @function approveResponse
  * @param {(string|Object)} err - The error.
  */
 
 /**
- * Given an email/password, create an AuthUser.
+ * Given an email, approve a User.
  * @param {string} email - The user's email address.
- * @param {string} password - The user's password.
- * @param {createResponse} next - The callback function to run after this function
+ * @param {approveResponse} next - The callback function to run after this function
   *     finishes.
  */
-const create = (email, password, role,  next) => {
-  var user = new AuthUser({
-    email: email,
-    password: password,
-    role: role
-  });
-
-  AuthUser.findOne({ email: email }, (err, existingUser) => {
+const approve = (email, next) => {
+  AuthUser({email: email}, (err, user) => {
     if (err) {
       next(err);
-    } else if (existingUser) {
-      next('Account with that email address already exists.');
     } else {
+      user.isApproved = true;
       user.save((err) => { next(err); });
     }
   });
@@ -152,14 +148,18 @@ const verify = (req, res, next) => {
           } else if (!session) {
             next('Auth failed.');
           } else {
-            session.compareToken(token, (isMatch) => {
-              if (!isMatch) {
-                next('Auth failed.');
-              } else {
-                req.decoded = decoded;
-                next();
-              }
-            });
+            if (!decoded.isApproved) {
+              next('Auth failed.');
+            } else {
+              session.compareToken(token, (isMatch) => {
+                if (!isMatch) {
+                  next('Auth failed.');
+                } else {
+                  req.decoded = decoded;
+                  next();
+                }
+              });
+            }
           }
         });
       }
@@ -169,4 +169,4 @@ const verify = (req, res, next) => {
   }
 };
 
-module.exports = { create, login, logout, verify };
+module.exports = { approve, login, logout, verify };
