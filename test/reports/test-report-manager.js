@@ -1,13 +1,13 @@
-var mockgoose = require('mockgoose');
-var mongoose = require('mongoose');
-var assert = require('assert');
+const mockgoose = require('mockgoose');
+const mongoose = require('mongoose');
+const assert = require('assert');
 mockgoose(mongoose);
 
-var reportManager = require('../../src/reports/report-manager');
-var reportModels = require('../../src/reports/report-models');
-var Report = reportModels.Report;
-var EventReport = reportModels.EventReport;
-var OtherReport = reportModels.OtherReport;
+const reportManager = require('../../src/reports/report-manager');
+const reportModels = require('../../src/reports/report-models');
+const Report = reportModels.Report;
+const EventReport = reportModels.EventReport;
+const OtherReport = reportModels.OtherReport;
 
 describe('reportManager', () => {
   before((done) => { mongoose.connect('', done); });
@@ -21,7 +21,7 @@ describe('reportManager', () => {
   describe('#createReport', () => {
 
     it('should pass a created event report to the callback', (done) => {
-      var eventReport = {
+      const eventReport = {
         type: 'event',
         approvalStatus: true,
         student: 'John Doe',
@@ -46,7 +46,7 @@ describe('reportManager', () => {
     });
 
     it('should pass a created other report to the callback', (done) => {
-      var otherReport = {
+      const otherReport = {
         type: 'other',
         approvalStatus: true,
         student: 'John Doe',
@@ -86,11 +86,11 @@ describe('reportManager', () => {
 
   describe('#modifyReport', () => {
     it('should pass a modified event report to the callback', (done) => {
-      var originalEventReport = new EventReport({
+      const originalEventReport = new EventReport({
         student: 'John Doe',
         event: 'someEventUid',
       });
-      var updatedEventReport = {
+      const updatedEventReport = {
         student: 'Jane Doe',
         approvalStatus: true,
       };
@@ -111,14 +111,14 @@ describe('reportManager', () => {
     });
 
     it('should pass a modified other report to the callback', (done) => {
-      var originalOtherReport = new OtherReport({
+      const originalOtherReport = new OtherReport({
         student: 'John Doe',
         category: 'Some category',
         datetime: 'Apr 04 2017',
         location: 'EC203',
         description: 'Some report description',
       });
-      var updatedOtherReport = {
+      const updatedOtherReport = {
         student: 'Jane Doe',
         approvalStatus: true,
         location: 'EC204',
@@ -149,7 +149,7 @@ describe('reportManager', () => {
 
   describe('#deleteReport', () => {
     it('should delete the event report', (done) => {
-      var eventReport = new EventReport({
+      const eventReport = new EventReport({
         student: 'John Doe',
         event: 'someEventUid',
       });
@@ -170,7 +170,7 @@ describe('reportManager', () => {
     });
 
     it('should delete the other report', (done) => {
-      var otherReport = new OtherReport({
+      const otherReport = new OtherReport({
         student: 'John Doe',
         location: 'EC203',
       });
@@ -194,7 +194,7 @@ describe('reportManager', () => {
   describe('#getReportById', () => {
     it('should pass the event report with the given id to the callback',
        (done) => {
-         var eventReport = new EventReport({
+         const eventReport = new EventReport({
            student: 'John Doe',
            event: 'someEventUid',
          });
@@ -212,7 +212,7 @@ describe('reportManager', () => {
 
     it('should pass the other report with the given id to the callback',
        (done) => {
-         var otherReport = new OtherReport({
+         const otherReport = new OtherReport({
            student: 'John Doe',
            location: 'EC203',
          });
@@ -230,13 +230,13 @@ describe('reportManager', () => {
   });
 
   describe('#getAllReports', () => {
-    it('should pass an event report and other report to the callback',
+    it('should pass an object of id-report pairs to the callback',
        (done) => {
-         var report1 = new EventReport({
+         const report1 = new EventReport({
            student: 'John Doe',
            event: 'someEventUid',
          });
-         var report2 = new OtherReport({
+         const report2 = new OtherReport({
            student: 'Jane Doe',
            title: 'Some report',
          });
@@ -248,8 +248,8 @@ describe('reportManager', () => {
                assert.equal(err, null);
                assert.equal(Object.keys(reports).length, 2);
 
-               var actualReport1 = reports[expectedReport1.id];
-               var actualReport2 = reports[expectedReport2.id];
+               const actualReport1 = reports[expectedReport1.id];
+               const actualReport2 = reports[expectedReport2.id];
 
                assert.equal(actualReport1.type, 'EventReport');
                assert.equal(actualReport1.student, report1.student);
