@@ -15,7 +15,7 @@ describe('reportManager', () => {
   // TODO(jmtaber129): Find a version of mockgoose that works and doesn't
   // print to console each time 'mongoose.connect()' is called.
   before((done) => { mongoose.connect('', done); });
-  
+
   // Clear out the mocked database before each test case.
   beforeEach((done) => {
     mockgoose.reset();
@@ -104,14 +104,17 @@ describe('reportManager', () => {
       originalEventReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.modifyReport(
-            createdReport.id, updatedEventReport, {}, (err, actualUpdatedReport) => {
+            createdReport.id, updatedEventReport, {},
+            (err, actualUpdatedReport) => {
               assert.equal(err, null);
               assert.equal(actualUpdatedReport.type, 'EventReport');
-              assert.equal(actualUpdatedReport.student, updatedEventReport.student);
+              assert.equal(
+                  actualUpdatedReport.student, updatedEventReport.student);
               assert.equal(
                   actualUpdatedReport.approvalStatus,
                   updatedEventReport.approvalStatus);
-              assert.equal(actualUpdatedReport.event, originalEventReport.event);
+              assert.equal(
+                  actualUpdatedReport.event, originalEventReport.event);
               done();
             });
       });
@@ -133,10 +136,12 @@ describe('reportManager', () => {
       originalOtherReport.save((err, createdReport) => {
         assert.equal(err, null);
         reportManager.modifyReport(
-            createdReport.id, updatedOtherReport, {}, (err, actualUpdatedReport) => {
+            createdReport.id, updatedOtherReport, {},
+            (err, actualUpdatedReport) => {
               assert.equal(err, null);
               assert.equal(actualUpdatedReport.type, 'OtherReport');
-              assert.equal(actualUpdatedReport.student, updatedOtherReport.student);
+              assert.equal(
+                  actualUpdatedReport.student, updatedOtherReport.student);
               assert.equal(
                   actualUpdatedReport.approvalStatus,
                   updatedOtherReport.approvalStatus);
@@ -145,9 +150,11 @@ describe('reportManager', () => {
               assert.equal(
                   new Date(actualUpdatedReport.datetime).getTime(),
                   new Date(originalOtherReport.datetime).getTime());
-              assert.equal(actualUpdatedReport.location, updatedOtherReport.location);
               assert.equal(
-                  actualUpdatedReport.description, originalOtherReport.description);
+                  actualUpdatedReport.location, updatedOtherReport.location);
+              assert.equal(
+                  actualUpdatedReport.description,
+                  originalOtherReport.description);
               done();
             });
       });
@@ -237,39 +244,38 @@ describe('reportManager', () => {
   });
 
   describe('#getAllReports', () => {
-    it('should pass an object of id-report pairs to the callback',
-       (done) => {
-         const report1 = new EventReport({
-           student: 'John Doe',
-           event: 'someEventUid',
-         });
-         const report2 = new OtherReport({
-           student: 'Jane Doe',
-           title: 'Some report',
-         });
-         report1.save((err, expectedReport1) => {
-           assert.equal(err, null);
-           report2.save((err, expectedReport2) => {
-             assert.equal(err, null);
-             reportManager.getAllReports({}, {}, (err, reports) => {
-               assert.equal(err, null);
-               assert.equal(Object.keys(reports).length, 2);
+    it('should pass an object of id-report pairs to the callback', (done) => {
+      const report1 = new EventReport({
+        student: 'John Doe',
+        event: 'someEventUid',
+      });
+      const report2 = new OtherReport({
+        student: 'Jane Doe',
+        title: 'Some report',
+      });
+      report1.save((err, expectedReport1) => {
+        assert.equal(err, null);
+        report2.save((err, expectedReport2) => {
+          assert.equal(err, null);
+          reportManager.getAllReports({}, {}, (err, reports) => {
+            assert.equal(err, null);
+            assert.equal(Object.keys(reports).length, 2);
 
-               const actualReport1 = reports[expectedReport1.id];
-               const actualReport2 = reports[expectedReport2.id];
+            const actualReport1 = reports[expectedReport1.id];
+            const actualReport2 = reports[expectedReport2.id];
 
-               assert.equal(actualReport1.type, 'EventReport');
-               assert.equal(actualReport1.student, report1.student);
-               assert.equal(actualReport1.event, report1.event);
-               assert.equal(actualReport2.type, 'OtherReport');
-               assert.equal(actualReport2.student, report2.student);
-               assert.equal(actualReport2.title, report2.title);
+            assert.equal(actualReport1.type, 'EventReport');
+            assert.equal(actualReport1.student, report1.student);
+            assert.equal(actualReport1.event, report1.event);
+            assert.equal(actualReport2.type, 'OtherReport');
+            assert.equal(actualReport2.student, report2.student);
+            assert.equal(actualReport2.title, report2.title);
 
-               done();
-             });
-           });
-         });
-       });
+            done();
+          });
+        });
+      });
+    });
   });
 
 });
