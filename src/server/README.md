@@ -173,7 +173,7 @@ import { modify as modifyEvent } from 'server/events';
 const newEvent = {...}//As above
 const newEventUid = //Let's pretend this is the UID returned in previous method.
 testEvent.title = "Commencement";
-modifyEvent(testEventUid, testEvent).then(function(){
+modifyEvent(newEventUid, testEvent).then(function(){
   console.log("Event modified!")
 }).catch(function(reason){
   console.log("Event NOT modified with reason", reason)
