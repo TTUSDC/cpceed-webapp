@@ -1,6 +1,9 @@
 const mockgoose = require('mockgoose');
 const mongoose = require('mongoose');
 const assert = require('assert');
+const chai = require('chai');
+const expect = chai.expect;
+chai.use(require('chai-moment'));
 mockgoose(mongoose);
 
 const reportManager = require('../../src/reports/report-manager');
@@ -12,8 +15,6 @@ const OtherReport = reportModels.OtherReport;
 describe('reportManager', () => {
   // Mockgoose doesn't start the mock until after 'mongoose.connect()' is
   // called.
-  // TODO(jmtaber129): Find a version of mockgoose that works and doesn't
-  // print to console each time 'mongoose.connect()' is called.
   before((done) => { mongoose.connect('', done); });
 
   // Clear out the mocked database before each test case.
@@ -34,18 +35,18 @@ describe('reportManager', () => {
       };
       
       reportManager.createReport(eventReport, {}, (err, createdReport) => {
-        assert.equal(err, null);
-        assert.equal(createdReport.type, 'EventReport');
-        assert.equal(createdReport.approvalStatus, false);
-        assert.equal(createdReport.student, eventReport.student);
-        assert.equal(createdReport.event, eventReport.event);
+        expect(err).to.be.null;
+        expect(createdReport.type).to.be.equal('EventReport');
+        expect(createdReport.approvalStatus).to.be.false;
+        expect(createdReport.student).to.be.equal(eventReport.student);
+        expect(createdReport.event).to.be.equal(eventReport.event);
 
         Report.findById(createdReport.id, (err, foundReport) => {
-          assert.equal(err, null);
-          assert.equal(foundReport.type, 'EventReport');
-          assert.equal(foundReport.approvalStatus, false);
-          assert.equal(foundReport.student, eventReport.student);
-          assert.equal(foundReport.event, eventReport.event);
+          expect(err).to.be.null;
+          expect(foundReport.type).to.be.equal('EventReport');
+          expect(foundReport.approvalStatus).to.be.false;
+          expect(foundReport.student).to.be.equal(eventReport.student);
+          expect(foundReport.event).to.be.equal(eventReport.event);
           done();
         });
       });
@@ -57,34 +58,30 @@ describe('reportManager', () => {
         approvalStatus: true,
         student: 'John Doe',
         category: 'Some category',
-        datetime: 'Apr 04 2017',
+        datetime: 'Apr 04 2017 18:30',
         location: 'EC203',
         description: 'Some report description',
       };
       
       reportManager.createReport(otherReport, {}, (err, createdReport) => {
-        assert.equal(err, null);
-        assert.equal(createdReport.type, 'OtherReport');
-        assert.equal(createdReport.approvalStatus, false);
-        assert.equal(createdReport.student, otherReport.student);
-        assert.equal(createdReport.category, otherReport.category);
-        assert.equal(
-            new Date(createdReport.datetime).getTime(),
-            new Date(otherReport.datetime).getTime());
-        assert.equal(createdReport.location, otherReport.location);
-        assert.equal(createdReport.description, otherReport.description);
+        expect(err).to.be.null;
+        expect(createdReport.type).to.be.equal('OtherReport');
+        expect(createdReport.approvalStatus).to.be.false;
+        expect(createdReport.student).to.be.equal(otherReport.student);
+        expect(createdReport.category).to.be.equal(otherReport.category);
+        expect(createdReport.datetime).to.be.sameMoment(otherReport.datetime);
+        expect(createdReport.location).to.be.equal(otherReport.location);
+        expect(createdReport.description).to.be.equal(otherReport.description);
 
         Report.findById(createdReport.id, (err, foundReport) => {
-          assert.equal(err, null);
-          assert.equal(foundReport.type, 'OtherReport');
-          assert.equal(foundReport.approvalStatus, false);
-          assert.equal(foundReport.student, otherReport.student);
-          assert.equal(foundReport.category, otherReport.category);
-          assert.equal(
-              new Date(foundReport.datetime).getTime(),
-              new Date('Apr 04 2017').getTime());
-          assert.equal(foundReport.location, otherReport.location);
-          assert.equal(foundReport.description, otherReport.description);
+          expect(err).to.be.null;
+          expect(foundReport.type).to.be.equal('OtherReport');
+          expect(foundReport.approvalStatus).to.be.false;
+          expect(foundReport.student).to.be.equal(otherReport.student);
+          expect(foundReport.category).to.be.equal(otherReport.category);
+          expect(foundReport.datetime).to.be.sameMoment(otherReport.datetime);
+          expect(foundReport.location).to.be.equal(otherReport.location);
+          expect(foundReport.description).to.be.equal(otherReport.description);
           done();
         });
       });
@@ -104,19 +101,15 @@ describe('reportManager', () => {
       };
       
       originalEventReport.save((err, createdReport) => {
-        assert.equal(err, null);
+        expect(err).to.be.null;
         reportManager.modifyReport(
             createdReport.id, updatedEventReport, {},
             (err, actualUpdatedReport) => {
-              assert.equal(err, null);
-              assert.equal(actualUpdatedReport.type, 'EventReport');
-              assert.equal(
-                  actualUpdatedReport.student, updatedEventReport.student);
-              assert.equal(
-                  actualUpdatedReport.approvalStatus,
-                  updatedEventReport.approvalStatus);
-              assert.equal(
-                  actualUpdatedReport.event, originalEventReport.event);
+              expect(err).to.be.null;
+              expect(actualUpdatedReport.type).to.be.equal('EventReport');
+              expect(actualUpdatedReport.student).to.be.equal(updatedEventReport.student);
+              expect(actualUpdatedReport.approvalStatus).to.be.equal(updatedEventReport.approvalStatus);
+              expect(actualUpdatedReport.event).to.be.equal(originalEventReport.event);
               done();
             });
       });
@@ -138,27 +131,18 @@ describe('reportManager', () => {
       };
       
       originalOtherReport.save((err, createdReport) => {
-        assert.equal(err, null);
+        expect(err).to.be.null;
         reportManager.modifyReport(
             createdReport.id, updatedOtherReport, {},
             (err, actualUpdatedReport) => {
-              assert.equal(err, null);
-              assert.equal(actualUpdatedReport.type, 'OtherReport');
-              assert.equal(
-                  actualUpdatedReport.student, updatedOtherReport.student);
-              assert.equal(
-                  actualUpdatedReport.approvalStatus,
-                  updatedOtherReport.approvalStatus);
-              assert.equal(
-                  actualUpdatedReport.category, originalOtherReport.category);
-              assert.equal(
-                  new Date(actualUpdatedReport.datetime).getTime(),
-                  new Date(originalOtherReport.datetime).getTime());
-              assert.equal(
-                  actualUpdatedReport.location, updatedOtherReport.location);
-              assert.equal(
-                  actualUpdatedReport.description,
-                  originalOtherReport.description);
+              expect(err).to.be.null;
+              expect(actualUpdatedReport.type).to.be.equal('OtherReport');
+              expect(actualUpdatedReport.student).to.be.equal(updatedOtherReport.student);
+              expect(actualUpdatedReport.approvalStatus).to.be.equal(updatedOtherReport.approvalStatus);
+              expect(actualUpdatedReport.category).to.be.equal(originalOtherReport.category);
+              expect(actualUpdatedReport.datetime).to.be.sameMoment(originalOtherReport.datetime);
+              expect(actualUpdatedReport.location).to.be.equal(updatedOtherReport.location);
+              expect(actualUpdatedReport.description).to.be.equal(originalOtherReport.description);
               done();
             });
       });
@@ -173,15 +157,15 @@ describe('reportManager', () => {
       });
       
       eventReport.save((err, createdReport) => {
-        assert.equal(err, null);
+        expect(err).to.be.null;
         reportManager.deleteReport(
             createdReport.id, {}, (err, deletedReport) => {
-              assert.equal(err, null);
-              assert.equal(deletedReport.student, eventReport.student);
-              assert.equal(deletedReport.event, eventReport.event);
+              expect(err).to.be.null;
+              expect(deletedReport.student).to.be.equal(eventReport.student);
+              expect(deletedReport.event).to.be.equal(eventReport.event);
 
               Report.findById(createdReport.id, {}, (err, foundReport) => {
-                assert.equal(foundReport, null);
+                expect(foundReport).to.be.null;
                 done();
               });
             });
@@ -195,15 +179,15 @@ describe('reportManager', () => {
       });
       
       otherReport.save((err, createdReport) => {
-        assert.equal(err, null);
+        expect(err).to.be.null;
         reportManager.deleteReport(
             createdReport.id, {}, (err, deletedReport) => {
-              assert.equal(err, null);
-              assert.equal(deletedReport.student, otherReport.student);
-              assert.equal(deletedReport.location, otherReport.location);
+              expect(err).to.be.null;
+              expect(deletedReport.student).to.be.equal(otherReport.student);
+              expect(deletedReport.location).to.be.equal(otherReport.location);
 
               Report.findById(createdReport.id, {}, (err, foundReport) => {
-                assert.equal(foundReport, null);
+                expect(foundReport).to.be.null;
                 done();
               });
             });
@@ -220,12 +204,12 @@ describe('reportManager', () => {
          });
       
          eventReport.save((err, createdReport) => {
-           assert.equal(err, null);
+           expect(err).to.be.null;
            reportManager.getReportById(
                createdReport.id, {}, (err, foundReport) => {
-                 assert.equal(err, null);
-                 assert.equal(foundReport.student, eventReport.student);
-                 assert.equal(foundReport.event, eventReport.event);
+                 expect(err).to.be.null;
+                 expect(foundReport.student).to.be.equal(eventReport.student);
+                 expect(foundReport.event).to.be.equal(eventReport.event);
                  done();
                });
          });
@@ -238,12 +222,12 @@ describe('reportManager', () => {
            location: 'EC203',
          });
          otherReport.save((err, createdReport) => {
-           assert.equal(err, null);
+           expect(err).to.be.null;
            reportManager.getReportById(
                createdReport.id, {}, (err, foundReport) => {
-                 assert.equal(err, null);
-                 assert.equal(foundReport.student, otherReport.student);
-                 assert.equal(foundReport.location, otherReport.location);
+                 expect(err).to.be.null;
+                 expect(foundReport.student).to.be.equal(otherReport.student);
+                 expect(foundReport.location).to.be.equal(otherReport.location);
                  done();
                });
          });
@@ -263,22 +247,22 @@ describe('reportManager', () => {
       });
       
       report1.save((err, expectedReport1) => {
-        assert.equal(err, null);
+        expect(err).to.be.null;
         report2.save((err, expectedReport2) => {
-          assert.equal(err, null);
+          expect(err).to.be.null;
           reportManager.getAllReports({}, {}, (err, reports) => {
-            assert.equal(err, null);
-            assert.equal(Object.keys(reports).length, 2);
+            expect(err).to.be.null;
+            expect(Object.keys(reports).length).to.be.equal(2);
 
             const actualReport1 = reports[expectedReport1.id];
             const actualReport2 = reports[expectedReport2.id];
 
-            assert.equal(actualReport1.type, 'EventReport');
-            assert.equal(actualReport1.student, report1.student);
-            assert.equal(actualReport1.event, report1.event);
-            assert.equal(actualReport2.type, 'OtherReport');
-            assert.equal(actualReport2.student, report2.student);
-            assert.equal(actualReport2.title, report2.title);
+            expect(actualReport1.type).to.be.equal('EventReport');
+            expect(actualReport1.student).to.be.equal(report1.student);
+            expect(actualReport1.event).to.be.equal(report1.event);
+            expect(actualReport2.type).to.be.equal('OtherReport');
+            expect(actualReport2.student).to.be.equal(report2.student);
+            expect(actualReport2.title).to.be.equal(report2.title);
 
             done();
           });
