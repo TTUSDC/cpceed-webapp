@@ -33,7 +33,7 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       };
-      
+
       reportManager.createReport(eventReport, {}, (err, createdReport) => {
         expect(err).to.be.null;
         expect(createdReport.type).to.be.equal('EventReport');
@@ -62,7 +62,7 @@ describe('reportManager', () => {
         location: 'EC203',
         description: 'Some report description',
       };
-      
+
       reportManager.createReport(otherReport, {}, (err, createdReport) => {
         expect(err).to.be.null;
         expect(createdReport.type).to.be.equal('OtherReport');
@@ -94,12 +94,12 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       });
-      
+
       const updatedEventReport = {
         student: 'Jane Doe',
         approvalStatus: true,
       };
-      
+
       originalEventReport.save((err, createdReport) => {
         expect(err).to.be.null;
         reportManager.modifyReport(
@@ -107,9 +107,12 @@ describe('reportManager', () => {
             (err, actualUpdatedReport) => {
               expect(err).to.be.null;
               expect(actualUpdatedReport.type).to.be.equal('EventReport');
-              expect(actualUpdatedReport.student).to.be.equal(updatedEventReport.student);
-              expect(actualUpdatedReport.approvalStatus).to.be.equal(updatedEventReport.approvalStatus);
-              expect(actualUpdatedReport.event).to.be.equal(originalEventReport.event);
+              expect(actualUpdatedReport.student)
+                  .to.be.equal(updatedEventReport.student);
+              expect(actualUpdatedReport.approvalStatus)
+                  .to.be.equal(updatedEventReport.approvalStatus);
+              expect(actualUpdatedReport.event)
+                  .to.be.equal(originalEventReport.event);
               done();
             });
       });
@@ -123,13 +126,13 @@ describe('reportManager', () => {
         location: 'EC203',
         description: 'Some report description',
       });
-      
+
       const updatedOtherReport = {
         student: 'Jane Doe',
         approvalStatus: true,
         location: 'EC204',
       };
-      
+
       originalOtherReport.save((err, createdReport) => {
         expect(err).to.be.null;
         reportManager.modifyReport(
@@ -137,12 +140,18 @@ describe('reportManager', () => {
             (err, actualUpdatedReport) => {
               expect(err).to.be.null;
               expect(actualUpdatedReport.type).to.be.equal('OtherReport');
-              expect(actualUpdatedReport.student).to.be.equal(updatedOtherReport.student);
-              expect(actualUpdatedReport.approvalStatus).to.be.equal(updatedOtherReport.approvalStatus);
-              expect(actualUpdatedReport.category).to.be.equal(originalOtherReport.category);
-              expect(actualUpdatedReport.datetime).to.be.sameMoment(originalOtherReport.datetime);
-              expect(actualUpdatedReport.location).to.be.equal(updatedOtherReport.location);
-              expect(actualUpdatedReport.description).to.be.equal(originalOtherReport.description);
+              expect(actualUpdatedReport.student)
+                  .to.be.equal(updatedOtherReport.student);
+              expect(actualUpdatedReport.approvalStatus)
+                  .to.be.equal(updatedOtherReport.approvalStatus);
+              expect(actualUpdatedReport.category)
+                  .to.be.equal(originalOtherReport.category);
+              expect(actualUpdatedReport.datetime)
+                  .to.be.sameMoment(originalOtherReport.datetime);
+              expect(actualUpdatedReport.location)
+                  .to.be.equal(updatedOtherReport.location);
+              expect(actualUpdatedReport.description)
+                  .to.be.equal(originalOtherReport.description);
               done();
             });
       });
@@ -155,7 +164,7 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       });
-      
+
       eventReport.save((err, createdReport) => {
         expect(err).to.be.null;
         reportManager.deleteReport(
@@ -177,7 +186,7 @@ describe('reportManager', () => {
         student: 'John Doe',
         location: 'EC203',
       });
-      
+
       otherReport.save((err, createdReport) => {
         expect(err).to.be.null;
         reportManager.deleteReport(
@@ -202,7 +211,7 @@ describe('reportManager', () => {
            student: 'John Doe',
            event: 'someEventUid',
          });
-      
+
          eventReport.save((err, createdReport) => {
            expect(err).to.be.null;
            reportManager.getReportById(
@@ -240,12 +249,12 @@ describe('reportManager', () => {
         student: 'John Doe',
         event: 'someEventUid',
       });
-      
+
       const report2 = new OtherReport({
         student: 'Jane Doe',
         title: 'Some report',
       });
-      
+
       report1.save((err, expectedReport1) => {
         expect(err).to.be.null;
         report2.save((err, expectedReport2) => {
