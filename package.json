@@ -18,7 +18,7 @@
     "supertest": "^3.0.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --recursive -C",
+    "test": "./node_modules/.bin/mocha --recursive",
     "start": "node src/server.js"
   },
   "repository": {
