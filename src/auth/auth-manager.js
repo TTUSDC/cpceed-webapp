@@ -148,18 +148,14 @@ const verify = (req, res, next) => {
           } else if (!session) {
             next('Auth failed.');
           } else {
-            if (!decoded.isApproved) {
-              next('Auth failed.');
-            } else {
-              session.compareToken(token, (isMatch) => {
-                if (!isMatch) {
-                  next('Auth failed.');
-                } else {
-                  req.decoded = decoded;
-                  next();
-                }
-              });
-            }
+            session.compareToken(token, (isMatch) => {
+              if (!isMatch) {
+                next('Auth failed.');
+              } else {
+                req.local = decoded;
+                next();
+              }
+            });
           }
         });
       }

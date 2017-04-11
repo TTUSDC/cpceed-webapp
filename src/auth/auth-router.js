@@ -5,10 +5,10 @@ const authManager = require('./auth-manager');
 
 // Get the current User's role.
 authRouter.get('/', authManager.verify, (req, res) => {
-  if (!req.decoded) {
+  if (!req.local) {
     res.status(400).send('Auth failed.').end();
   } else {
-    res.status(201).json({ role: req.decoded.role }).end();
+    res.status(201).json({ role: req.local.role }).end();
   }
 });
 
@@ -25,10 +25,10 @@ authRouter.post('/', (req, res) => {
 
 // Log the User out of all devices.
 authRouter.delete('/', authManager.verify, (req, res) => {
-  if (!req.decoded) {
+  if (!req.local) {
     res.status(400).send('Auth failed.').end();
   } else {
-    authManager.logout(req.decoded.email, (err) => {
+    authManager.logout(req.local.email, (err) => {
       if (err) {
         res.status(500).send(err).end();
       } else {
@@ -40,7 +40,7 @@ authRouter.delete('/', authManager.verify, (req, res) => {
 
 // Mark the User as approved.
 authRouter.post('/approve/', authManager.verify, (req, res) => {
-  if (!req.decoded || req.decoded.role !== 'Admin' || !req.decoded.isApproved) {
+  if (!req.local || req.local.role !== 'Admin' || !req.local.isApproved) {
     res.status(400).send('User not authorized.').end();
   } else {
     authManager.approve(req.body.email, (err) => {
