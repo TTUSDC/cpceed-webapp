@@ -7,7 +7,7 @@ var Admin = userModels.Admin;
  * Callback for sending the response to the client.
  *
  * @function createResponse
- * @param {(string|Object)} err - The error.
+ * @param {Object} err - The error.
  * @param {Number} id - The student ID.
  */
 
@@ -24,51 +24,61 @@ const createUser = (data, next) => {
   // Ensure the required data is available.
   if (!data || !data.role || !data.email || !data.password ||
       (data.role === 'Student' && !data.studentId)) {
-    next('Required parameters not found.');
-  } else if (data.role === 'Student') {
-    // Create a student
-    const user = new Student({
-      email: data.email,
-      password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      role: data.role,
-      studentId: data.studentId
-    });
+    next({ err: 'Required parameters not found.' });
+    return;
+  }
 
-    // Search for possible duplicate student.
-    Student.findOne({ email: user.email, studentId: user.studentId }, (err, existingUser) => {
-      if (err) {
-        next(err);
-      } else if (existingUser) {
-        next('Account with that email address or student id already exists.');
-      } else {
-        user.save((err) => { next(err, user.studentId); });
-      }
-    });
-  } else if (data.role === 'Admin') {
-    // Create an admin
-    const user = new Admin({
-      email: data.email,
-      password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      role: data.role
-    });
+  switch (data.role) {
+    case "Student":
+      // Create a student
+      const user = new Student({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role,
+        studentId: data.studentId
+      });
 
-    // Search for possible duplicate admin.
-    Admin.findOne({ email: user.email }, (err, existingUser) => {
-      if (err) {
-        next(err);
-      } else if (existingUser) {
-        next('Account with that email address already exists');
-      } else {
-        // TODO(ryanfaulkenberry100): Does the admin need an ID?
-        user.save((err) => { next(err); });
-      }
-    });
-  } else {
-    next('Valid role not provided.');
+      // Search for possible duplicate student.
+      Student.findOne({ email: user.email, studentId: user.studentId }, (err, existingUser) => {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        if (existingUser) {
+          next({ err: 'Account with that email address or student id already exists.' });
+        } else {
+          user.save((err) => { next(err, user.studentId); });
+        }
+      });
+      break;
+    case "Admin":
+      // Create an admin
+      const user = new Admin({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role
+      });
+
+      // Search for possible duplicate admin.
+      Admin.findOne({ email: user.email }, (err, existingUser) => {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        if (existingUser) {
+          next({ err: 'Account with that email address or student id already exists.' });
+        } else {
+          // TODO(ryanfaulkenberry100): Does the admin need an ID?
+          user.save((err) => { next(err); });
+        }
+      });
+      break;
   }
 };
 

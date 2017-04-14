@@ -20,7 +20,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha -C",
-    "start": "node src/server.js"
+    "start": "node src/server.js PATH='.env.example'"
   },
   "repository": {
     "type": "git",

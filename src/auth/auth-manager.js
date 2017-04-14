@@ -6,7 +6,7 @@ const Session = require('./auth-models').Session;
  * Callback for sending the response to the client.
  *
  * @function loginResponse
- * @param {(string|Object)} err - The error.
+ * @param {Object} err - The error.
  * @param {string} token - The JWT token.
  */
 
@@ -19,44 +19,40 @@ const Session = require('./auth-models').Session;
  */
 const login = (email, password, next) => {
   User.findOne({ email: email }, (err, user) => {
-    if (err) {
-      next(err);
-    } else if (!user) {
-      next('Auth failed');
-    } else {
-      user.comparePassword(password, (err, isMatch) => {
-        if (err) {
-          next(err);
-        } else {
-          Session.findOne({ email: email }, (err, session) => {
-            if (err) {
-              next(err);
-            } else if (session) {
-              next(null, session.token);
-            } else {
-              // Create a JWT.
-              const jwtData = {
-                email: email,
-                role: user.role,
-                isApproved: user.isApproved
-              };
-              jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (err, token) => {
-                if (err) {
-                  next(err);
-                } else {
-                  // Save the session to the DB.
-                  const session = new Session({
-                    email: email,
-                    token: token
-                  });
-                  session.save((err) => { next(err, token); });
-                }
-              });
-            }
-          });
-        }
-      });
+    if (err || !user) {
+      next(err || { err: "Auth failed." });
+      return;
     }
+
+    user.comparePassword(password, (err, isMatch) => {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      Session.findOne({ email: email }, (err, session) => {
+        if (err || session) {
+          next(err, session.token);
+          return;
+        }
+
+        // Create a JWT.
+        const jwtData = {
+          email: email,
+          role: user.role,
+          isApproved: user.isApproved
+        };
+
+        // Sign and save the session.
+        jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (err, token) => {
+          const session = new Session({
+            email: email,
+            token: token
+          });
+          session.save((err) => { next(err, token); });
+        });
+      });
+    });
   });
 };
 
@@ -64,8 +60,8 @@ const login = (email, password, next) => {
  * Callback for sending the response to the client.
  *
  * @function logoutResponse
- * @param {(string|Object)} err - The error.
- * @param {string} err.message - The error message.
+ * @param {Object} err - The error.
+ * @param {string} err.err - The error message.
  */
 
 /**
@@ -77,11 +73,11 @@ const login = (email, password, next) => {
 const logout = (email, next) => {
   // Delete the session from the DB.
   Session.findOne({ email: email }, (err, session) => {
-    if (err) {
+    if (err || !session) {
       next(err);
-    } else if (session) {
-      session.remove(next);
-    } else { next(); }
+      return;
+    }
+    session.remove(next);
   });
 };
 
@@ -120,10 +116,11 @@ const approve = (email, next) => {
   AuthUser({email: email}, (err, user) => {
     if (err) {
       next(err);
-    } else {
-      user.isApproved = true;
-      user.save((err) => { next(err); });
+      return;
     }
+
+    user.isApproved = true;
+    user.save((err) => { next(err); });
   });
 };
 
@@ -137,32 +134,33 @@ const approve = (email, next) => {
 const verify = (req, res, next) => {
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-  if (token) {
-    jwt.verify(token, process.env.SECRET, (err, decoded) => {
-      if (err) {
-        next('Auth failed.');
-      } else {
-        Session.findOne({ email: decoded.email }, (err, session) => {
-          if (err) {
-            next(err);
-          } else if (!session) {
-            next('Auth failed.');
-          } else {
-            session.compareToken(token, (isMatch) => {
-              if (!isMatch) {
-                next('Auth failed.');
-              } else {
-                req.local = decoded;
-                next();
-              }
-            });
-          }
-        });
-      }
-    });
-  } else {
-    next('No token provided.');
+  if (!token) {
+    next({ err: 'No token provided.' });
+    return;
   }
+
+  jwt.verify(token, process.env.SECRET, (err, decoded) => {
+    if (err) {
+      next('Auth failed.');
+      return;
+    }
+
+    Session.findOne({ email: decoded.email }, (err, session) => {
+      if (err || !session)  {
+        next(err || { err: "Auth failed." });
+        return;
+      }
+
+      session.compareToken(token, (isMatch) => {
+        if (!isMatch) {
+          next({ err: 'Auth failed.' });
+          return;
+        }
+        req.local = decoded;
+        next();
+      });
+    });
+  });
 };
 
 module.exports = { approve, login, logout, verify };
