@@ -13,8 +13,10 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "chai-moment": "0.1.0",
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",
+    "mockgoose": "5.3.3",
     "sinon": "^2.1.0",
     "supertest": "^3.0.0"
   },
