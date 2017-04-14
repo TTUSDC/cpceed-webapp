@@ -10,6 +10,9 @@ const report = require('./reports/report-router.js');
 const auth = require('./auth/auth-router.js');
 
 // load environment variables from .env file.
+if (!process.env.PATH) {
+  process.env.PATH = '.env.example';
+}
 dotenv.load({ path: process.env.PATH });
 
 // Express server.

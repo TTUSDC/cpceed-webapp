@@ -31,7 +31,7 @@ const createUser = (data, next) => {
   switch (data.role) {
     case "Student":
       // Create a student
-      const user = new Student({
+      const student = new Student({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
@@ -41,7 +41,7 @@ const createUser = (data, next) => {
       });
 
       // Search for possible duplicate student.
-      Student.findOne({ email: user.email, studentId: user.studentId }, (err, existingUser) => {
+      Student.findOne({ email: student.email, studentId: student.studentId }, (err, existingUser) => {
         if (err) {
           next(err);
           return;
@@ -50,13 +50,13 @@ const createUser = (data, next) => {
         if (existingUser) {
           next({ err: 'Account with that email address or student id already exists.' });
         } else {
-          user.save((err) => { next(err, user.studentId); });
+          student.save((err) => { next(err, student.studentId); });
         }
       });
       break;
     case "Admin":
       // Create an admin
-      const user = new Admin({
+      const admin = new Admin({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
@@ -65,17 +65,17 @@ const createUser = (data, next) => {
       });
 
       // Search for possible duplicate admin.
-      Admin.findOne({ email: user.email }, (err, existingUser) => {
+      Admin.findOne({ email: admin.email }, (err, existingUser) => {
         if (err) {
           next(err);
           return;
         }
 
         if (existingUser) {
-          next({ err: 'Account with that email address or student id already exists.' });
+          next({ err: 'Account with that email address already exists.' });
         } else {
           // TODO(ryanfaulkenberry100): Does the admin need an ID?
-          user.save((err) => { next(err); });
+          admin.save((err) => { next(err); });
         }
       });
       break;
