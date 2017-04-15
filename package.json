@@ -15,13 +15,15 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.3",
+    "chai-moment": "0.1.0",
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",
+    "mockgoose": "5.3.3",
     "sinon": "^2.1.0",
     "supertest": "^3.0.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -C",
+    "test": "./node_modules/.bin/mocha --recursive",
     "start": "node src/server.js"
   },
   "repository": {
