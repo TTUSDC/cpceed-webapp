@@ -24,7 +24,8 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --recursive",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "lint": "node_modules/.bin/eslint src test"
   },
   "repository": {
     "type": "git",
