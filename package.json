@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --recursive",
-    "start": "node src/server.js PATH='.env.example'"
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
