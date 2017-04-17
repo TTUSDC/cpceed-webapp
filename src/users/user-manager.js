@@ -1,14 +1,15 @@
-var response = require('../Objects/response.js');
-var userModels = require('./user-models.js');
-var Student = userModels.Student;
-var Admin = userModels.Admin;
+const response = require('../Objects/response.js');
+const userModels = require('./user-models.js');
+const User = userModels.User;
+const Student = userModels.Student;
+const Admin = userModels.Admin;
 
 /**
  * Callback for sending the response to the client.
  *
  * @function createResponse
  * @param {Object} err - The error.
- * @param {Number} id - The student ID.
+ * @param {Number} id - The user UID.
  */
 
 /**
@@ -28,58 +29,41 @@ const createUser = (data, next) => {
     return;
   }
 
-  switch (data.role) {
-    case "Student":
-      // Create a student
-      const student = new Student({
-        email: data.email,
-        password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: data.role,
-        studentId: data.studentId
-      });
+  const info = {
+    email: data.email,
+    password: data.password,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    role: data.role,
+  };
 
-      // Search for possible duplicate student.
-      Student.findOne({ email: student.email, studentId: student.studentId }, (err, existingUser) => {
-        if (err) {
-          next(err);
-          return;
-        }
+  let user;
 
-        if (existingUser) {
-          next({ err: 'Account with that email address or student id already exists.' });
-        } else {
-          student.save((err) => { next(err, student.studentId); });
-        }
-      });
-      break;
-    case "Admin":
-      // Create an admin
-      const admin = new Admin({
-        email: data.email,
-        password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: data.role
-      });
+  if (data.role === "Student") {
+    // Create a student.
+    info.studentId = data.studentId;
 
-      // Search for possible duplicate admin.
-      Admin.findOne({ email: admin.email }, (err, existingUser) => {
-        if (err) {
-          next(err);
-          return;
-        }
-
-        if (existingUser) {
-          next({ err: 'Account with that email address already exists.' });
-        } else {
-          // TODO(ryanfaulkenberry100): Does the admin need an ID?
-          admin.save((err) => { next(err); });
-        }
-      });
-      break;
+    user = new Student(info);
+  } else if (data.role === "Admin") {
+    // Create an admin.
+    user = new Admin(info);
+  } else {
+    next({ err: 'Valid role not found.' });
+    return;
   }
+
+  User.findOne({ email: user.email }, (err, existingUser) => {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    if (existingUser) {
+      next({ err: 'Account with that email address already exists.' });
+    } else {
+      user.save((err, dbUser) => { next(err, dbUser.id); });
+    }
+  });
 };
 
 var modifyUser = (userUid, reqData, modifyCallback) => {
@@ -120,7 +104,32 @@ var getUser = (userUid) => {
   // TODO(ryanfaulkenberry100): Return actual data.
 }
 
+/**
+ * Callback for sending the response to the client.
+ *
+ * @callback approveResponse
+ * @param {Object} err - The error.
+ */
+
+/**
+ * Given an email, approve a User.
+ * @param {string} email - The user's email address.
+ * @param {approveResponse} next - The callback function to run after this function
+  *     finishes.
+ */
+const approveUser = (email, next) => {
+  User.findOne({email: email}, (err, user) => {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    user.isApproved = true;
+    user.save((err) => { next(err); });
+  });
+};
+
 var modifyUserAsSelf = (userUid, reqData, modifyCallback) => {}
 var modifyUserAsAdmin = (userUid, reqData, modifyCallback) => {}
 
-module.exports = { createUser, modifyUser, deleteUser, getUser };
+module.exports = { approveUser, createUser, modifyUser, deleteUser, getUser };

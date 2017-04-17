@@ -6,11 +6,11 @@ const sessionSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    required: true
+    required: true,
   },
   token: {
     type: String,
-    required: true
+    required: true,
   }
 });
 

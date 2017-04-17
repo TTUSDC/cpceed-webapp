@@ -5,12 +5,12 @@ const authManager = require('./auth-manager');
 
 // Get the current User's role.
 authRouter.get('/', authManager.verify, (req, res) => {
-  if (!req.local) {
+  if (!res.locals.auth) {
     res.status(400).send('Auth failed.').end();
     return;
   }
 
-  res.status(201).json({ role: req.local.role }).end();
+  res.status(200).json({ role: res.locals.auth.role }).end();
 });
 
 // Log the User in (uses same token across all devices).
@@ -27,7 +27,7 @@ authRouter.post('/', (req, res) => {
 
 // Log the User out of all devices.
 authRouter.delete('/', authManager.verify, (req, res) => {
-  if (!req.local) {
+  if (!res.locals.auth) {
     res.status(400).send('Auth failed.').end();
     return;
   }
@@ -38,24 +38,7 @@ authRouter.delete('/', authManager.verify, (req, res) => {
       return;
     }
 
-    res.status(201).end();
-  });
-});
-
-// Mark the User as approved.
-authRouter.post('/approve/', authManager.verify, (req, res) => {
-  if (!req.local || req.local.role !== 'Admin' || !req.local.isApproved) {
-    res.status(400).send('User not authorized.').end();
-    return;
-  }
-
-  authManager.approve(req.body.email, (err) => {
-    if (err) {
-      res.status(500).send(err).end();
-      return;
-    }
-
-    res.status(201).end();
+    res.status(204).end();
   });
 });
 

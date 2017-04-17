@@ -5,7 +5,7 @@ const Session = require('./auth-models').Session;
 /**
  * Callback for sending the response to the client.
  *
- * @function loginResponse
+ * @callback loginResponse
  * @param {Object} err - The error.
  * @param {string} token - The JWT token.
  */
@@ -30,24 +30,31 @@ const login = (email, password, next) => {
         return;
       }
 
+      // The wrong password was provided.
+      if (!isMatch) {
+        next({ err: 'Auth failed.' });
+        return;
+      }
+
       Session.findOne({ email: email }, (err, session) => {
+        // If a session token exists, return the session token.
         if (err || session) {
           next(err, session.token);
           return;
         }
 
-        // Create a JWT.
+        // If no session currently exists, create a new session.
         const jwtData = {
           email: email,
           role: user.role,
-          isApproved: user.isApproved
+          isApproved: user.isApproved,
         };
 
         // Sign and save the session.
         jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (err, token) => {
           const session = new Session({
             email: email,
-            token: token
+            token: token,
           });
           session.save((err) => { next(err, token); });
         });
@@ -59,7 +66,7 @@ const login = (email, password, next) => {
 /**
  * Callback for sending the response to the client.
  *
- * @function logoutResponse
+ * @callback logoutResponse
  * @param {Object} err - The error.
  * @param {string} err.err - The error message.
  */
@@ -72,19 +79,13 @@ const login = (email, password, next) => {
  */
 const logout = (email, next) => {
   // Delete the session from the DB.
-  Session.findOne({ email: email }, (err, session) => {
-    if (err || !session) {
-      next(err);
-      return;
-    }
-    session.remove(next);
-  });
+  Session.findOneAndRemove({ email: email }, (err) => { next(err); });
 };
 
 /**
  * Callback for sending the response to the client.
  *
- * @function changePasswordResponse
+ * @callback changePasswordResponse
  */
 
 /**
@@ -100,31 +101,6 @@ const changePassword = (email, password, next) => {
 }
 
 /**
- * Callback for sending the response to the client.
- *
- * @function approveResponse
- * @param {(string|Object)} err - The error.
- */
-
-/**
- * Given an email, approve a User.
- * @param {string} email - The user's email address.
- * @param {approveResponse} next - The callback function to run after this function
-  *     finishes.
- */
-const approve = (email, next) => {
-  AuthUser({email: email}, (err, user) => {
-    if (err) {
-      next(err);
-      return;
-    }
-
-    user.isApproved = true;
-    user.save((err) => { next(err); });
-  });
-};
-
-/**
  * Middleware to verify the JWT.
  * For valid tokens, a `decoded` object is added to the request object.
  * @param {Object} req - The request object.
@@ -134,33 +110,40 @@ const approve = (email, next) => {
 const verify = (req, res, next) => {
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
+  //If no token is provided, inform the client.
   if (!token) {
     next({ err: 'No token provided.' });
     return;
   }
 
+  // Verify the client token has a valid signature.
   jwt.verify(token, process.env.SECRET, (err, decoded) => {
     if (err) {
       next('Auth failed.');
       return;
     }
 
+    // Verify that the session is current.
     Session.findOne({ email: decoded.email }, (err, session) => {
+      // If no session is found, then the user was logged out of their account.
       if (err || !session)  {
         next(err || { err: "Auth failed." });
         return;
       }
 
+      // Verify that the stored token and the client token are the same.
       session.compareToken(token, (isMatch) => {
         if (!isMatch) {
           next({ err: 'Auth failed.' });
           return;
         }
-        req.local = decoded;
+
+        // Add the token information to `res.locals.auth`.
+        res.locals.auth = decoded;
         next();
       });
     });
   });
 };
 
-module.exports = { approve, login, logout, verify };
+module.exports = { login, logout, verify };
