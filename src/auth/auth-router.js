@@ -1,12 +1,12 @@
 const express = require('express');
-const authRouter = express.Router();
-
 const authManager = require('./auth-manager');
+
+const authRouter = express.Router();
 
 // Get the current User's role.
 authRouter.get('/', authManager.verify, (req, res) => {
   if (!res.locals.auth) {
-    res.status(400).send('Auth failed.').end();
+    res.status(400).send('User not verified.').end();
     return;
   }
 
@@ -21,20 +21,20 @@ authRouter.post('/', (req, res) => {
       return;
     }
 
-    res.status(201).json({ token: token }).end();
+    res.status(201).json({ token }).end();
   });
 });
 
 // Log the User out of all devices.
 authRouter.delete('/', authManager.verify, (req, res) => {
   if (!res.locals.auth) {
-    res.status(400).send('Auth failed.').end();
+    res.status(400).send('User not verified.').end();
     return;
   }
 
   authManager.logout(req.local.email, (err) => {
     if (err) {
-      res.status(500).send(err).end();
+      res.status(400).send(err).end();
       return;
     }
 
@@ -42,4 +42,6 @@ authRouter.delete('/', authManager.verify, (req, res) => {
   });
 });
 
-module.exports = { router: authRouter }
+module.exports = {
+  router: authRouter,
+};

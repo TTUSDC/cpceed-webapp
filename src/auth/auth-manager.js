@@ -18,45 +18,52 @@ const Session = require('./auth-models').Session;
  *     finishes.
  */
 const login = (email, password, next) => {
-  User.findOne({ email: email }, (err, user) => {
-    if (err || !user) {
-      next(err || { err: "Auth failed." });
+  User.findOne({ email }, (findErr, user) => {
+    if (findErr || !user) {
+      next(findErr);
       return;
     }
 
-    user.comparePassword(password, (err, isMatch) => {
-      if (err) {
-        next(err);
+    if (!user) {
+      next({ err: 'User not found.' });
+      return;
+    }
+
+    user.comparePassword(password, (passwordErr, isMatch) => {
+      if (passwordErr) {
+        next(passwordErr);
         return;
       }
 
       // The wrong password was provided.
       if (!isMatch) {
-        next({ err: 'Auth failed.' });
+        next({ err: 'Wrong password provided.' });
         return;
       }
 
-      Session.findOne({ email: email }, (err, session) => {
+      Session.findOne({ email }, (sessionErr, session) => {
         // If a session token exists, return the session token.
-        if (err || session) {
-          next(err, session.token);
+        if (sessionErr || session) {
+          next(sessionErr, session.token);
           return;
         }
 
         // If no session currently exists, create a new session.
         const jwtData = {
-          email: email,
+          email,
           role: user.role,
           isApproved: user.isApproved,
         };
 
         // Sign and save the session.
-        jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (err, token) => {
-          const session = new Session({
-            email: email,
-            token: token,
-          });
-          session.save((err) => { next(err, token); });
+        jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (signErr, token) => {
+          if (signErr) {
+            next(signErr);
+            return;
+          }
+
+          session = new Session({ email, token });
+          session.save((saveErr) => { next(saveErr, token); });
         });
       });
     });
@@ -79,7 +86,7 @@ const login = (email, password, next) => {
  */
 const logout = (email, next) => {
   // Delete the session from the DB.
-  Session.findOneAndRemove({ email: email }, (err) => { next(err); });
+  Session.findOneAndRemove({ email }, (err) => { next(err); });
 };
 
 /**
@@ -98,43 +105,48 @@ const logout = (email, next) => {
 const changePassword = (email, password, next) => {
   // TODO(the-pat): Update the user's password and regen the JWT.
   next();
-}
+};
 
 /**
  * Middleware to verify the JWT.
- * For valid tokens, a `decoded` object is added to the request object.
+ * For valid tokens, an `auth` object is added to the response.locals object.
  * @param {Object} req - The request object.
  * @param {Object} res - The response object.
  * @param {function} next - Invoke the next middleware or route.
  */
 const verify = (req, res, next) => {
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-  //If no token is provided, inform the client.
+  // If no token is provided, inform the client.
   if (!token) {
     next({ err: 'No token provided.' });
     return;
   }
 
   // Verify the client token has a valid signature.
-  jwt.verify(token, process.env.SECRET, (err, decoded) => {
-    if (err) {
-      next('Auth failed.');
+  jwt.verify(token, process.env.SECRET, (verifyErr, decoded) => {
+    if (verifyErr) {
+      next(verifyErr);
       return;
     }
 
     // Verify that the session is current.
-    Session.findOne({ email: decoded.email }, (err, session) => {
+    Session.findOne({ email: decoded.email }, (sessionErr, session) => {
+      if (sessionErr) {
+        next(sessionErr);
+        return;
+      }
+
       // If no session is found, then the user was logged out of their account.
-      if (err || !session)  {
-        next(err || { err: "Auth failed." });
+      if (!session) {
+        next({ err: 'No session found.' });
         return;
       }
 
       // Verify that the stored token and the client token are the same.
       session.compareToken(token, (isMatch) => {
         if (!isMatch) {
-          next({ err: 'Auth failed.' });
+          next({ err: 'Invalid session token provided.' });
           return;
         }
 
@@ -146,4 +158,4 @@ const verify = (req, res, next) => {
   });
 };
 
-module.exports = { login, logout, verify };
+module.exports = { changePassword, login, logout, verify };

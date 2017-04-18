@@ -10,13 +10,13 @@ const report = require('./reports/report-router.js');
 const auth = require('./auth/auth-router.js');
 
 // load environment variables from .env file.
-dotenv.load({ path: process.env.ENV_PATH || '.env.example' });
+dotenv.load({ path: process.env.ENV_PATH || '.env.default' });
 
 // Express server.
 const app = express();
 
 // Connect to mongodb.
-const mongoURL = process.env.MONGODB_URI || process.env.MONGOLAB_URI
+const mongoURL = process.env.MONGODB_URI || process.env.MONGOLAB_URI;
 mongoose.Promise = global.Promise;
 mongoose.connect(mongoURL);
 mongoose.connection.on('error', (err) => {

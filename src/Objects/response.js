@@ -1,6 +1,6 @@
-var ResponseObject = function (status, object) {
-    this.status = status;
-    this.object = object;
-}
+const ResponseObject = (status, object) => {
+  this.status = status;
+  this.object = object;
+};
 
-module.exports = { ResponseObject }
+module.exports = { ResponseObject };
