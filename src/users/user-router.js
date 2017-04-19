@@ -5,12 +5,12 @@ const userRouter = express.Router();
 
 // Create User.
 userRouter.post('/', (req, res) => {
-  userManager.createUser(req.body, (err, id) => {
+  userManager.createUser(req.body, (err, uid) => {
     if (err) {
       res.status(400).json(err).end();
     } else {
       // A User was created.
-      res.status(201).json({ uid: id }).end();
+      res.status(201).json({ uid }).end();
     }
   });
 });

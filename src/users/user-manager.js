@@ -24,8 +24,7 @@ const Admin = userModels.Admin;
  */
 const createUser = (data, next) => {
   // Ensure the required data is available.
-  if (!data || !data.role || !data.email || !data.password ||
-    (data.role === 'Student' && !data.studentId)) {
+  if (!data) {
     next({ err: 'Required parameters not found.' });
     return;
   }
@@ -43,7 +42,6 @@ const createUser = (data, next) => {
   if (data.role === 'Student') {
     // Create a student.
     info.studentId = data.studentId;
-
     user = new Student(info);
   } else if (data.role === 'Admin') {
     // Create an admin.
@@ -56,14 +54,11 @@ const createUser = (data, next) => {
   User.findOne({ email: user.email }, (userErr, existingUser) => {
     if (userErr) {
       next(userErr);
-      return;
-    }
-
-    if (existingUser) {
+    } else if (existingUser) {
       next({ err: 'Account with that email address already exists.' });
     } else {
       user.save((saveErr, dbUser) => {
-        next(saveErr, dbUser.id);
+        next(saveErr, (dbUser || {}).id);
       });
     }
   });
@@ -110,9 +105,4 @@ var getUser = (userUid) => {
 var modifyUserAsSelf = (userUid, reqData, modifyCallback) => {}
 var modifyUserAsAdmin = (userUid, reqData, modifyCallback) => {}
 
-module.exports = {
-  createUser,
-  modifyUser,
-  deleteUser,
-  getUser,
-};
+module.exports = { createUser, modifyUser, deleteUser, getUser };

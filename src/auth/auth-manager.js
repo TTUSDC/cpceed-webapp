@@ -19,13 +19,14 @@ const Session = require('./auth-models').Session;
  */
 const login = (email, password, next) => {
   User.findOne({ email }, (findErr, user) => {
-    if (findErr || !user) {
+    if (findErr) {
       next(findErr);
       return;
     }
 
+    // No user found for the given email address.
     if (!user) {
-      next({ err: 'User not found.' });
+      next('User not found.');
       return;
     }
 
@@ -37,7 +38,7 @@ const login = (email, password, next) => {
 
       // The wrong password was provided.
       if (!isMatch) {
-        next({ err: 'Wrong password provided.' });
+        next('Wrong password provided.');
         return;
       }
 
@@ -62,8 +63,8 @@ const login = (email, password, next) => {
             return;
           }
 
-          session = new Session({ email, token });
-          session.save((saveErr) => { next(saveErr, token); });
+          const newSession = new Session({ email, token });
+          newSession.save((saveErr) => { next(saveErr, token); });
         });
       });
     });
@@ -118,37 +119,23 @@ const verify = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
   // If no token is provided, inform the client.
-  if (!token) {
-    next({ err: 'No token provided.' });
-    return;
-  }
+  if (!token) { throw new Error('No token provided.'); }
 
   // Verify the client token has a valid signature.
   jwt.verify(token, process.env.SECRET, (verifyErr, decoded) => {
-    if (verifyErr) {
-      next(verifyErr);
-      return;
-    }
+    if (verifyErr) { throw new Error(verifyErr); }
 
     // Verify that the session is current.
     Session.findOne({ email: decoded.email }, (sessionErr, session) => {
-      if (sessionErr) {
-        next(sessionErr);
-        return;
-      }
+      if (sessionErr) { throw new Error(sessionErr); }
 
       // If no session is found, then the user was logged out of their account.
-      if (!session) {
-        next({ err: 'No session found.' });
-        return;
-      }
+      if (!session) { throw new Error('No session found.'); }
 
       // Verify that the stored token and the client token are the same.
       session.compareToken(token, (isMatch) => {
-        if (!isMatch) {
-          next({ err: 'Invalid session token provided.' });
-          return;
-        }
+        // The token is expired.
+        if (!isMatch) { throw new Error('Expired session provided.'); }
 
         // Add the token information to `res.locals.auth`.
         res.locals.auth = decoded;

@@ -19,6 +19,4 @@ sessionSchema.methods.compareToken = function compareToken(token, next) {
 
 const Session = mongoose.model('Session', sessionSchema);
 
-module.exports = {
-  Session,
-};
+module.exports = { Session };

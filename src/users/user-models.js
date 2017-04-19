@@ -87,8 +87,4 @@ const User = mongoose.model('User', userSchema);
 const Student = User.discriminator('Student', studentSchema);
 const Admin = User.discriminator('Admin', adminSchema);
 
-module.exports = {
-  Student,
-  Admin,
-  User,
-};
+module.exports = { Student, Admin, User };
