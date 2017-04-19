@@ -97,9 +97,38 @@ const getEventById = (eventUid, locals, getCallback) => {
   // TODO(asclines): Add checks for required data and expection handling
 
   // TODO(asclines): Check the UID of the logged in user and make sure they
-  // are either the creator of the event or an admin.
+  // have permisssion to get this event.
 
   Event.findById(eventUid, getCallback);
 };
 
-module.exports = { createEvent, modifyEvent, deleteEvent, getEventById };
+const getAllEvents = (reqData, locals, getAllCallback) => {
+  // TODO(asclines): Add checks for required data and expection handling
+
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // have permission to call this method.
+
+  const conditions = locals.conditions || {};
+  Event.find(conditions, (err, events) => {
+    if (err) {
+      getAllCallback(err);
+      return;
+    }
+
+    const results = {};
+    events.forEach((event) => {
+      results[event.id] = event;
+    });
+
+    getAllCallback(err, results);
+  });
+};
+
+
+module.exports = {
+  createEvent,
+  modifyEvent,
+  deleteEvent,
+  getEventById,
+  getAllEvents,
+};
