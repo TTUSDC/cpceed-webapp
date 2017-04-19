@@ -119,23 +119,33 @@ const verify = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
   // If no token is provided, inform the client.
-  if (!token) { throw new Error('No token provided.'); }
+  if (!token) {
+    res.locals.err = new Error('No token provided.');
+  }
 
   // Verify the client token has a valid signature.
   jwt.verify(token, process.env.SECRET, (verifyErr, decoded) => {
-    if (verifyErr) { throw new Error(verifyErr); }
+    if (verifyErr) {
+      res.locals.err = new Error(verifyErr);
+    }
 
     // Verify that the session is current.
     Session.findOne({ email: decoded.email }, (sessionErr, session) => {
-      if (sessionErr) { throw new Error(sessionErr); }
+      if (sessionErr) {
+        res.locals.err = new Error(sessionErr);
+      }
 
       // If no session is found, then the user was logged out of their account.
-      if (!session) { throw new Error('No session found.'); }
+      if (!session) {
+        res.locals.err = new Error('No session found.');
+      }
 
       // Verify that the stored token and the client token are the same.
       session.compareToken(token, (isMatch) => {
         // The token is expired.
-        if (!isMatch) { throw new Error('Expired session provided.'); }
+        if (!isMatch) {
+          res.locals.err = new Error('Expired session provided.');
+        }
 
         // Add the token information to `res.locals.auth`.
         res.locals.auth = decoded;
