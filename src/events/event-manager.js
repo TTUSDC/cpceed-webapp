@@ -47,6 +47,11 @@ const createEvent = (reqData, locals, createCallback) => {
  * @param {eventCallback} modifyCallback - Called once the operation finishes.
  */
 const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
+  // TODO(asclines): Add checks for required data and expection handling
+
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the event or an admin.
+
   Event.findOneAndUpdate({
     '_id:': eventUid,
   }, {
@@ -62,10 +67,16 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
     new: true,
   }, modifyCallback,
   );
-    // TODO(asclines): Check the UID of the logged in user and make sure they
-    // are either the creator of the event or an admin.
 };
 
+
+/**
+ * Deletes a specific event and calls back once database deletion finishes.
+ * @param {string} eventUid - The UID of the event to be deleted.
+ * @param {Object} locals - An object containg the current request's local
+ *   variables.
+ * @param {eventCallback} deleteCallback - Called once the operation is done.
+ */
 const deleteEvent = (eventUid, locals, deleteCallback) => {
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // are either the creator of the event or an admin.
@@ -75,4 +86,20 @@ const deleteEvent = (eventUid, locals, deleteCallback) => {
   Event.findByIdAndRemove(eventUid, deleteCallback);
 };
 
-module.exports = { createEvent, modifyEvent, deleteEvent };
+/**
+ * Finds a specific event and calls back once find operation finishes.
+ * @param {string} eventUid - The UID of the event to be found.
+ * @param {Object} locals - An object containing the current request's
+ *   local variables.
+ * @param {eventCallback} getCallback - Called once the operation is done.
+ */
+const getEventById = (eventUid, locals, getCallback) => {
+  // TODO(asclines): Add checks for required data and expection handling
+
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the event or an admin.
+
+  Event.findById(eventUid, getCallback);
+};
+
+module.exports = { createEvent, modifyEvent, deleteEvent, getEventById };
