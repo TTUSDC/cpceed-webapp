@@ -1,63 +1,80 @@
-var response = require('../Objects/response.js');
-var userModels = require('./user-models.js');
-var Student = userModels.Student;
-var Admin = userModels.Admin;
+const response = require('../objects/response.js');
+const userModels = require('./user-models.js');
 
-var createUser = (reqData, createCallback) => {
-  var user;
-  if (reqData.role == 'Student') {
-    // Create new student.
-    user = new Student({
-      approvalStatus: false,
-      email: reqData.email,
-      firstName: reqData.firstName,
-      lastName: reqData.lastName,
-      points: {
-        career: 0,
-        community: 0,
-        firstother: 0,
-        firstworkshops: 0,
-        mentor: 0,
-        other: 0,
-        outreach: 0,
-        professor: 0,
-        staff: 0,
-        misc: 0
-      },
-      role: 'Student',
-      studentId: reqData.studentId
-    });
+const User = userModels.User;
+const Student = userModels.Student;
+const Admin = userModels.Admin;
 
-  } else if (reqData.role == 'Admin') {
-    // Create new admin.
-    user = new Admin({
-      email: reqData.email,
-      firstName: reqData.firstName,
-      lastName: reqData.lastName,
-      role: 'Admin'
-    });
+/**
+ * Callback for sending the response to the client.
+ *
+ * @callback createResponse
+ * @param {Object} err - The error.
+ * @param {Number} id - The user UID.
+ */
 
-  } else {
-  // TODO(ryanfaulkenberry100): Handle error case where role is incorrect.
+/**
+ * Given User information, create a User.
+ * @param {Object} data - The request body data.
+ * @param {String} data.role - The user role.
+ * @param {String} data.email - The user email address.
+ * @param {String} data.password - The user password.
+ * @param {createResponse} next - The callback function to run after this function
+ *     finishes.
+ */
+const createUser = (data, next) => {
+  // Ensure the required data is available.
+  if (!data) {
+    next({ err: 'Required parameters not found.' });
+    return;
   }
 
-  // TODO(ryanfaulkenberry100): Write user to database.
+  const info = {
+    email: data.email,
+    password: data.password,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    role: data.role,
+  };
 
-  return new response.ResponseObject(201, {"uid":"1", "url":"//www.google.com"});
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
+  let user;
+
+  if (data.role === 'Student') {
+    // Create a student.
+    info.studentId = data.studentId;
+    user = new Student(info);
+  } else if (data.role === 'Admin') {
+    // Create an admin.
+    user = new Admin(info);
+  } else {
+    next({ err: 'Valid role not found.' });
+    return;
+  }
+
+  User.findOne({ email: user.email }, (userErr, existingUser) => {
+    if (userErr) {
+      next(userErr);
+    } else if (existingUser) {
+      next({ err: 'Account with that email address already exists.' });
+    } else {
+      user.save((saveErr, dbUser) => {
+        next(saveErr, (dbUser || {}).id);
+      });
+    }
+  });
+};
 
 var modifyUser = (userUid, reqData, modifyCallback) => {
   // TODO(ryanfaulkenberry100): Check if modifier is a user or an admin.
-  if (/*modifying user is student*/ true) {
+  if ( /*modifying user is student*/ true) {
     modifyUserAsSelf(userUid, reqData, modifyCallback);
-  } else if (/*modifying user is admin*/ false) {
+  } else if ( /*modifying user is admin*/ false) {
     modifyUserAsAdmin(userUid, reqData, modifyCallback);
   } else {
     // TODO(ryanfaulkenberry100): Handle errors.
   }
 
-  return new response.ResponseObject(200, {"url":"//www.google.com"});
+  return new response.ResponseObject(200, { "url": "//www.google.com" });
   // TODO(ryanfaulkenberry100): Return actual data.
 }
 
@@ -65,7 +82,7 @@ var deleteUser = (userUid) => {
   // TODO(ryanfaulkenberry100): Delete the specified user and remove console.log.
   console.log(userUid);
 
-  return new response.ResponseObject(200, {"url":"//www.google.com"});
+  return new response.ResponseObject(200, { "url": "//www.google.com" });
   // TODO(ryanfaulkenberry100): Return actual data.
 }
 
@@ -78,7 +95,7 @@ var getUser = (userUid) => {
     email: "nobody@gmail.com",
     firstName: "John",
     lastName: "Doe",
-    role: "Admin"
+    role: "Admin",
   });
 
   return new response.ResponseObject(200, User);

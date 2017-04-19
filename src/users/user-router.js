@@ -1,11 +1,18 @@
-var express = require('express');
-var userManager = require('./user-manager.js');
-var userRouter = express.Router();
+const express = require('express');
+const userManager = require('./user-manager.js');
 
+const userRouter = express.Router();
+
+// Create User.
 userRouter.post('/', (req, res) => {
-  var response = userManager.createUser(req.body);
-
-  res.status(201).json(response.object);
+  userManager.createUser(req.body, (err, uid) => {
+    if (err) {
+      res.status(400).json(err).end();
+    } else {
+      // A User was created.
+      res.status(201).json({ uid }).end();
+    }
+  });
 });
 
 userRouter.put('/:uid', (req, res) => {

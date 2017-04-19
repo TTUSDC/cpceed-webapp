@@ -205,7 +205,7 @@ var getAllReports = (reqData, locals, queryCallback) => {
 
 };
 
-/** 
+/**
  * If the new value is defined and non-null, returns the new value.  Otherwise,
  * returns the old value.
  * @param {T} newValue - A new value value that may or may not be defined and
