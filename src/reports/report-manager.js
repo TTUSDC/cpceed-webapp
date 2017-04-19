@@ -1,4 +1,5 @@
 var reportModels = require('./report-models');
+var newIfPresent = require('../core/utils').newIfPresent;
 var Report = reportModels.Report;
 var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;
@@ -203,23 +204,6 @@ var getAllReports = (reqData, locals, queryCallback) => {
     queryCallback(err, returnObject);
   });
 
-};
-
-/** 
- * If the new value is defined and non-null, returns the new value.  Otherwise,
- * returns the old value.
- * @param {T} newValue - A new value value that may or may not be defined and
- *     non-null.
- * @param {T} oldValue - A old value that is defined and non-null.
- * @return {T} The new value if it is defined and non-null.  The old value if
- *     the new value is undefined or null.
- * @template T
- */
-var newIfPresent = (newValue, oldValue) => {
-  if (newValue == undefined || newValue == null) {
-    return oldValue;
-  }
-  return newValue;
 };
 
 module.exports = {createReport, modifyReport, deleteReport, getReportById,
