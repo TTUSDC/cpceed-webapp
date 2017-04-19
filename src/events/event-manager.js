@@ -66,4 +66,13 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
     // are either the creator of the event or an admin.
 };
 
-module.exports = { createEvent, modifyEvent };
+const deleteEvent = (eventUid, locals, deleteCallback) => {
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the event or an admin.
+
+  // TODO(asclines): Look into better error handling.
+
+  Event.findByIdAndRemove(eventUid, deleteCallback);
+};
+
+module.exports = { createEvent, modifyEvent, deleteEvent };
