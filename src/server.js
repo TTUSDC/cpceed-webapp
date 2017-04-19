@@ -1,26 +1,49 @@
-// BASE SETUP
-var express = require('express');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var MONGO_PORT = 27017;
-mongoose.connect('mongodb://localhost:' + MONGO_PORT);
-var user = require('./users/user-router.js');
-var event = require('./Events/router.js');
-var report = require('./reports/report-router.js');
-var app = express();
-var port = process.env.PORT || 8080;
+const express = require('express');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
-app.use(bodyParser.urlencoded({ extended: true }));
+// Routers.
+const user = require('./users/user-router.js');
+const event = require('./events/router.js');
+const report = require('./reports/report-router.js');
+const auth = require('./auth/auth-router.js');
+
+// load environment variables from .env file.
+dotenv.load({ path: process.env.ENV_PATH || '.env.default' });
+
+// Express server.
+const app = express();
+
+// Connect to mongodb.
+const mongoURL = process.env.MONGODB_URI || process.env.MONGOLAB_URI;
+mongoose.Promise = global.Promise;
+mongoose.connect(mongoURL);
+mongoose.connection.on('error', (err) => {
+  console.error(err);
+  console.log('MongoDB connection error. Please make sure MongoDB is running.');
+  process.exit();
+});
+
+// Express configuration.
+const port = process.env.PORT || 3000;
+app.set('port', port);
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// BASE ROUTES
-var router = express.Router();
+// App routes.
+const router = express.Router();
 router.use('/users', user.userRouter);
 router.use('/events', event.eventRouter);
 router.use('/reports', report.reportRouter);
+router.use('/auth', auth.router);
 
 app.use('/api', router);
 
-const server = app.listen(port);
-console.log('Listening on port ' + port);
+// Start express server.
+const server = app.listen(port, () => {
+  console.log('App is running at %d in %s mode', port, app.get('env'));
+  console.log('  Press ctrl-c to stop\n');
+});
+
 module.exports = server;
