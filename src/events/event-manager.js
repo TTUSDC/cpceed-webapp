@@ -51,10 +51,8 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
 
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // are either the creator of the event or an admin.
-
-  Event.findOneAndUpdate({
-    '_id:': eventUid,
-  }, {
+  const conditions = { _id: eventUid };
+  const update = {
     $set: {
       creator: reqData.creator,
       category: reqData.category,
@@ -63,10 +61,12 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
       title: reqData.title,
       description: reqData.description,
     },
-  }, {
+  };
+
+  const options = {
     new: true,
-  }, modifyCallback,
-  );
+  };
+  Event.findOneAndUpdate(conditions, update, options, modifyCallback);
 };
 
 
@@ -94,19 +94,19 @@ const deleteEvent = (eventUid, locals, deleteCallback) => {
  * @param {eventCallback} getCallback - Called once the operation is done.
  */
 const getEventById = (eventUid, locals, getCallback) => {
-  // TODO(asclines): Add checks for required data and expection handling
+//   // TODO(asclines): Add checks for required data and expection handling
 
-  // TODO(asclines): Check the UID of the logged in user and make sure they
-  // have permisssion to get this event.
+//   // TODO(asclines): Check the UID of the logged in user and make sure they
+//   // have permisssion to get this event.
 
   Event.findById(eventUid, getCallback);
 };
 
 const getAllEvents = (reqData, locals, getAllCallback) => {
-  // TODO(asclines): Add checks for required data and expection handling
+//   // TODO(asclines): Add checks for required data and expection handling
 
-  // TODO(asclines): Check the UID of the logged in user and make sure they
-  // have permission to call this method.
+//   // TODO(asclines): Check the UID of the logged in user and make sure they
+//   // have permission to call this method.
 
   const conditions = locals.conditions || {};
   Event.find(conditions, (err, events) => {
