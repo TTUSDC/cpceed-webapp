@@ -57,7 +57,7 @@ const login = (email, password, next) => {
         };
 
         // Sign and save the session.
-        jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS256' }, (signErr, token) => {
+        jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS512' }, (signErr, token) => {
           if (signErr) {
             next(signErr);
             return;
@@ -121,23 +121,31 @@ const verify = (req, res, next) => {
   // If no token is provided, inform the client.
   if (!token) {
     res.locals.err = new Error('No token provided.');
+    next();
+    return;
   }
 
   // Verify the client token has a valid signature.
   jwt.verify(token, process.env.SECRET, (verifyErr, decoded) => {
     if (verifyErr) {
       res.locals.err = new Error(verifyErr);
+      next();
+      return;
     }
 
     // Verify that the session is current.
     Session.findOne({ email: decoded.email }, (sessionErr, session) => {
       if (sessionErr) {
         res.locals.err = new Error(sessionErr);
+        next();
+        return;
       }
 
       // If no session is found, then the user was logged out of their account.
       if (!session) {
         res.locals.err = new Error('No session found.');
+        next();
+        return;
       }
 
       // Verify that the stored token and the client token are the same.
@@ -145,6 +153,8 @@ const verify = (req, res, next) => {
         // The token is expired.
         if (!isMatch) {
           res.locals.err = new Error('Expired session provided.');
+          next();
+          return;
         }
 
         // Add the token information to `res.locals.auth`.
