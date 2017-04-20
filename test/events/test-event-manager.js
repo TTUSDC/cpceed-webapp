@@ -124,4 +124,27 @@ describe('eventManager', () => {
       });
     });
   });
+
+  describe('#getEventById', () => {
+    it('should pass the event with the given id to the callback', (done) => {
+      const testEventObj = getDefaultTestEvent();
+      const testEvent = new Event(testEventObj);
+      const testDatetime = testEventObj.datetime;
+      delete testEventObj.datetime;
+
+      testEvent.save((saveErr, createdEvent) => {
+        expect(saveErr).to.be.null;
+        expect(createdEvent).to.exist;
+
+        eventManager.getEventById(createdEvent.id, {},
+          (getErr, foundEvent) => {
+            expect(getErr).to.be.null;
+            expect(foundEvent).to.exist;
+            expect(foundEvent.datetime).to.be.sameMoment(testDatetime);
+            expect(foundEvent).to.shallowDeepEqual(testEventObj);
+            done();
+          });
+      });
+    });
+  });
 });
