@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const options = {
+  timestamps: true,
+};
+
 const eventSchema = new Schema({
   creator: String,
   category: String,
@@ -9,7 +13,7 @@ const eventSchema = new Schema({
   location: String,
   title: String,
   description: String,
-});
+}, options);
 
 const Event = mongoose.model('Event', eventSchema);
 
