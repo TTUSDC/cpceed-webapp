@@ -1,6 +1,7 @@
 const mockgoose = require('mockgoose');
 const mongoose = require('mongoose');
 const chai = require('chai');
+const async = require('async');
 const eventManager = require('../../src/events/event-manager');
 const eventModels = require('../../src/events/event-models');
 
@@ -31,7 +32,9 @@ describe('eventManager', () => {
   };
 
 
-  before((done) => { mongoose.connect('', done); });
+  before((done) => {
+    mongoose.connect('', done);
+  });
 
   beforeEach((done) => {
     mockgoose.reset();
@@ -145,6 +148,58 @@ describe('eventManager', () => {
             expect(foundEvent).to.shallowDeepEqual(testData.obj);
             done();
           });
+      });
+    });
+  });
+
+  describe('#getAllEvents', () => {
+    it('should pass an object of all events to the callback', (done) => {
+      const testDataList = [
+        getDefaultTestData(1),
+        getDefaultTestData(2),
+        getDefaultTestData(3),
+      ];
+      const savedItemsList = [];
+
+      const saveIteratee = (testData, saveCb) => {
+        testData.event.save((saveErr, savedEvent) => {
+          expect(saveErr).to.be.null;
+          expect(savedEvent).to.exist;
+          const savedItem = testData;
+          savedItem.savedEvent = savedEvent;
+          savedItem.id = savedEvent.id;
+          savedItemsList.push(savedItem);
+          saveCb();
+        });
+      };
+
+      async.each(testDataList, saveIteratee, (asyncSaveErr) => {
+        expect(asyncSaveErr).to.be.null;
+
+        eventManager.getAllEvents({}, {}, (getErr, events) => {
+          expect(getErr).to.be.null;
+          expect(events).to.exist;
+
+          const getIteratee = (savedItem, cb) => {
+            it(`should have returned event with id: ${savedItem.id}`,
+            (innerDone) => {
+              const event = events[savedItem.id];
+              expect(event).to.exist;
+              expect(event.datetime).to.be.sameMoment(savedItem.datetime);
+              expect(event).to.shallowDeepEqual(savedItem.obj);
+              innerDone();
+            });
+            cb();
+          };
+
+          describe('eventManager', () => {
+            describe('#getAllEvents', () => {
+              async.each(savedItemsList, getIteratee, (err) => {
+                done(err);
+              });
+            });
+          });
+        });
       });
     });
   });
