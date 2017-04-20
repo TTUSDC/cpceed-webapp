@@ -27,7 +27,7 @@ describe('eventManager', () => {
       const testEvent = {
         creator: 'creatoruid123',
         category: 'eventcategory',
-        datetime: 'Apr 19 2017 15:34',
+        datetime: '2017-04-19T20:34:00.000Z',
         location: 'ECE 204',
         title: 'Awesome Event',
         description: 'This event has an awesome description',
@@ -37,7 +37,6 @@ describe('eventManager', () => {
         expect(createErr).to.be.null;
         expect(createdEvent).to.not.be.null;
         expect(createdEvent.datetime).to.be.sameMoment(testEvent.datetime);
-
         // The next line is to handle the fact that datetimes when equivalent don't
         // mean equal when compared.
         delete testEvent.datetime;
@@ -51,5 +50,9 @@ describe('eventManager', () => {
         });
       });
     });
+  });
+
+  describe('#modifyEvent', () => {
+
   });
 });
