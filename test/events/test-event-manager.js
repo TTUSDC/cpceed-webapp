@@ -13,17 +13,23 @@ const Event = eventModels.Event;
 mockgoose(mongoose);
 
 describe('eventManager', () => {
-  const getDefaultTestEvent = () => {
-    const defaultTestEvent = {
+  // Helper method to get an object for event test
+  const getDefaultTestData = () => {
+    const datetime = '2017-04-19T20:34:00.000Z';
+    const obj = {
       creator: 'creatoruid123',
       category: 'eventcategory',
-      datetime: '2017-04-19T20:34:00.000Z',
       location: 'ECE 204',
       title: 'Awesome Event',
       description: 'This event has an awesome description',
+      datetime,
     };
-    return defaultTestEvent;
+    const event = new Event(obj);
+    delete obj.datetime;
+    const defaultTestData = { obj, datetime, event };
+    return defaultTestData;
   };
+
 
   before((done) => { mongoose.connect('', done); });
 
@@ -36,8 +42,10 @@ describe('eventManager', () => {
 
   describe('#createEvent', () => {
     it('should pass a created and saved event to the callback', (done) => {
-      const testEvent = getDefaultTestEvent();
-      const testDatetime = testEvent.datetime;
+      const testData = getDefaultTestData();
+      console.log(testData);
+      const testEvent = testData.obj;
+      testEvent.datetime = testData.datetime;
 
       eventManager.createEvent(testEvent, {}, (createErr, createdEvent) => {
         // The next line is to handle the fact that datetimes when equivalent don't
@@ -45,13 +53,13 @@ describe('eventManager', () => {
         delete testEvent.datetime;
         expect(createErr).to.be.null;
         expect(createdEvent).to.not.be.null;
-        expect(createdEvent.datetime).to.be.sameMoment(testDatetime);
+        expect(createdEvent.datetime).to.be.sameMoment(testData.datetime);
         expect(createdEvent).to.shallowDeepEqual(testEvent);
 
         Event.findById(createdEvent.id, (findErr, foundEvent) => {
           expect(findErr).to.be.null;
           expect(foundEvent).to.not.be.null;
-          expect(foundEvent.datetime).to.be.sameMoment(testDatetime);
+          expect(foundEvent.datetime).to.be.sameMoment(testData.datetime);
           expect(foundEvent).to.shallowDeepEqual(testEvent);
           done();
         });
@@ -61,7 +69,8 @@ describe('eventManager', () => {
 
   describe('#modifyEvent', () => {
     it('should pass a modified and saved event to the callback', (done) => {
-      const originalEvent = new Event(getDefaultTestEvent());
+      const testData = getDefaultTestData();
+      const originalEvent = testData.event;
       const updatedEvent = {
         creator: 'updatedCreatorId',
         category: 'eventcategoryish',
@@ -71,7 +80,6 @@ describe('eventManager', () => {
         description: 'This event had an awesome description',
       };
       const testDatetime = updatedEvent.datetime;
-
       originalEvent.save((saveErr, createdEvent) => {
         expect(saveErr).to.be.null;
         expect(createdEvent).to.not.be.null;
@@ -101,20 +109,17 @@ describe('eventManager', () => {
 
   describe('#deleteEvent', () => {
     it('should delete a saved event', (done) => {
-      const testEventObj = getDefaultTestEvent();
-      const testEvent = new Event(testEventObj);
-      const testDatetime = testEventObj.datetime;
-      delete testEventObj.datetime;
+      const testData = getDefaultTestData();
 
-      testEvent.save((saveErr, createdEvent) => {
+      testData.event.save((saveErr, createdEvent) => {
         expect(saveErr).to.be.null;
         expect(createdEvent).to.not.be.null;
 
         eventManager.deleteEvent(createdEvent.id, {}, (err, deletedEvent) => {
           expect(err).to.be.null;
           expect(deletedEvent).to.not.be.null;
-          expect(deletedEvent.datetime).to.be.sameMoment(testDatetime);
-          expect(deletedEvent).to.shallowDeepEqual(testEventObj);
+          expect(deletedEvent.datetime).to.be.sameMoment(testData.datetime);
+          expect(deletedEvent).to.shallowDeepEqual(testData.obj);
 
           Event.findById(createdEvent.id, {}, (foundErr, foundEvent) => {
             expect(foundEvent).to.be.null;
@@ -127,12 +132,9 @@ describe('eventManager', () => {
 
   describe('#getEventById', () => {
     it('should pass the event with the given id to the callback', (done) => {
-      const testEventObj = getDefaultTestEvent();
-      const testEvent = new Event(testEventObj);
-      const testDatetime = testEventObj.datetime;
-      delete testEventObj.datetime;
+      const testData = getDefaultTestData();
 
-      testEvent.save((saveErr, createdEvent) => {
+      testData.event.save((saveErr, createdEvent) => {
         expect(saveErr).to.be.null;
         expect(createdEvent).to.exist;
 
@@ -140,8 +142,8 @@ describe('eventManager', () => {
           (getErr, foundEvent) => {
             expect(getErr).to.be.null;
             expect(foundEvent).to.exist;
-            expect(foundEvent.datetime).to.be.sameMoment(testDatetime);
-            expect(foundEvent).to.shallowDeepEqual(testEventObj);
+            expect(foundEvent.datetime).to.be.sameMoment(testData.datetime);
+            expect(foundEvent).to.shallowDeepEqual(testData.obj);
             done();
           });
       });
