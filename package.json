@@ -12,6 +12,7 @@
     "mongoose": "^4.9.1"
   },
   "devDependencies": {
+    "async": "^2.3.0",
     "chai": "^3.5.0",
     "chai-moment": "0.1.0",
     "chai-shallow-deep-equal": "^1.4.6",
