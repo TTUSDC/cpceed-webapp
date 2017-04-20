@@ -87,7 +87,7 @@ describe('authManager', () => {
   describe('#logout', () => {
     it('should not find a session', (done) => {
       const email = 'session@test.com';
-      const token = jwt.sign({}, process.env.SECRET);
+      const token = jwt.sign({ email }, process.env.SECRET);
       const session = new Session({ email, token });
 
       session.save((saveErr) => {
@@ -107,8 +107,23 @@ describe('authManager', () => {
   });
 
   describe('#verify', () => {
-    it('should verify the student token', (done) => {
-      done();
+    it('should verify the passed token', (done) => {
+      const email = 'session@test.com';
+      const token = jwt.sign({ email }, process.env.SECRET);
+      const session = new Session({ email, token });
+
+      session.save((saveErr) => {
+        expect(saveErr).to.be.null;
+
+        const req = { body: { token } };
+        const res = { locals: { err: null, auth: null } };
+
+        authManager.verify(req, res, () => {
+          expect(res.locals.err).to.be.null;
+          expect(res.locals.auth).to.deep.equal(jwt.decode(token));
+          done();
+        });
+      });
     });
   });
 });
