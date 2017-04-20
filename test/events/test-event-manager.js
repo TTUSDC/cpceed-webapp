@@ -14,14 +14,14 @@ mockgoose(mongoose);
 
 describe('eventManager', () => {
   // Helper method to get an object for event test
-  const getDefaultTestData = () => {
+  const getDefaultTestData = (seed) => {
     const datetime = '2017-04-19T20:34:00.000Z';
     const obj = {
-      creator: 'creatoruid123',
-      category: 'eventcategory',
-      location: 'ECE 204',
-      title: 'Awesome Event',
-      description: 'This event has an awesome description',
+      creator: `creatoruid123${seed}`,
+      category: `eventcategory${seed}`,
+      location: `ECE 204${seed}`,
+      title: `Awesome Event${seed}`,
+      description: `This event has an awesome description${seed}`,
       datetime,
     };
     const event = new Event(obj);
@@ -43,7 +43,6 @@ describe('eventManager', () => {
   describe('#createEvent', () => {
     it('should pass a created and saved event to the callback', (done) => {
       const testData = getDefaultTestData();
-      console.log(testData);
       const testEvent = testData.obj;
       testEvent.datetime = testData.datetime;
 
