@@ -32,15 +32,23 @@ describe('eventManager', () => {
         title: 'Awesome Event',
         description: 'This event has an awesome description',
       };
-      eventManager.createEvent(testEvent, {}, (err, createdEvent) => {
-        expect(err).to.be.null;
+      const testDatetime = testEvent.datetime;
+      eventManager.createEvent(testEvent, {}, (createErr, createdEvent) => {
+        expect(createErr).to.be.null;
+        expect(createdEvent).to.not.be.null;
         expect(createdEvent.datetime).to.be.sameMoment(testEvent.datetime);
 
         // The next line is to handle the fact that datetimes when equivalent don't
         // mean equal when compared.
         delete testEvent.datetime;
         expect(createdEvent).to.shallowDeepEqual(testEvent);
-        done();
+        Event.findById(createdEvent.id, (findErr, foundEvent) => {
+          expect(findErr).to.be.null;
+          expect(foundEvent).to.not.be.null;
+          expect(foundEvent.datetime).to.be.sameMoment(testDatetime);
+          expect(foundEvent).to.shallowDeepEqual(testEvent);
+          done();
+        });
       });
     });
   });
