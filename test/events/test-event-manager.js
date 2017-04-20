@@ -38,6 +38,7 @@ describe('eventManager', () => {
     it('should pass a created and saved event to the callback', (done) => {
       const testEvent = getDefaultTestEvent();
       const testDatetime = testEvent.datetime;
+
       eventManager.createEvent(testEvent, {}, (createErr, createdEvent) => {
         // The next line is to handle the fact that datetimes when equivalent don't
         // mean equal when compared.
@@ -46,6 +47,7 @@ describe('eventManager', () => {
         expect(createdEvent).to.not.be.null;
         expect(createdEvent.datetime).to.be.sameMoment(testDatetime);
         expect(createdEvent).to.shallowDeepEqual(testEvent);
+
         Event.findById(createdEvent.id, (findErr, foundEvent) => {
           expect(findErr).to.be.null;
           expect(foundEvent).to.not.be.null;
@@ -69,9 +71,11 @@ describe('eventManager', () => {
         description: 'This event had an awesome description',
       };
       const testDatetime = updatedEvent.datetime;
+
       originalEvent.save((saveErr, createdEvent) => {
         expect(saveErr).to.be.null;
         expect(createdEvent).to.not.be.null;
+
         eventManager.modifyEvent(createdEvent.id, updatedEvent, {},
           (modifyErr, realUpdatedEvent) => {
             // The next line is to handle the fact that datetimes when
@@ -82,6 +86,7 @@ describe('eventManager', () => {
             expect(realUpdatedEvent.datetime)
               .to.be.sameMoment(testDatetime);
             expect(realUpdatedEvent).to.shallowDeepEqual(updatedEvent);
+
             Event.findById(realUpdatedEvent.id, (findErr, foundEvent) => {
               expect(findErr).to.be.null;
               expect(foundEvent).to.not.be.null;
@@ -90,6 +95,32 @@ describe('eventManager', () => {
               done();
             });
           });
+      });
+    });
+  });
+
+  describe('#deleteEvent', () => {
+    it('should delete a saved event', (done) => {
+      const testEventObj = getDefaultTestEvent();
+      const testEvent = new Event(testEventObj);
+      const testDatetime = testEventObj.datetime;
+      delete testEventObj.datetime;
+
+      testEvent.save((saveErr, createdEvent) => {
+        expect(saveErr).to.be.null;
+        expect(createdEvent).to.not.be.null;
+
+        eventManager.deleteEvent(createdEvent.id, {}, (err, deletedEvent) => {
+          expect(err).to.be.null;
+          expect(deletedEvent).to.not.be.null;
+          expect(deletedEvent.datetime).to.be.sameMoment(testDatetime);
+          expect(deletedEvent).to.shallowDeepEqual(testEventObj);
+
+          Event.findById(createdEvent.id, {}, (foundErr, foundEvent) => {
+            expect(foundEvent).to.be.null;
+            done(err);
+          });
+        });
       });
     });
   });
