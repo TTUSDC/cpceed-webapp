@@ -3,12 +3,7 @@ import { AuthStates } from 'redux/actions';
 // import logger from 'logger/logger.js';
 import { login, logout } from 'server/user-auth';
 
-const user38257001 = {
-  studentId: '38257001',
-  password: 'SD678fdg$',
-  uid: 'e95IXy3d6zampLzmtnizERxjaMr2',
-  email: 'test-38257001@ttu.edu',
-};
+import { user38257001 as testUser } from './core/users';
 
 const expect = require('chai').expect;
 
@@ -28,7 +23,6 @@ export default describe('Server API: Auth', () => {
   });
   describe('#login(email,password)', () => {
     it('should login to account', (done) => {
-      const testUser = user38257001;
       login(testUser.email, testUser.password).then((user) => {
         expect(user.studentId).to.equal(testUser.studentId);
         const reduxUser = store.getState().user;
@@ -42,7 +36,6 @@ export default describe('Server API: Auth', () => {
   });
   describe('#logout()', () => {
     it('should login then logout of account', (done) => {
-      const testUser = user38257001;
       login(testUser.email, testUser.password).then((user) => {
         expect(user.studentId).to.equal(testUser.studentId);
         logout().then(() => {

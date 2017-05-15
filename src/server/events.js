@@ -1,36 +1,52 @@
-import * as util from './utils';
-import * as dummyData from '../../test/server/dummy-data';
+// import logger from 'logger/logger';
+import * as firebase from 'firebase';
+
+const eventsRef = firebase.database().ref().child('events');
 
 export function create(newEvent) {
   return new Promise((resolve, reject) => {
-    const uid = util.getRandomString();
-    dummyData.events[uid] = newEvent;
-    resolve(uid);
+    const newEventRef = eventsRef.push();
+    newEventRef.set(newEvent).then((err) => {
+      if (err) reject(err);
+      resolve(newEventRef.key);
+    });
   });
 }
 
 export function modify(uid, updatedEvent) {
   return new Promise((resolve, reject) => {
-    dummyData.events[uid] = updatedEvent;
-    resolve();
+    const updatedEventRef = eventsRef.child(uid);
+    updatedEventRef.set(updatedEvent).then((err) => {
+      if (err) reject(err);
+      resolve(updatedEventRef.key);
+    });
   });
 }
 
 export function remove(uid) {
   return new Promise((resolve, reject) => {
-    dummyData.events[uid] = undefined;
-    resolve();
+    const removeEventRef = eventsRef.child(uid);
+    removeEventRef.remove().then(() => {
+      resolve();
+    }).catch((err) => {
+      reject(err);
+    });
   });
 }
 
 export function getByUid(uid) {
   return new Promise((resolve, reject) => {
-    resolve(dummyData.events[uid]);
+    const getEventRef = eventsRef.child(uid);
+    getEventRef.once('value').then((snapshot) => {
+      resolve(snapshot.val());
+    }).catch((err) => { reject(err); });
   });
 }
 
 export function getAll() {
   return new Promise((resolve, reject) => {
-    resolve(dummyData.events);
+    eventsRef.once('value').then((snapshot) => {
+      resolve(snapshot.val());
+    }).catch((err) => { reject(err); });
   });
 }
