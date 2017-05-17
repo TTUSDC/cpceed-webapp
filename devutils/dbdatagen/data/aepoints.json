@@ -1,0 +1,42 @@
+{
+  "career" : {
+    "description" : "University Career Center Testing & Events",
+    "value" : 1
+  },
+  "community" : {
+    "description" : "Community Involvement Activities",
+    "value" : 1
+  },
+  "firstother" : {
+    "description" : "FIRST Program Presentations & Socials",
+    "value" : 1
+  },
+  "firstworkshops" : {
+    "description" : "FIRST Program Workshops",
+    "value" : 3
+  },
+  "mentor" : {
+    "description" : "Mentor Meetings",
+    "value" : 1
+  },
+  "other" : {
+    "description" : "Other College of Engineering Workshops & Engineering Company Info Sessions",
+    "value" : 1
+  },
+  "outreach" : {
+    "description" : "FIRST Program Outreach",
+    "value" : 2
+  },
+  "professor" : {
+    "description" : "Professor Meetings",
+    "value" : 4
+  },
+  "staff" : {
+    "description" : "Advisor/Faculty/Staff Meetings",
+    "value" : 1
+  },
+  "misc": {
+    "description" : "For things that don't fit any category",
+    "value" : 0
+  }
+}

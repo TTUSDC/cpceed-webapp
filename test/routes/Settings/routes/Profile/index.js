@@ -1,0 +1,1 @@
+import componentTests from './components';
