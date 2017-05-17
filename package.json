@@ -6,16 +6,21 @@
   "dependencies": {
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
     "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "jsonwebtoken": "^7.3.0",
-    "mongoose": "^4.9.1"
+    "mongoose": "^4.9.1",
+    "morgan": "^1.8.1"
   },
   "devDependencies": {
     "async": "^2.3.0",
     "chai": "^3.5.0",
     "chai-moment": "0.1.0",
     "chai-shallow-deep-equal": "^1.4.6",
+    "bluebird": "^3.5.0",
+    "chai": "^3.5.0",
+    "chai-moment": "0.1.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-chai-friendly": "0.2.0",
