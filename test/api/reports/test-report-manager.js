@@ -6,8 +6,8 @@ const expect = chai.expect;
 chai.use(require('chai-moment'));
 mockgoose(mongoose);
 
-const reportManager = require('../../src/reports/report-manager');
-const reportModels = require('../../src/reports/report-models');
+const reportManager = require('../../../api/reports/report-manager');
+const reportModels = require('../../../api/reports/report-models');
 const Report = reportModels.Report;
 const EventReport = reportModels.EventReport;
 const OtherReport = reportModels.OtherReport;

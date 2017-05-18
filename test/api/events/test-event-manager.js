@@ -2,8 +2,8 @@ const mockgoose = require('mockgoose');
 const mongoose = require('mongoose');
 const chai = require('chai');
 const async = require('async');
-const eventManager = require('../../src/events/event-manager');
-const eventModels = require('../../src/events/event-models');
+const eventManager = require('../../../api/events/event-manager');
+const eventModels = require('../../../api/events/event-models');
 
 chai.use(require('chai-shallow-deep-equal'));
 chai.use(require('chai-moment'));

@@ -2,8 +2,8 @@ const mockgoose = require('mockgoose');
 const mongoose = require('mongoose');
 const chai = require('chai');
 const chaiMoment = require('chai-moment');
-const userManager = require('../../src/users/user-manager');
-const userModels = require('../../src/users/user-models');
+const userManager = require('../../../api/users/user-manager');
+const userModels = require('../../../api/users/user-models');
 
 const expect = chai.expect;
 const should = chai.should();

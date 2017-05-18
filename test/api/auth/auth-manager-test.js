@@ -4,9 +4,9 @@ const bluebird = require('bluebird');
 const chai = require('chai');
 const chaiMoment = require('chai-moment');
 const jwt = require('jsonwebtoken');
-const authManager = require('../../src/auth/auth-manager');
-const authModels = require('../../src/auth/auth-models');
-const userManager = require('../../src/users/user-manager');
+const authManager = require('../../../api/auth/auth-manager');
+const authModels = require('../../../api/auth/auth-models');
+const userManager = require('../../../api/users/user-manager');
 
 const expect = chai.expect;
 const Session = authModels.Session;
