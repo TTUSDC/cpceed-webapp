@@ -27,7 +27,7 @@ mongoose.connect(mongoURL);
 mongoose.connection.on('error', (err) => {
   console.error(err);
   console.log('MongoDB connection error. Please make sure MongoDB is running.');
-  process.exit();
+  process.exit(1);
 });
 
 app.use('/', express.static(__dirname +'/build'));

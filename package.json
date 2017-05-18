@@ -4,10 +4,12 @@
   "description": "Time logging app for the CPCEED program at Texas Tech University",
   "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server --env=dev",
-    "start-server": "node server.js",
+    "start": "npm-run-all start-api start-app",
+    "start-app": "webpack-dev-server --env=dev",
+    "start-api": "node server.js",
     "build": "webpack --env=prod",
-    "test": "karma start karma.conf.js",
+    "test": "npm-run-all --parallel --continue-on-error test-app test-api",
+    "test-app": "karma start karma.conf.js",
     "test-api": "./node_modules/.bin/mocha --recursive test/api",
     "lint": "node_modules/.bin/eslint src test"
   },
