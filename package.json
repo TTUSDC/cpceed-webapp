@@ -11,7 +11,7 @@
     "test": "npm-run-all --parallel --continue-on-error test-app test-api",
     "test-app": "karma start karma.conf.js",
     "test-api": "./node_modules/.bin/mocha --recursive test/api",
-    "lint": "node_modules/.bin/eslint src test"
+    "lint": "node eslint.js app src test"
   },
   "repository": {
     "type": "git",

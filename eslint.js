@@ -1,18 +1,21 @@
 const exec = require('child_process').exec;
 
-const base = 'node_modules\\.bin\\eslint --color --config';
-let cmd = null;
+let cmd = 'node_modules\\.bin\\eslint --color --config';
 
 switch (process.argv[2]) {
   case 'app':
-    cmd = `${base} app.eslintrc.js ${process.argv[3]}`;
+    cmd += ' app.eslintrc.js';
     break;
   case 'api':
-    cmd = `${base} api.eslintrc.js ${process.argv[3]}`;
+    cmd += ' api.eslintrc.js';
     break;
   default:
-    cmd = `${base} app.eslintrc.js ${process.argv[3]}`;
+    cmd += ' app.eslintrc.js';
 }
+
+process.argv.slice(3).forEach((value) => {
+  cmd += ` ${value}`;
+});
 
 exec(cmd, function(error, stdout, stderr) {
   console.log(stdout);
