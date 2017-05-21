@@ -54,7 +54,7 @@
     "chai-shallow-deep-equal": "1.4.6",
     "css-loader": "0.26.1",
     "enzyme": "2.7.1",
-    "eslint": "3.18.0",
+    "eslint": "3.19.0",
     "eslint-config-airbnb": "14.1.0",
     "eslint-plugin-chai-friendly": "0.2.0",
     "eslint-plugin-import": "2.2.0",
