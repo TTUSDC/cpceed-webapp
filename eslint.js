@@ -17,6 +17,6 @@ process.argv.slice(3).forEach((value) => {
   cmd += ` ${value}`;
 });
 
-exec(cmd, function(error, stdout, stderr) {
+exec(cmd, (error, stdout, stderr) => {
   console.log(stdout);
 });
