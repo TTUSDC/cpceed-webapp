@@ -31,4 +31,13 @@ export default describe('Server API: Core/tokenmanager', () => {
       expect(tokenManager.getToken()).to.be.null;
     });
   });
+
+  describe('#decode', () => {
+    it('should decode the token', () => {
+      const result = tokenManager.decode(testToken);
+      expect(result.email).to.equal('alexander@clines.com');
+      expect(result.role).to.equal('Student');
+      expect(result.isApproved).to.be.false;
+    });
+  });
 });
