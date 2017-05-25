@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/TTUSDC/CPCEEDWebApp#readme",
   "dependencies": {
+    "axios": "0.16.1",
     "bcrypt": "1.0.2",
     "body-parser": "1.17.1",
     "bunyan": "1.8.8",
@@ -36,6 +37,8 @@
     "jsonwebtoken": "7.4.1",
     "mongoose": "4.9.9",
     "morgan": "1.8.1",
+    "needle": "1.6.0",
+    "node-fetch": "2.0.0-alpha.4",
     "react": "15.4.2",
     "react-dom": "15.4.2",
     "react-redux": "5.0.1",
