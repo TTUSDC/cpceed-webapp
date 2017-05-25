@@ -2,7 +2,8 @@ import { store } from 'App';
 import { updateUser, logoutUser } from 'redux/actions';
 import * as firebase from 'firebase';
 import logger from 'logger/logger';
-import * as connection from 'server/connection';
+import * as connection from 'server/core/connection';
+import * as tokenManager from 'server/core/tokenmanager';
 
 export function login(email, password) {
   logger.info('Logging in');
@@ -13,10 +14,12 @@ export function login(email, password) {
     }
     connection.post('/auth',data,
     (res) => {
-      logger.info(`Then: ${res}`)
-      logger.error(res);
-      localStorage.setItem('sessiontoken', res.token); //localStorage.getItem('sessiontoken');
-      resolve();
+      tokenManager.saveToken(res.token);
+      const decoded = tokenManager.decode(res.token);
+      const userData = decoded;
+      userData.role = userData.role.toLowerCase();
+      store.dispatch(updateUser(userData));
+      resolve(userData);
     },reject);
   });
 }
