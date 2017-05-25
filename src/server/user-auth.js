@@ -1,18 +1,17 @@
 import { store } from 'App';
 import { updateUser, logoutUser } from 'redux/actions';
 import * as firebase from 'firebase';
-import logger from 'logger/logger';
+// import logger from 'logger/logger';
 import * as connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 
 export function login(email, password) {
-  logger.info('Logging in');
   return new Promise((resolve, reject) => {
     const data = {
-      email: 'alexander@clines.com',
-      password: 'password1',
-    }
-    connection.post('/auth',data,
+      email,
+      password,
+    };
+    connection.post('/auth', data,
     (res) => {
       tokenManager.saveToken(res.token);
       const decoded = tokenManager.decode(res.token);
@@ -20,7 +19,7 @@ export function login(email, password) {
       userData.role = userData.role.toLowerCase();
       store.dispatch(updateUser(userData));
       resolve(userData);
-    },reject);
+    }, reject);
   });
 }
 
