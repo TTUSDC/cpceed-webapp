@@ -19,4 +19,17 @@ export const post = (endpoint, data, onSuccess, onError) => {
     });
 };
 
+// Because delete is a non fun word to use
+export const del = (endpoint, data, onSuccess, onError) => {
+  instance.delete(endpoint, data)
+    .then((res) => {
+      logger.info('Deleted something');
+      onSuccess(res);
+    })
+    .catch((err) => {
+      logger.error(err);
+      onError(err);
+    });
+};
+
 export default instance;

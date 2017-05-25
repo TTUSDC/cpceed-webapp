@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { store } from 'App.js';
 import { AuthStates } from 'redux/actions';
-import logger from 'logger/logger.js';
+// import logger from 'logger/logger.js';
 import { login, logout } from 'server/user-auth';
 import * as tokenManager from 'server/core/tokenmanager';
 import * as connection from 'server/core/connection';
@@ -15,6 +15,39 @@ chai.use(sinonChai);
 const expect = chai.expect;
 
 export default describe('Server API: Auth', () => {
+  before(() => {
+    sinon.stub(tokenManager, 'saveToken');
+    sinon.stub(tokenManager, 'removeToken');
+    sinon.stub(connection, 'post').callsFake((endpoint, data, onSuccess, onError) => {
+      if (endpoint === '/auth') {
+        onSuccess({
+          token: testToken.token,
+        });
+      } else {
+        onError(new Error('Test: Invalid post endpoint'));
+      }
+    });
+    sinon.stub(connection, 'del').callsFake((endpoint, data, onSuccess, onError) => {
+      if (endpoint === '/auth') {
+        onSuccess();
+      } else {
+        onError(new Error('Test: Invalid del endpoint'));
+      }
+    });
+  });
+
+  afterEach(() => {
+    tokenManager.saveToken.resetHistory();
+    tokenManager.removeToken.resetHistory();
+    connection.post.resetHistory();
+  });
+
+  after(() => {
+    tokenManager.saveToken.restore();
+    tokenManager.removeToken.restore();
+    connection.post.restore();
+  });
+
   describe('initial state', () => {
     /*
      * The purpose of these tests is not to test the code of user-auth, but to
@@ -28,20 +61,8 @@ export default describe('Server API: Auth', () => {
       done();
     });
   });
+
   describe('#login', () => {
-    beforeEach(() => {
-      sinon.stub(tokenManager, 'saveToken');
-      sinon.stub(connection, 'post', (endpoint, data, onSuccess) => {
-        onSuccess({
-          token: testToken.token,
-        });
-      });
-    });
-
-    afterEach(() => {
-      tokenManager.saveToken.restore();
-    });
-
     it('should save the session token', (done) => {
       login(testUser.email, testUser.password).then((userData) => {
         expect(userData).to.not.be.null;
@@ -55,16 +76,19 @@ export default describe('Server API: Auth', () => {
       });
     });
   });
-  // describe('#logout()', () => {
-  //   it('should login then logout of account', (done) => {
-  //     login(testUser.email, testUser.password).then((user) => {
-  //       expect(user.studentId).to.equal(testUser.studentId);
-  //       logout().then(() => {
-  //         const reduxUser = store.getState().user;
-  //         expect(reduxUser.role).to.equal(AuthStates.GUEST);
-  //         done();
-  //       }).catch((err) => { done(err); });
-  //     }).catch((err) => { done(err); });
-  //   }).timeout(10000);
-  // });
+
+  describe('#logout', () => {
+    it('should remove the session token', (done) => {
+      login(testUser.email, testUser.password).then((userData) => {
+        expect(userData).to.not.be.null;
+        logout().then(() => {
+          expect(connection.del).to.have.been.calledOnce;
+          const reduxUser = store.getState().user;
+          expect(reduxUser.role).to.equal(AuthStates.GUEST);
+          expect(tokenManager.removeToken).to.have.been.calledOnce;
+          done();
+        }).catch((err) => { done(err); });
+      }).catch((err) => { done(err); });
+    });
+  });
 });

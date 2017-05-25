@@ -1,7 +1,6 @@
 import { store } from 'App';
 import { updateUser, logoutUser } from 'redux/actions';
-import * as firebase from 'firebase';
-// import logger from 'logger/logger';
+import logger from 'logger/logger';
 import * as connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 
@@ -25,9 +24,15 @@ export function login(email, password) {
 
 export function logout() {
   return new Promise((resolve, reject) => {
-    firebase.auth().signOut().then(() => {
+    const data = {
+      token: tokenManager.getToken(),
+    };
+
+    connection.del('/auth', data,
+    (res) => {
+      tokenManager.removeToken();
       store.dispatch(logoutUser());
-      resolve();
-    }).catch((err) => { reject(err); });
+      resolve(res);
+    }, reject);
   });
 }
