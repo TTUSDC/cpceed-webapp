@@ -17,7 +17,7 @@ export function login(email, password) {
       const decoded = tokenManager.decode(res.token);
       const userData = decoded;
       userData.role = userData.role.toLowerCase();
-      store.dispatch(updateUser(userData));
+      store.dispatch(updateUser(userData)); // TODO(asclines): This is temp until getUser is setup
       resolve(userData);
     }, reject);
   });
