@@ -3,7 +3,7 @@ import logger from 'logger/logger';
 
 const instance = axios.create({
   baseURL: 'http://localhost:3000/api', // TODO(asclines): Move this to env
-  timeout: 1000,
+  timeout: 5000,
 });
 instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
