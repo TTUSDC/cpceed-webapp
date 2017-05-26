@@ -31,6 +31,14 @@ export default describe('Server API: Core/tokenmanager', () => {
     });
   });
 
+  describe('#removeToken', () => {
+    it('should remove the token', () => {
+      localStorage.setItem(tokenManager.tokenKey, testToken.token);
+      tokenManager.removeToken();
+      expect(localStorage.getItem(tokenManager.tokenKey)).to.be.null;
+    });
+  });
+
   describe('#decode', () => {
     it('should decode the token', () => {
       const result = tokenManager.decode(testToken.token);
