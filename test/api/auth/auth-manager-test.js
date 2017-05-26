@@ -7,9 +7,13 @@ const jwt = require('jsonwebtoken');
 const authManager = require('../../../api/auth/auth-manager');
 const authModels = require('../../../api/auth/auth-models');
 const userManager = require('../../../api/users/user-manager');
+const userModels = require('../../../api/users/user-models');
+const testUsers = require('../../core/users');
 
 const expect = chai.expect;
 const Session = authModels.Session;
+const Admin = userModels.Admin;
+const Student = userModels.Student;
 
 chai.use(chaiMoment);
 mockgoose(mongoose);
@@ -33,14 +37,7 @@ describe('authManager', () => {
 
   describe('#login', () => {
     it('should pass a student token to the callback.', (done) => {
-      const student = {
-        email: 'student@test.com',
-        password: 'P@ssw0rd!Student',
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'student',
-        studentId: '',
-      };
+      const student = testUsers.student000;
 
       userManager.createUser(student, (createErr, uid) => {
         expect(createErr).to.be.null;
@@ -53,19 +50,18 @@ describe('authManager', () => {
           expect(decoded.email).to.be.equal(student.email);
           expect(decoded.role).to.be.equal(student.role);
           expect(decoded.isApproved).to.be.false;
-          done();
+          expect(decoded.id).to.be.a('string');
+          Student.findById(decoded.id, (studentErr, foundStudent) => {
+            expect(studentErr).to.be.null;
+            expect(foundStudent.email).to.equal(student.email);
+            done();
+          });
         });
       });
     });
 
     it('should pass an admin token to the callback.', (done) => {
-      const admin = {
-        email: 'admin@test.com',
-        password: 'P@ssw0rd!Admin',
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'admin',
-      };
+      const admin = testUsers.admin000;
 
       userManager.createUser(admin, (createErr, uid) => {
         expect(createErr).to.be.null;
@@ -78,7 +74,13 @@ describe('authManager', () => {
           expect(decoded.email).to.be.equal(admin.email);
           expect(decoded.role).to.be.equal(admin.role);
           expect(decoded.isApproved).to.be.false;
-          done();
+          expect(decoded.id).to.be.a('string');
+
+          Admin.findById(decoded.id, (adminErr, foundAdmin) => {
+            expect(adminErr).to.be.null;
+            expect(foundAdmin.email).to.equal(admin.email);
+            done();
+          });
         });
       });
     });

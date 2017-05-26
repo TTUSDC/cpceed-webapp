@@ -54,6 +54,7 @@ const login = (email, password, next) => {
           email,
           role: user.role,
           isApproved: user.isApproved,
+          id: user.id,
         };
 
         // Sign and save the session.
