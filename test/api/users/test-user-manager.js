@@ -4,6 +4,7 @@ const chai = require('chai');
 const chaiMoment = require('chai-moment');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
+const testUsers = require('../../core/users');
 
 const expect = chai.expect;
 const should = chai.should();
@@ -27,14 +28,7 @@ describe('userManager', () => {
 
   describe('#createStudent', () => {
     it('should pass a uid to the callback', (done) => {
-      const student = {
-        email: 'test@test.com',
-        password: 'P@ssw0rd!',
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'student',
-        studentId: '',
-      };
+      const student = testUsers.student000;
 
       userManager.createUser(student, (createErr, uid) => {
         expect(createErr).to.be.null;
@@ -44,8 +38,7 @@ describe('userManager', () => {
           expect(studentErr).to.be.null;
           expect(foundStudent.isApproved).to.be.false;
           expect(foundStudent.email).to.be.equal(student.email);
-          expect(foundStudent.firstName).to.be.equal(student.firstName);
-          expect(foundStudent.lastName).to.be.equal(student.lastName);
+          expect(foundStudent.name).to.be.equal(student.name);
           expect(foundStudent.role).to.be.equal(student.role);
           expect(foundStudent.studentId).to.be.equal(student.studentId);
           foundStudent.comparePassword(student.password, (passwordErr, isMatch) => {
@@ -59,8 +52,7 @@ describe('userManager', () => {
     it('should pass an error to the callback', (done) => {
       const student = {
         email: 'test@test.com',
-        firstName: 'Test',
-        lastName: 'User',
+        nameame: 'Test',
         role: 'student',
         studentId: '',
       };
@@ -75,27 +67,19 @@ describe('userManager', () => {
 
   describe('#createAdmin', () => {
     it('should pass a uid to the callback', (done) => {
-      const admin = {
-        email: 'test@test.com',
-        password: 'P@ssw0rd!',
-        firstName: 'Test',
-        lastName: 'User',
-        role: 'admin',
-      };
+      const admin = testUsers.admin000;
 
       userManager.createUser(admin, (createErr, uid) => {
         expect(createErr).to.be.null;
         expect(uid).to.be.a('string');
 
-        Admin.findById(uid, (studentErr, foundStudent) => {
-          expect(studentErr).to.be.null;
-          expect(foundStudent.isApproved).to.be.false;
-          expect(foundStudent.email).to.be.equal(admin.email);
-          expect(foundStudent.firstName).to.be.equal(admin.firstName);
-          expect(foundStudent.lastName).to.be.equal(admin.lastName);
-          expect(foundStudent.role).to.be.equal(admin.role);
-          expect(foundStudent.studentId).to.be.equal(admin.studentId);
-          foundStudent.comparePassword(admin.password, (passwordErr, isMatch) => {
+        Admin.findById(uid, (adminErr, foundAdmin) => {
+          expect(adminErr).to.be.null;
+          expect(foundAdmin.isApproved).to.be.false;
+          expect(foundAdmin.name).to.be.equal(admin.name);
+          expect(foundAdmin.email).to.be.equal(admin.email);
+          expect(foundAdmin.role).to.be.equal(admin.role);
+          foundAdmin.comparePassword(admin.password, (passwordErr, isMatch) => {
             expect(isMatch).to.be.true;
           });
           done();
@@ -106,8 +90,7 @@ describe('userManager', () => {
     it('should pass an error to the callback', (done) => {
       const admin = {
         email: 'test@test.com',
-        firstName: 'Test',
-        lastName: 'User',
+        name: 'Test',
         role: 'student',
         studentId: '',
       };

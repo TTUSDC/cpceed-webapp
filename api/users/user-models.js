@@ -11,6 +11,7 @@ const pointOption = {
 };
 
 const userSchema = new Schema({
+  name: String,
   firstName: String,
   lastName: String,
   email: {

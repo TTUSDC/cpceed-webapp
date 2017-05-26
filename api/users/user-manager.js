@@ -32,8 +32,7 @@ const createUser = (data, next) => {
   const info = {
     email: data.email,
     password: data.password,
-    firstName: data.firstName,
-    lastName: data.lastName,
+    name: data.name,
     role: data.role,
   };
 
