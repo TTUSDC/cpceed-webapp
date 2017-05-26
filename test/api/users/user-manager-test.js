@@ -32,7 +32,7 @@ describe('userManager', () => {
         password: 'P@ssw0rd!',
         firstName: 'Test',
         lastName: 'User',
-        role: 'Student',
+        role: 'student',
         studentId: '',
       };
 
@@ -61,7 +61,7 @@ describe('userManager', () => {
         email: 'test@test.com',
         firstName: 'Test',
         lastName: 'User',
-        role: 'Student',
+        role: 'student',
         studentId: '',
       };
 
@@ -80,7 +80,7 @@ describe('userManager', () => {
         password: 'P@ssw0rd!',
         firstName: 'Test',
         lastName: 'User',
-        role: 'Admin',
+        role: 'admin',
       };
 
       userManager.createUser(admin, (createErr, uid) => {
@@ -108,7 +108,7 @@ describe('userManager', () => {
         email: 'test@test.com',
         firstName: 'Test',
         lastName: 'User',
-        role: 'Student',
+        role: 'student',
         studentId: '',
       };
 

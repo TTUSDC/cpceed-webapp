@@ -38,7 +38,7 @@ describe('authManager', () => {
         password: 'P@ssw0rd!Student',
         firstName: 'Test',
         lastName: 'User',
-        role: 'Student',
+        role: 'student',
         studentId: '',
       };
 
@@ -64,7 +64,7 @@ describe('authManager', () => {
         password: 'P@ssw0rd!Admin',
         firstName: 'Test',
         lastName: 'User',
-        role: 'Admin',
+        role: 'admin',
       };
 
       userManager.createUser(admin, (createErr, uid) => {

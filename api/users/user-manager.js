@@ -39,11 +39,11 @@ const createUser = (data, next) => {
 
   let user;
 
-  if (data.role === 'Student') {
+  if (data.role === 'student') {
     // Create a student.
     info.studentId = data.studentId;
     user = new Student(info);
-  } else if (data.role === 'Admin') {
+  } else if (data.role === 'admin') {
     // Create an admin.
     user = new Admin(info);
   } else {
@@ -95,7 +95,7 @@ var getUser = (userUid) => {
     email: "nobody@gmail.com",
     firstName: "John",
     lastName: "Doe",
-    role: "Admin",
+    role: "admin",
   });
 
   return new response.ResponseObject(200, User);
