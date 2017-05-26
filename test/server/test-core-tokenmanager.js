@@ -1,8 +1,7 @@
 import * as tokenManager from 'server/core/tokenmanager';
+import { testToken1 as testToken } from './core/tokens';
 
 const expect = require('chai').expect;
-
-const testToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsZXhhbmRlckBjbGluZXMuY29tIiwicm9sZSI6IlN0dWRlbnQiLCJpc0FwcHJvdmVkIjpmYWxzZSwiaWF0IjoxNDk1NjYyNzY4fQ.SQToghIxuiszjQ0kB0L5WAKfvlMrRK4lkuLeT08Y9QMJDAvqaiGGVq4dzlqL1oXedHWt_-xihReyChbABiFskQ';
 
 export default describe('Server API: Core/tokenmanager', () => {
   beforeEach(() => {
@@ -17,15 +16,15 @@ export default describe('Server API: Core/tokenmanager', () => {
 
   describe('#saveToken', () => {
     it('should save the sessiontoken in localstorage', () => {
-      tokenManager.saveToken(testToken);
-      expect(localStorage.getItem(tokenManager.tokenKey)).to.equal(testToken);
+      tokenManager.saveToken(testToken.token);
+      expect(localStorage.getItem(tokenManager.tokenKey)).to.equal(testToken.token);
     });
   });
 
   describe('#getToken', () => {
     it('should return the saved token', () => {
-      localStorage.setItem(tokenManager.tokenKey, testToken);
-      expect(tokenManager.getToken()).to.equal(testToken);
+      localStorage.setItem(tokenManager.tokenKey, testToken.token);
+      expect(tokenManager.getToken()).to.equal(testToken.token);
     });
     it('should return null', () => {
       expect(tokenManager.getToken()).to.be.null;
@@ -34,10 +33,10 @@ export default describe('Server API: Core/tokenmanager', () => {
 
   describe('#decode', () => {
     it('should decode the token', () => {
-      const result = tokenManager.decode(testToken);
-      expect(result.email).to.equal('alexander@clines.com');
-      expect(result.role).to.equal('Student');
-      expect(result.isApproved).to.be.false;
+      const result = tokenManager.decode(testToken.token);
+      expect(result.email).to.equal(testToken.email);
+      expect(result.role).to.equal(testToken.role);
+      expect(result.isApproved).to.equal(testToken.isApproved);
     });
   });
 });
