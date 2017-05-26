@@ -85,23 +85,17 @@ var deleteUser = (userUid) => {
   // TODO(ryanfaulkenberry100): Return actual data.
 }
 
-var getUser = (userUid) => {
-  // Returns a user.
-
-  // TODO(ryanfaulkenberry100): Find the user and remove placeholder User variable.
-  var User = new Admin({
-    // Placeholder
-    email: "nobody@gmail.com",
-    firstName: "John",
-    lastName: "Doe",
-    role: "admin",
+const getUserById = (userUid, locals, queryCallback) => {
+  User.findById(userUid, (err, user) => {
+  if(err) {
+    queryCallback(err);
+    return;
+  }
+  queryCallback(err, user);  
   });
-
-  return new response.ResponseObject(200, User);
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
+};
 
 var modifyUserAsSelf = (userUid, reqData, modifyCallback) => {}
 var modifyUserAsAdmin = (userUid, reqData, modifyCallback) => {}
 
-module.exports = { createUser, modifyUser, deleteUser, getUser };
+module.exports = { createUser, modifyUser, deleteUser, getUserById };

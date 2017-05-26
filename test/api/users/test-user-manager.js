@@ -1,7 +1,6 @@
 const mockgoose = require('mockgoose');
 const mongoose = require('mongoose');
 const chai = require('chai');
-const chaiMoment = require('chai-moment');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
 const testUsers = require('../../core/users');
@@ -11,7 +10,9 @@ const should = chai.should();
 const Admin = userModels.Admin;
 const Student = userModels.Student;
 
-chai.use(chaiMoment);
+chai.use(require('chai-shallow-deep-equal'));
+chai.use(require('chai-moment'));
+
 mockgoose(mongoose);
 
 describe('userManager', () => {
@@ -37,14 +38,11 @@ describe('userManager', () => {
 
           Student.findById(uid, (studentErr, foundStudent) => {
             expect(studentErr).to.be.null;
-            expect(foundStudent.isApproved).to.be.false;
-            expect(foundStudent.email).to.be.equal(student.email);
-            expect(foundStudent.name).to.be.equal(student.name);
-            expect(foundStudent.role).to.be.equal(student.role);
-            expect(foundStudent.studentId).to.be.equal(student.studentId);
             foundStudent.comparePassword(student.password, (passwordErr, isMatch) => {
               expect(isMatch).to.be.true;
             });
+            student.password = foundStudent.password; // foundStudent has a hashed password
+            expect(foundStudent).to.shallowDeepEqual(student);
             done();
           });
         });
@@ -76,13 +74,11 @@ describe('userManager', () => {
 
           Admin.findById(uid, (adminErr, foundAdmin) => {
             expect(adminErr).to.be.null;
-            expect(foundAdmin.isApproved).to.be.false;
-            expect(foundAdmin.name).to.be.equal(admin.name);
-            expect(foundAdmin.email).to.be.equal(admin.email);
-            expect(foundAdmin.role).to.be.equal(admin.role);
             foundAdmin.comparePassword(admin.password, (passwordErr, isMatch) => {
               expect(isMatch).to.be.true;
             });
+            admin.password = foundAdmin.password; // foundAdmin has a hashed password
+            expect(foundAdmin).to.shallowDeepEqual(admin);
             done();
           });
         });
@@ -99,6 +95,26 @@ describe('userManager', () => {
         userManager.createUser(admin, (createErr, uid) => {
           should.exist(createErr);
           should.not.exist(uid);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('#getUserById', () => {
+    it('should return the created student', (done) => {
+      const student = testUsers.student000;
+      userManager.createUser(student, (createErr, uid) => {
+        expect(createErr).to.be.null;
+        expect(uid).to.be.a('string');
+        userManager.getUserById(uid, {}, (getErr, foundStudent) => {
+          expect(getErr).to.be.null;
+          expect(foundStudent).to.not.be.null;
+          foundStudent.comparePassword(student.password, (passwordErr, isMatch) => {
+            expect(isMatch).to.be.true;
+          });
+          student.password = foundStudent.password; // foundStudent has a hashed password
+          expect(foundStudent).to.shallowDeepEqual(student);
           done();
         });
       });

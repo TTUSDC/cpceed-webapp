@@ -1,5 +1,6 @@
 const express = require('express');
-const userManager = require('./user-manager.js');
+const userManager = require('./user-manager');
+const authManager = require('../auth/auth-manager');
 
 const userRouter = express.Router();
 
@@ -15,7 +16,7 @@ userRouter.post('/', (req, res) => {
   });
 });
 
-userRouter.put('/:uid', (req, res) => {
+userRouter.put('/:uid', authManager.verify, (req, res) => {
   var response = userManager.modifyUser(req.params.uid, req.body, (err) => {
     if (err) {
       res.status(400).send(err).end();
@@ -34,9 +35,19 @@ userRouter.delete('/:uid', (req, res) => {
 
 // Get User.
 userRouter.get('/:uid', (req, res) => {
-  var response = userManager.getUser(req.params.uid);
+  userManager.getUserById(req.params.uid, {}, (err, user) => {
+    if(err) {
+      res.status(400).send(err).end();
+      return;
+    }
 
-  res.status(200).json(response.object);
+    if (!user) {
+      res.status(404).end();
+      return;
+    }
+
+    res.status(200).json(user).end();
+  })
 });
 
 module.exports = { userRouter };
