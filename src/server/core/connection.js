@@ -10,7 +10,6 @@ instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlenco
 export const post = (endpoint, data, onSuccess, onError) => {
   instance.post(endpoint, data)
     .then((res) => {
-      logger.info(res.data, 'Recieved data');
       onSuccess(res.data);
     })
     .catch((err) => {
@@ -23,7 +22,6 @@ export const post = (endpoint, data, onSuccess, onError) => {
 export const del = (endpoint, data, onSuccess, onError) => {
   instance.delete(endpoint, data)
     .then((res) => {
-      logger.info('Deleted something');
       onSuccess(res);
     })
     .catch((err) => {
