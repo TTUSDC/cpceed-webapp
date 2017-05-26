@@ -5,12 +5,14 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const apiRouter = require('./api/server.js');
+const cors = require('cors');
 
 // load environment variables from .env file.
 dotenv.load({ path: process.env.ENV_PATH || '.env.default' });
 
 // Express server.
 const app = express();
+app.use(cors());
 
 // Express configuration.
 const port = process.env.PORT || 3000;

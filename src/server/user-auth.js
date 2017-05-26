@@ -1,30 +1,38 @@
 import { store } from 'App';
 import { updateUser, logoutUser } from 'redux/actions';
-import * as firebase from 'firebase';
-// import logger from 'logger/logger.js';
+import logger from 'logger/logger';
+import * as connection from 'server/core/connection';
+import * as tokenManager from 'server/core/tokenmanager';
 
 export function login(email, password) {
   return new Promise((resolve, reject) => {
-    firebase.auth().signInWithEmailAndPassword(email, password).then((user) => {
-      const rootRef = firebase.database().ref();
-      const userRef = rootRef.child(`users/${user.uid}`);
-      userRef.once('value').then((snapshot) => {
-        const userData = snapshot.val();
-        userData.uid = user.uid;
-        store.dispatch(updateUser(userData));
-        resolve(snapshot.val());
-      });
-    }).catch((err) => {
-      reject(err);
-    });
+    const data = {
+      email,
+      password,
+    };
+    connection.post('/auth', data,
+    (res) => {
+      tokenManager.saveToken(res.token);
+      const decoded = tokenManager.decode(res.token);
+      const userData = decoded;
+      userData.role = userData.role.toLowerCase();
+      store.dispatch(updateUser(userData)); // TODO(asclines): This is temp until getUser is setup
+      resolve(userData);
+    }, reject);
   });
 }
 
 export function logout() {
   return new Promise((resolve, reject) => {
-    firebase.auth().signOut().then(() => {
+    const data = {
+      token: tokenManager.getToken(),
+    };
+
+    connection.del('/auth', data,
+    (res) => {
+      tokenManager.removeToken();
       store.dispatch(logoutUser());
-      resolve();
-    }).catch((err) => { reject(err); });
+      resolve(res);
+    }, reject);
   });
 }

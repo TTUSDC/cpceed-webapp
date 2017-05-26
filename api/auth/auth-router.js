@@ -37,8 +37,7 @@ authRouter.delete('/', authManager.verify, (req, res) => {
     res.status(400).json(new Error('User not verified.')).end();
     return;
   }
-
-  authManager.logout(req.local.email, (logoutErr) => {
+  authManager.logout(res.locals.auth.email, (logoutErr) => {
     if (logoutErr) {
       res.status(400).json(logoutErr).end();
     } else {
