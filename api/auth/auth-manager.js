@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const authErrors = require('../errors/auth-errors');
 const User = require('../users/user-models').User;
 const Session = require('./auth-models').Session;
 
@@ -26,7 +27,7 @@ const login = (email, password, next) => {
 
     // No user found for the given email address.
     if (!user) {
-      next('User not found.');
+      next(authErrors.userNotFoundError);
       return;
     }
 
@@ -38,7 +39,7 @@ const login = (email, password, next) => {
 
       // The wrong password was provided.
       if (!isMatch) {
-        next('Wrong password provided.');
+        next(authErrors.invalidPasswordError);
         return;
       }
 
@@ -118,10 +119,9 @@ const changePassword = (email, password, next) => {
  */
 const verify = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
-
   // If no token is provided, inform the client.
   if (!token) {
-    res.locals.err = new Error('No token provided.');
+    res.locals.err = new Error(authErrors.missingTokenError);
     next();
     return;
   }
@@ -144,7 +144,7 @@ const verify = (req, res, next) => {
 
       // If no session is found, then the user was logged out of their account.
       if (!session) {
-        res.locals.err = new Error('No session found.');
+        res.locals.err = new Error(authErrors.sessionNotFoundError);
         next();
         return;
       }
@@ -153,7 +153,7 @@ const verify = (req, res, next) => {
       session.compareToken(token, (isMatch) => {
         // The token is expired.
         if (!isMatch) {
-          res.locals.err = new Error('Expired session provided.');
+          res.locals.err = new Error(authErrors.invalidSessionError);
           next();
           return;
         }
