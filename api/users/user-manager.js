@@ -91,7 +91,6 @@ const getUserById = (userUid, locals, queryCallback) => {
       queryCallback(err);
       return;
     }
-    console.log(results);
     const user = {
       uid: results.id,
       email: results.email,

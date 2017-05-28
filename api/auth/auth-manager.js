@@ -186,7 +186,7 @@ const validateUidPermissions = (req, res, next) => {
       uid = req.query.uid;
     } else if (req.query.uid !== uid) {
       res.locals.err = authErrors.unauthorizedError;
-      next();
+      next(authErrors.unauthorizedError);
       return;
     }
   }
