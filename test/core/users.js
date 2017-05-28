@@ -4,6 +4,19 @@ const student000 = {
   name: 'TestStudent000',
   role: 'student',
   studentId: '0001234',
+  isApproved: false,
+  points: {
+    misc: 0,
+    staff: 0,
+    professor: 0,
+    outreach: 0,
+    other: 0,
+    mentor: 0,
+    firstworkshops: 0,
+    firstother: 0,
+    community: 0,
+    career: 0,
+  },
 };
 
 const admin000 = {

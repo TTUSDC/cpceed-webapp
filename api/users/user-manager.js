@@ -86,12 +86,25 @@ var deleteUser = (userUid) => {
 }
 
 const getUserById = (userUid, locals, queryCallback) => {
-  User.findById(userUid, (err, user) => {
-  if(err) {
-    queryCallback(err);
-    return;
-  }
-  queryCallback(err, user);  
+  User.findById(userUid, (err, results) => {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+    console.log(results);
+    const user = {
+      uid: results.id,
+      email: results.email,
+      name: results.name,
+      role: results.role,
+    };
+
+    if (user.role === 'student') {
+      user.points = results.points;
+      user.isApproved = results.isApproved;
+    }
+
+    queryCallback(err, user);
   });
 };
 

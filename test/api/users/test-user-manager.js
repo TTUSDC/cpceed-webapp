@@ -102,19 +102,32 @@ describe('userManager', () => {
   });
 
   describe('#getUserById', () => {
+    const compareUsers = (expected, actual) => {
+      expect(expected).to.not.be.null;
+      expect(actual).to.not.be.null;
+      expect(actual.email).to.equal(expected.email);
+      expect(actual.name).to.equal(expected.name);
+      expect(actual.uid).to.equal(expected.uid);
+      expect(actual.role).to.equal(expected.role);
+
+      if (expected.role === 'student') {
+        expect(actual.points).to.shallowDeepEqual(expected.points);
+        expect(actual.isApproved).to.equal(expected.isApproved);
+      } else {
+        expect(actual.points).to.be.undefined;
+        expect(actual.isApproved).to.be.undefined;
+      }
+    };
     it('should return the created student', (done) => {
       const student = testUsers.student000;
       userManager.createUser(student, (createErr, uid) => {
         expect(createErr).to.be.null;
         expect(uid).to.be.a('string');
+        student.uid = uid;
         userManager.getUserById(uid, {}, (getErr, foundStudent) => {
           expect(getErr).to.be.null;
+          compareUsers(student, foundStudent);
           expect(foundStudent).to.not.be.null;
-          foundStudent.comparePassword(student.password, (passwordErr, isMatch) => {
-            expect(isMatch).to.be.true;
-          });
-          student.password = foundStudent.password; // foundStudent has a hashed password
-          expect(foundStudent).to.shallowDeepEqual(student);
           done();
         });
       });
