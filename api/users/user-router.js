@@ -34,8 +34,23 @@ userRouter.delete('/:uid', (req, res) => {
 });
 
 // Get User.
-userRouter.get('/:uid', (req, res) => {
-  userManager.getUserById(req.params.uid, {}, (err, user) => {
+userRouter.get('/', authManager.verify, (req, res) => {
+  // let uid = res.locals.auth.id;
+  // if(!uid) {
+  //   res.status(400).send(new Error('Not logged in.'));
+  //   return;
+  // }
+
+  // if (req.query.uid) {
+  //   if (res.locals.auth.role === 'admin') {
+  //     uid = req.query.uid;
+  //   } else if (req.query.uid != uid){
+  //     res.status(401).send(new Error('Not authorized.'));
+  //     return;
+  //   }
+  // }
+  const uid = req.query.uid;
+  userManager.getUserById(uid, {}, (err, user) => {
     if(err) {
       res.status(400).send(err).end();
       return;

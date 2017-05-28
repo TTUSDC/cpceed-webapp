@@ -18,6 +18,7 @@ const invalidSessionError = new Error('Invalid session token.');
  */
 const missingTokenError = new Error('Token not found.');
 
+const unauthorizedError = new Error('Unauthorized.');
 
 module.exports = {
   userNotFoundError,
@@ -25,4 +26,5 @@ module.exports = {
   invalidPasswordError,
   invalidSessionError,
   missingTokenError,
+  unauthorizedError,
 };

@@ -166,4 +166,38 @@ const verify = (req, res, next) => {
   });
 };
 
-module.exports = { changePassword, login, logout, verify };
+/*
+ * Middleware to verify the user has access permissions of some document.
+ * For valid tokens, an `uid` object is added to the response.locals object.
+ * The `uid` object is the uid of the owner of the document being accessed.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {function} next - Invoke the next middleware or route.
+ */
+const validateUidPermissions = (req, res, next) => {
+  let uid = res.locals.auth.id;
+  if (!uid) {
+    res.locals.err = authErrors.missingTokenError;
+    next();
+    return;
+  }
+  if (req.query.uid) {
+    if (res.locals.auth.role === 'admin') {
+      uid = req.query.uid;
+    } else if (req.query.uid !== uid) {
+      res.locals.err = authErrors.unauthorizedError;
+      next();
+      return;
+    }
+  }
+  res.locals.uid = uid;
+  next();
+};
+
+module.exports = {
+  changePassword,
+  login,
+  logout,
+  verify,
+  validateUidPermissions,
+};

@@ -9,6 +9,8 @@ const authModels = require('../../../api/auth/auth-models');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
 const testUsers = require('../../core/users');
+const testTokens = require('../../core/tokens');
+const authErrors = require('../../../api/errors/auth-errors');
 
 const expect = chai.expect;
 const Session = authModels.Session;
@@ -123,6 +125,69 @@ describe('authManager', () => {
         authManager.verify(req, res, () => {
           expect(res.locals.err).to.be.null;
           expect(res.locals.auth).to.deep.equal(jwt.decode(token));
+          done();
+        });
+      });
+    });
+  });
+
+  describe('#validateUidPermissions', () => {
+    let req;
+    let res;
+
+    beforeEach(() => {
+      req = { query: {} };
+      res = { locals: { err: null, auth: {} } };
+    });
+    describe('user accessing their own data', () => {
+      const testToken = testTokens.testTokenStudent000;
+      beforeEach(() => {
+        req.query.token = testToken.token;
+        res.locals.auth.id = testToken.id;
+      });
+      it('should let them with a query param', (done) => {
+        req.query.uid = testToken.id;
+
+        authManager.validateUidPermissions(req, res, () => {
+          expect(res.locals.err).to.be.null;
+          expect(res.locals.uid).to.equal(testToken.id);
+          done();
+        });
+      });
+      it('should let them without a query param', (done) => {
+        authManager.validateUidPermissions(req, res, () => {
+          expect(res.locals.err).to.be.null;
+          expect(res.locals.uid).to.be.equal(testToken.id);
+          done();
+        });
+      });
+    });
+
+    describe('users accessing other data', () => {
+      it('should not let a student access other data', (done) => {
+        const testStudentToken = testTokens.testTokenStudent000;
+        req.query.uid = 'notmyuid';
+        req.query.token = testStudentToken.token;
+        res.locals.auth.id = testStudentToken.id;
+        res.locals.auth.role = 'student';
+
+        authManager.validateUidPermissions(req, res, () => {
+          expect(res.locals.err).to.be.an('error');
+          expect(res.locals.err).to.equal(authErrors.unauthorizedError);
+          done();
+        });
+      });
+      it('should let an admin access other data', (done) => {
+        const testStudentToken = testTokens.testTokenStudent000;
+        const testAdminToken = testTokens.testTokenAdmin000;
+        req.query.uid = testStudentToken.id;
+        req.query.token = testAdminToken.token;
+        res.locals.auth.id = testAdminToken.id;
+        res.locals.auth.role = 'admin';
+
+        authManager.validateUidPermissions(req, res, () => {
+          expect(res.locals.err).to.not.be.an('error');
+          expect(res.locals.uid).to.equal(testStudentToken.id);
           done();
         });
       });
