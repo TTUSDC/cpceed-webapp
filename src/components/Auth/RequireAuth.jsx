@@ -1,6 +1,6 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {withRouter} from 'react-router';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import AuthContainer from './AuthContainer.js';
 
@@ -14,47 +14,40 @@ const requireAuth = (WrappedComponent, requiredState) => {
 
     authCancelled() {
       // If signin is cancelled, go back to the previous page
-      this.props.router.goBack();
+      this.props.history.goBack();
     }
 
     render() {
-      var authorized = true;
+      let authorized = true;
+      let output;
 
       // Checks if user has the required permissions
-      for(var key in requiredState) {
-        // Skips properties from prototype
-        if(!requiredState.hasOwnProperty(key)) {
-          continue;
-        }
-
-        if(this.props.user.permissions[key] !== requiredState[key]) {
+      Object.keys(requiredState).forEach((key) => {
+        if (this.props.user.permissions[key] !== requiredState[key]) {
           authorized = false;
-          break;
         }
-      }
+      });
 
       // Depnding on whether the user has the required permissions
-      if(authorized === true) {
+      if (authorized === true) {
         // Render the component
-        return super.render();
+        output = super.render();
       } else {
         // Display the signin window
-        return <AuthContainer authCancelled={this.authCancelled} />;
+        output = <AuthContainer authCancelled={this.authCancelled} />;
       }
+
+      return output;
     }
   }
 
-  const getUser = (user) => {
-    return user;
-  }
-
-  const mapStateToProps = (state) => {
+  function mapStateToProps(state) {
     return {
-      user: getUser(state.user)
-    }
+      user: state.user,
+    };
   }
 
-  return connect(mapStateToProps)(withRouter(AuthWrapper));
-}
+  return withRouter(connect(mapStateToProps)(AuthWrapper));
+};
 
 export default requireAuth;
