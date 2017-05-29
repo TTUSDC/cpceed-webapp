@@ -1,13 +1,12 @@
-import React, {PropTypes} from 'react';
-import {withRouter} from 'react-router';
+import React, { PropTypes } from 'react';
 import * as firebase from 'firebase';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import {
   updateUser,
   coordinator,
   student,
-  AuthStates
+  AuthStates,
 } from 'redux/actions.js';
 import logger from 'logger/logger.js';
 import Auth from './Auth.js';
@@ -18,7 +17,7 @@ class AuthContainer extends React.Component {
     this.state = {
       logErr: '',
       regErr: '',
-      waiting: false
+      waiting: false,
     };
 
     /*
@@ -34,11 +33,11 @@ class AuthContainer extends React.Component {
   handleRegister(data) {
     this.setState({
       waiting: true,
-      regErr: ''
+      regErr: '',
     });
 
-    var userData = {};
-    switch(data.role) {
+    let userData = {};
+    switch (data.role) {
       case AuthStates.COORDINATOR:
         userData = coordinator;
 
@@ -51,23 +50,22 @@ class AuthContainer extends React.Component {
         break;
       default:
         logger.error('Unknown user role in AuthContainer.js');
-    };
+    }
 
     userData.email = data.email;
     userData.firstName = data.firstName;
     userData.lastName = data.lastName;
 
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
-      .then((user) => {
-        return firebase.database().ref().child('users/' + user.uid)
-          .set(userData);
-      })
+      .then(user =>
+        firebase.database().ref().child(`users/${user.uid}`).set(userData),
+      )
       .then(() => {
         logger.info('User was registered');
 
         this.props.dispatch(updateUser(userData));
 
-        if(this.props.authFinished) {
+        if (this.props.authFinished) {
           this.props.authFinished();
         }
       })
@@ -75,7 +73,7 @@ class AuthContainer extends React.Component {
         logger.error(e.message);
         this.setState({
           regErr: e.message,
-          waiting: false
+          waiting: false,
         });
       });
   }
@@ -83,13 +81,13 @@ class AuthContainer extends React.Component {
   handleLogin(email, password) {
     this.setState({
       waiting: true,
-      logErr: ''
+      logErr: '',
     });
 
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
         const rootRef = firebase.database().ref();
-        const userRef = rootRef.child('users/' + user.uid);
+        const userRef = rootRef.child(`users/${user.uid}`);
 
         userRef.once('value')
           .then((snapshot) => {
@@ -97,7 +95,7 @@ class AuthContainer extends React.Component {
 
             this.props.dispatch(updateUser(snapshot.val()));
 
-            if(this.props.authFinished) {
+            if (this.props.authFinished) {
               this.props.authFinished();
             }
           });
@@ -106,7 +104,7 @@ class AuthContainer extends React.Component {
         logger.error(e.message);
         this.setState({
           logErr: e.message,
-          waiting: false
+          waiting: false,
         });
       });
   }
@@ -119,14 +117,22 @@ class AuthContainer extends React.Component {
         authCancelled={this.props.authCancelled}
         regErr={this.state.regErr}
         logErr={this.state.logErr}
-        waiting={this.state.waiting} />
+        waiting={this.state.waiting}
+      />
     );
   }
 }
 
 AuthContainer.propTypes = {
   authFinished: React.PropTypes.func,
-  authCancelled: React.PropTypes.func.isRequired
-}
+  authCancelled: React.PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
+};
 
-export default connect()(withRouter(AuthContainer));
+AuthContainer.defaultProps = {
+  authFinished: () => {
+    logger.error('authFinished called in AuthContainer.jsx without being passed');
+  },
+};
+
+export default connect()(AuthContainer);
