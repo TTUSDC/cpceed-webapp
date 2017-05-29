@@ -8,7 +8,7 @@ import Box from 'grommet/components/Box';
 
 import init from 'server/server';
 import cpceedApp from 'redux/reducers.js';
-import NavBarContainer from 'components/NavBar/NavBarContainer.js';
+import NavBarContainer from 'components/NavBar/NavBarContainer.jsx';
 import Events from 'routes/Events';
 import Activity from 'routes/Activity';
 import Settings from 'routes/Settings';
