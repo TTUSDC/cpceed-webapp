@@ -1,24 +1,26 @@
 import React from 'react';
-import {withRouter} from 'react-router';
+import { Route, Redirect } from 'react-router-dom';
 
 import Box from 'grommet/components/Box';
 import Header from 'grommet/components/Header';
 import Button from 'grommet/components/Button';
 
 import RequireAuth from 'components/Auth/RequireAuth.js';
+import AccountContainer from './routes/Account';
+import ProfileContainer from './routes/Profile';
 
 class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      index: 0
+      index: 0,
     };
 
     this.navigate = this.navigate.bind(this);
   }
 
   navigate(url) {
-    this.props.router.push(url);
+    this.props.history.push(url);
   }
 
   render() {
@@ -28,27 +30,50 @@ class Settings extends React.Component {
           fixed={false}
           size='medium'
           justify='center'
-          flex={true}
+          flex
           direction='row'
           responsive={false}
-          pad={{between: "small"}}>
+          pad={{ between: 'small' }}
+        >
           <Button
             label='Profile'
             primary={false}
-            onClick={() => {this.navigate('/settings/profile')}}/>
+            onClick={() => {
+              this.navigate('/settings/profile');
+            }}
+          />
           <Button
             label='Account'
             primary={false}
-            onClick={() => {this.navigate('/settings/account')}}/>
+            onClick={() => {
+              this.navigate('/settings/account');
+            }}
+          />
         </Header>
-        {this.props.children}
+
+        <Route
+          exact
+          path='/settings'
+          render={() => (
+            <Redirect to='/settings/profile' />
+          )}
+        />
+
+        <Route path='/settings/profile' component={AccountContainer} />
+        <Route path='/settings/account' component={ProfileContainer} />
       </Box>
     );
   }
 }
 
+Settings.propTypes = {
+  history: React.PropTypes.shape({
+    push: React.PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 const requiredState = {
-  viewSettings: true
+  viewSettings: true,
 };
 
 /*
@@ -58,4 +83,4 @@ const requiredState = {
 */
 export { Settings };
 // The permissions object is passed as the second argument to RequireAuth
-export default withRouter(RequireAuth(Settings, requiredState));
+export default RequireAuth(Settings, requiredState);
