@@ -69,11 +69,17 @@ class NavBarContainer extends React.Component {
 NavBarContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
   user: PropTypes.shape({
-    email: PropTypes.string.isRequired,
+    email: PropTypes.string,
   }).isRequired,
   history: React.PropTypes.shape({
     push: React.PropTypes.func.isRequired,
   }).isRequired,
+};
+
+NavBarContainer.defaultProps = {
+  user: {
+    email: '',
+  },
 };
 
 // Used by connect to map user to this.props.user
