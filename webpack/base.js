@@ -29,7 +29,7 @@ const base = {
     */
     rules: [
       {
-        test: /\.js?$/,
+        test: /\.(js|jsx)$/,
         exclude: nodePath,
         loader: 'babel-loader'
       },

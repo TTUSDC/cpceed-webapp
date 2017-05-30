@@ -10,7 +10,7 @@ import UserIcon from 'grommet/components/icons/base/User';
 import Anchor from 'grommet/components/Anchor';
 
 import {AuthStates} from 'redux/actions.js';
-import AuthContainer from 'components/Auth/AuthContainer.js';
+import AuthContainer from 'components/Auth/AuthContainer.jsx';
 
 class NavBar extends React.Component {
   constructor(props) {
