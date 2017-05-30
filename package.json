@@ -38,6 +38,7 @@
     "jsonwebtoken": "7.4.1",
     "mongoose": "4.9.9",
     "morgan": "1.8.1",
+    "prop-types": "^15.5.10",
     "react": "15.5.4",
     "react-dom": "15.5.4",
     "react-redux": "5.0.5",

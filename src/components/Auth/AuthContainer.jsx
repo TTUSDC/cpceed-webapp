@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import * as firebase from 'firebase';
 import { connect } from 'react-redux';
 
@@ -124,8 +125,8 @@ class AuthContainer extends React.Component {
 }
 
 AuthContainer.propTypes = {
-  authFinished: React.PropTypes.func,
-  authCancelled: React.PropTypes.func.isRequired,
+  authFinished: PropTypes.func,
+  authCancelled: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 

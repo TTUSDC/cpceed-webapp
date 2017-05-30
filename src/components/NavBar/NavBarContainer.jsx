@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import * as firebase from 'firebase';
 import { connect } from 'react-redux';
@@ -71,8 +72,8 @@ NavBarContainer.propTypes = {
   user: PropTypes.shape({
     email: PropTypes.string,
   }).isRequired,
-  history: React.PropTypes.shape({
-    push: React.PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
   }).isRequired,
 };
 
