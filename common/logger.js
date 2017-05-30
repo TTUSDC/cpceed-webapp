@@ -29,7 +29,7 @@ const logger = new (winston.Logger)({
       colorize: true,
       timestamp: true,
     }),
-    new (winston.transports.File)({ filename: 'cpceed.log' }),
+    new (winston.transports.File)({ filename: `log/cpceed-${Date.now()}.log` }),
   ],
 });
 
@@ -57,5 +57,5 @@ logger.log = function (level, msg) {
 // log.warn('testing');
 // log.crit('testing');
 // log.fatal('testing');
-
+logger.info('Starting logger');
 module.exports = logger;
