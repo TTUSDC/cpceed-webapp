@@ -11,7 +11,7 @@ class Login extends React.Component {
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -24,7 +24,7 @@ class Login extends React.Component {
     const name = target.name;
 
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
@@ -35,15 +35,15 @@ class Login extends React.Component {
   }
 
   render() {
-    var errMessage = null;
-    if(this.props.logErr !== '') {
+    let errMessage = null;
+    if (this.props.logErr !== '') {
       errMessage = (
-        <span style={{color: 'red'}}>{this.props.logErr}</span>
+        <span style={{ color: 'red' }}>{this.props.logErr}</span>
       );
     }
 
-    var passHandleSubmit = this.handleSubmit;
-    if(this.props.waiting === true) {
+    let passHandleSubmit = this.handleSubmit;
+    if (this.props.waiting === true) {
       passHandleSubmit = null;
     }
 
@@ -51,21 +51,24 @@ class Login extends React.Component {
       <Form
         pad='medium'
         plain={false}
-        onSubmit={this.handleSubmit}>
+        onSubmit={this.handleSubmit}
+      >
         <fieldset>
           <FormField label='Email'>
             <input
               name='email'
               type='email'
               value={this.state.email}
-              onChange={this.handleInputChange}/>
+              onChange={this.handleInputChange}
+            />
           </FormField>
           <FormField label='Password'>
             <input
               name='password'
               type='password'
               value={this.state.password}
-              onChange={this.handleInputChange}/>
+              onChange={this.handleInputChange}
+            />
           </FormField>
           {errMessage}
         </fieldset>
@@ -73,8 +76,9 @@ class Login extends React.Component {
           <Button
             label='Login'
             type='submit'
-            primary={true}
-            onClick={passHandleSubmit}/>
+            primary
+            onClick={passHandleSubmit}
+          />
         </Footer>
       </Form>
     );
@@ -82,14 +86,9 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-  handleLogin: PropTypes.func,
-  logErr: PropTypes.string,
-  waiting: PropTypes.bool
-};
-
-Login.defaultProps = {
-  logErr: '',
-  waiting: false
+  handleLogin: PropTypes.func.isRequired,
+  logErr: PropTypes.string.isRequired,
+  waiting: PropTypes.bool.isRequired,
 };
 
 export default Login;

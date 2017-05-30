@@ -131,9 +131,7 @@ AuthContainer.propTypes = {
 };
 
 AuthContainer.defaultProps = {
-  authFinished: () => {
-    logger.error('authFinished called in AuthContainer.jsx without being passed');
-  },
+  authFinished: null,
 };
 
 export default connect()(AuthContainer);

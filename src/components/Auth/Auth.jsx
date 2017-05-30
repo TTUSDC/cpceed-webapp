@@ -6,7 +6,7 @@ import Tabs from 'grommet/components/Tabs';
 import Tab from 'grommet/components/Tab';
 
 import logger from 'logger/logger.js';
-import Login from './Login.js';
+import Login from './Login.jsx';
 import Register from './Register.js';
 
 class Auth extends React.Component {
