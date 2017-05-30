@@ -1,1 +1,1 @@
-export { Settings as default } from "./components/Settings.jsx";
+export { default as default } from "./components/Settings.jsx";

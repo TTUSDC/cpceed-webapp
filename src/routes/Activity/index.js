@@ -1,1 +1,1 @@
-export { Activity as default } from './components/Activity.js';
+export { default as default } from './components/Activity.js';

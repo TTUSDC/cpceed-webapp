@@ -1,1 +1,1 @@
-export { ProfileContainer as default } from "./components/ProfileContainer.jsx";
+export { default as default } from "./components/ProfileContainer.jsx";

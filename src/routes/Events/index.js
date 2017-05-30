@@ -1,1 +1,1 @@
-export { Events as default } from './components/Events.js';
+export { default as default } from './components/Events.js';

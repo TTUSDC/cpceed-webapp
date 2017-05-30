@@ -1,1 +1,1 @@
-export { AccountContainer as default } from "./components/AccountContainer.jsx";
+export { default as default } from "./components/AccountContainer.jsx";
