@@ -108,7 +108,7 @@ class NavBar extends React.Component {
                   Events
                 </Anchor>
                 <Anchor onClick={() => {
-                  this.props.navigate('activity/');
+                  this.props.navigate('/activity');
                 }}>
                   Activity
                 </Anchor>
