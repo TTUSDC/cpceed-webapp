@@ -9,9 +9,9 @@ import Paragraph from 'grommet/components/Paragraph';
 import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
 
-import {AuthStates} from 'redux/actions.js';
-import {checkEmail, checkPass, checkConfirm, checkID} from './verify.js';
+import { AuthStates } from 'redux/actions.js';
 import logger from 'logger/logger.js';
+import { checkEmail, checkPass, checkConfirm, checkID } from './verify.js';
 
 class Register extends React.Component {
   constructor(props) {
@@ -28,8 +28,8 @@ class Register extends React.Component {
         emailErr: '',
         passErr: '',
         confirmErr: '',
-        stuIDErr: ''
-      }
+        stuIDErr: '',
+      },
     };
 
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -45,8 +45,8 @@ class Register extends React.Component {
       password: event.target.value,
       confirmPass: '',
       err: update(this.state.err, {
-        confirmErr: {$set: ''}
-      })
+        confirmErr: { $set: '' },
+      }),
     });
   }
 
@@ -56,7 +56,7 @@ class Register extends React.Component {
     const name = target.name;
 
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
@@ -68,8 +68,8 @@ class Register extends React.Component {
       [name]: option,
       studentID: '',
       err: update(this.state.err, {
-        stuIDErr: {$set: ''}
-      })
+        stuIDErr: { $set: '' },
+      }),
     });
   }
 
@@ -77,15 +77,15 @@ class Register extends React.Component {
     // This prevents a '?' from being appended to the URL
     event.preventDefault();
 
-    var data = {
+    const data = {
       email: this.state.email,
       password: this.state.password,
       firstName: this.state.firstName,
       lastName: this.state.lastName,
-      role: this.state.role
+      role: this.state.role,
     };
 
-    if(data.role === AuthStates.STUDENT) {
+    if (data.role === AuthStates.STUDENT) {
       data.studentId = this.state.studentID;
     }
 
@@ -95,152 +95,150 @@ class Register extends React.Component {
   handleFocus(event) {
     const name = event.target.name;
 
-    switch(name) {
-      case "email":
-        if(this.state.err.emailErr !== '') {
+    switch (name) {
+      case 'email':
+        if (this.state.err.emailErr !== '') {
           this.setState({
             err: update(this.state.err, {
-              emailErr: {$set: ''}
-            })
+              emailErr: { $set: '' },
+            }),
           });
         }
 
         break;
-      case "password":
-        if(this.state.err.passErr !== '') {
+      case 'password':
+        if (this.state.err.passErr !== '') {
           this.setState({
             err: update(this.state.err, {
-              passErr: {$set: ''}
-            })
+              passErr: { $set: '' },
+            }),
           });
         }
 
         break;
-      case "confirmPass":
-        if(this.state.err.confirmErr !== '') {
+      case 'confirmPass':
+        if (this.state.err.confirmErr !== '') {
           this.setState({
             err: update(this.state.err, {
-              confirmErr: {$set: ''}
-            })
+              confirmErr: { $set: '' },
+            }),
           });
         }
 
         break;
-      case "studentID":
-        if(this.state.err.stuIDErr !== '') {
+      case 'studentID':
+        if (this.state.err.stuIDErr !== '') {
           this.setState({
             err: update(this.state.err, {
-              stuIDErr: {$set: ''}
-            })
+              stuIDErr: { $set: '' },
+            }),
           });
         }
 
         break;
       default:
-        logger.error('Create an onFocus handler for ' + name);
-
-        break;
-    };
+        logger.error(`Create an onFocus handler for ${name}`);
+    }
   }
 
   inputChecking(event) {
     const name = event.target.name;
-    var value = null;
+    let value = null;
 
-    switch(name) {
-      case "email":
+    switch (name) {
+      case 'email':
         value = checkEmail(this.state.email);
 
         this.setState({
           err: update(this.state.err, {
-            emailErr: {$set: value}
-          })
+            emailErr: { $set: value },
+          }),
         });
 
         break;
-      case "password":
+      case 'password':
         value = checkPass(this.state.password);
 
         this.setState({
           err: update(this.state.err, {
-            passErr: {$set: value}
-          })
+            passErr: { $set: value },
+          }),
         });
 
         break;
-      case "confirmPass":
+      case 'confirmPass':
         value = checkConfirm(this.state.password, this.state.confirmPass);
 
         this.setState({
           err: update(this.state.err, {
-            confirmErr: {$set: value}
-          })
+            confirmErr: { $set: value },
+          }),
         });
 
         break;
-      case "studentID":
+      case 'studentID':
         value = checkID(this.state.studentID);
 
         this.setState({
           err: update(this.state.err, {
-            stuIDErr: {$set: value}
-          })
+            stuIDErr: { $set: value },
+          }),
         });
 
         break;
       default:
-        logger.error('Create an onBlur handler for ' + name);
-
-        break;
-    };
+        logger.error(`Create an onBlur handler for ${name}`);
+    }
   }
 
   render() {
-    var studentIDdesc = null;
-    var studentIDField = null;
-    if(this.state.role === 'student') {
+    let studentIDdesc = null;
+    let studentIDField = null;
+    if (this.state.role === 'student') {
       studentIDdesc = (
         <Paragraph margin='none'>
-          Don't include the R before your student ID number.
+          Don{'\''}t include the R before your student ID number.
         </Paragraph>
       );
       studentIDField = (
         <FormField
           label='Student ID'
-          error={this.state.err.stuIDErr}>
+          error={this.state.err.stuIDErr}
+        >
           <input
             name='studentID'
             type='text'
             value={this.state.studentID}
             onBlur={this.inputChecking}
             onFocus={this.handleFocus}
-            onChange={this.handleInputChange}/>
+            onChange={this.handleInputChange}
+          />
         </FormField>
       );
     }
 
     // Turn AuthStates from actions.js into array for Select
-    var authArray = [];
-    for(var key in AuthStates) {
-      if(AuthStates[key] !== 'guest') {
+    const authArray = [];
+    Object.keys(AuthStates).forEach((key) => {
+      if (AuthStates[key] !== 'guest') {
         authArray.push(AuthStates[key]);
       }
-    }
+    });
 
-    var errMessage = null;
-    if(this.props.regErr !== '') {
+    let errMessage = null;
+    if (this.props.regErr !== '') {
       errMessage = (
-        <span style={{color: 'red'}}>{this.props.regErr}</span>
+        <span style={{ color: 'red' }}>{this.props.regErr}</span>
       );
     }
 
-    var passHandleSubmit = this.handleSubmit;
-    for(var key in this.state.err) {
-      if(this.state.err[key] !== '') {
+    let passHandleSubmit = this.handleSubmit;
+    Object.keys(this.state.err).forEach((key) => {
+      if (this.state.err[key] !== '') {
         passHandleSubmit = null;
       }
-    }
-    if(this.props.waiting === true) {
+    });
+    if (this.props.waiting === true) {
       passHandleSubmit = null;
     }
 
@@ -248,27 +246,31 @@ class Register extends React.Component {
       <Form
         pad='medium'
         plain={false}
-        onSubmit={passHandleSubmit}>
+        onSubmit={passHandleSubmit}
+      >
         <fieldset>
           <FormField label='Role'>
             <Select
               name='role'
               options={authArray}
               value={this.state.role}
-              onChange={this.handleSelectChange}/>
+              onChange={this.handleSelectChange}
+            />
           </FormField>
           {studentIDdesc}
           {studentIDField}
           <FormField
             label='Email'
-            error={this.state.err.emailErr}>
+            error={this.state.err.emailErr}
+          >
             <input
               name='email'
               type='email'
               value={this.state.email}
               onBlur={this.inputChecking}
               onFocus={this.handleFocus}
-              onChange={this.handleInputChange}/>
+              onChange={this.handleInputChange}
+            />
           </FormField>
           <Paragraph margin='none'>
             Your password should use at least 8 characters. It should
@@ -277,39 +279,45 @@ class Register extends React.Component {
           </Paragraph>
           <FormField
             label='Password'
-            error={this.state.err.passErr}>
+            error={this.state.err.passErr}
+          >
             <input
               name='password'
               type='password'
               value={this.state.password}
               onBlur={this.inputChecking}
               onFocus={this.handleFocus}
-              onChange={this.handlePasswordChange}/>
+              onChange={this.handlePasswordChange}
+            />
           </FormField>
           <FormField
             label='Confirm Password'
-            error={this.state.err.confirmErr}>
+            error={this.state.err.confirmErr}
+          >
             <input
               name='confirmPass'
               type='password'
               value={this.state.confirmPass}
               onBlur={this.inputChecking}
               onFocus={this.handleFocus}
-              onChange={this.handleInputChange}/>
+              onChange={this.handleInputChange}
+            />
           </FormField>
           <FormField label='First Name'>
             <input
               name='firstName'
               type='text'
               value={this.state.firstName}
-              onChange={this.handleInputChange}/>
+              onChange={this.handleInputChange}
+            />
           </FormField>
           <FormField label='Last Name'>
             <input
               name='lastName'
               type='text'
               value={this.state.lastName}
-              onChange={this.handleInputChange}/>
+              onChange={this.handleInputChange}
+            />
           </FormField>
           {errMessage}
         </fieldset>
@@ -317,8 +325,9 @@ class Register extends React.Component {
           <Button
             label='Register'
             type='submit'
-            primary={true}
-            onClick={passHandleSubmit}/>
+            primary
+            onClick={passHandleSubmit}
+          />
         </Footer>
       </Form>
     );
@@ -326,14 +335,9 @@ class Register extends React.Component {
 }
 
 Register.propTypes = {
-  handleRegister: PropTypes.func,
-  regErr: PropTypes.string,
-  waiting: PropTypes.bool
-};
-
-Register.defaultProps = {
-  regErr: '',
-  waiting: false
+  handleRegister: PropTypes.func.isRequired,
+  regErr: PropTypes.string.isRequired,
+  waiting: PropTypes.bool.isRequired,
 };
 
 export default Register;
