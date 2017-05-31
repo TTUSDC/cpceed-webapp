@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { logoutUser } from 'redux/actions.js';
 import logger from 'logger/logger.js';
-import NavBar from './NavBar.js';
+import NavBar from './NavBar.jsx';
 
 class NavBarContainer extends React.Component {
   constructor(props) {
