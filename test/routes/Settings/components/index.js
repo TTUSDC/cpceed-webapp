@@ -1,1 +1,1 @@
-import testSettings from './test-settings';
+import testSettings from './test-settings.jsx';

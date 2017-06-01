@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { store } from 'App.js';
+import { store } from 'App.jsx';
 import { AuthStates } from 'redux/actions';
 // import logger from 'logger/logger.js';
 import { login, logout } from 'server/user-auth';

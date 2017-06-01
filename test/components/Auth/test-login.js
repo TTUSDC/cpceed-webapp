@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import Login from 'components/Auth/Login.js';
+import Login from 'components/Auth/Login.jsx';
 
 export default describe("Login.js", () => {
   it("Handles input changes", () => {

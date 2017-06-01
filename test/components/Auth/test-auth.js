@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 
-import Auth from 'components/Auth/Auth.js';
+import Auth from 'components/Auth/Auth.jsx';
 
 export default describe("Auth.js", () => {
   it("Changes tabs", () => {

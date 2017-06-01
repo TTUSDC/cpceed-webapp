@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 
-import Register from 'components/Auth/Register.js';
+import Register from 'components/Auth/Register.jsx';
 
 export default describe("Register.js", () => {
   it("Handles password changes", () => {
