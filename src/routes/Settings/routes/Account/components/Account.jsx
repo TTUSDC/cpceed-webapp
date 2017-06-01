@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 
 import Box from 'grommet/components/Box';
@@ -12,7 +13,7 @@ import Button from 'grommet/components/Button';
 import {
   checkPass,
   checkConfirm,
-  checkEmail
+  checkEmail,
 } from 'components/Auth/verify.js';
 import logger from 'logger/logger.js';
 
@@ -27,8 +28,8 @@ class Account extends React.Component {
       err: {
         password: '',
         confirm: '',
-        email: ''
-      }
+        email: '',
+      },
     };
 
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -44,8 +45,8 @@ class Account extends React.Component {
       password: event.target.value,
       confirm: '',
       err: update(this.state.err, {
-        confirm: {$set: ''}
-      })
+        confirm: { $set: '' },
+      }),
     });
   }
 
@@ -55,7 +56,7 @@ class Account extends React.Component {
     const name = target.name;
 
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
@@ -73,129 +74,131 @@ class Account extends React.Component {
   handleFocus(event) {
     const name = event.target.name;
 
-    switch(name) {
-      case "password":
-        if(this.state.err.password !== '') {
+    switch (name) {
+      case 'password':
+        if (this.state.err.password !== '') {
           this.setState({
             err: update(this.state.err, {
-              password: {$set: ''}
-            })
+              password: { $set: '' },
+            }),
           });
         }
 
         break;
-      case "confirm":
-        if(this.state.err.confirm !== '') {
+      case 'confirm':
+        if (this.state.err.confirm !== '') {
           this.setState({
             err: update(this.state.err, {
-              confirm: {$set: ''}
-            })
+              confirm: { $set: '' },
+            }),
           });
         }
 
         break;
-      case "email":
-        if(this.state.err.email !== '') {
+      case 'email':
+        if (this.state.err.email !== '') {
           this.setState({
             err: update(this.state.err, {
-              email: {$set: ''}
-            })
+              email: { $set: '' },
+            }),
           });
         }
 
         break;
       default:
-        logger.error('Create an onFocus handler in Account.js for ' + name);
-    };
+        logger.error(`Create an onFocus handler in Account.js for ${name}`);
+    }
   }
 
   inputChecking(event) {
     const name = event.target.name;
-    var value = null;
+    let value = null;
 
-    switch(name) {
-      case "password":
+    switch (name) {
+      case 'password':
         value = checkPass(this.state.password);
 
         this.setState({
           err: update(this.state.err, {
-            password: {$set: value}
-          })
+            password: { $set: value },
+          }),
         });
 
         break;
-      case "confirm":
+      case 'confirm':
         value = checkConfirm(this.state.password, this.state.confirm);
 
         this.setState({
           err: update(this.state.err, {
-            confirm: {$set: value}
-          })
+            confirm: { $set: value },
+          }),
         });
 
         break;
-      case "email":
+      case 'email':
         value = checkEmail(this.state.email);
 
         this.setState({
           err: update(this.state.err, {
-            email: {$set: value}
-          })
+            email: { $set: value },
+          }),
         });
 
         break;
       default:
-        logger.error('Create an onBlur handler in Account.js for ' + name);
-    };
+        logger.error(`Create an onBlur handler in Account.js for ${name}`);
+    }
   }
 
   render() {
     // Password conditional rendering
 
-    var passwordMessage = null;
-    if(this.props.err.password !== '') {
+    let passwordMessage = null;
+    if (this.props.err.password !== '') {
       passwordMessage = (
-        <span style={{color: 'red'}}>{this.props.err.password}</span>
+        <span style={{ color: 'red' }}>{this.props.err.password}</span>
       );
     }
 
-    var passPassword = this.handlePassword;
-    if(this.state.err.password !== '') {
+    let passPassword = this.handlePassword;
+    if (this.state.err.password !== '') {
       passPassword = null;
-    } else if(this.state.err.confirm !== '') {
+    } else if (this.state.err.confirm !== '') {
       passPassword = null;
-    } else if(this.props.waiting.password === true) {
+    } else if (this.props.waiting.password === true) {
       passPassword = null;
     }
 
     // Email conditional rendering
 
-    var emailMessage = null;
-    if(this.props.err.email !== '') {
+    let emailMessage = null;
+    if (this.props.err.email !== '') {
       emailMessage = (
-        <span style={{color: 'red'}}>{this.props.err.email}</span>
+        <span style={{ color: 'red' }}>{this.props.err.email}</span>
       );
     }
 
-    var passEmail = this.handleEmail;
-    if(this.state.err.email !== '') {
+    let passEmail = this.handleEmail;
+    if (this.state.err.email !== '') {
       passEmail = null;
-    } else if(this.props.waiting.email === true) {
+    } else if (this.props.waiting.email === true) {
       passEmail = null;
     }
 
     return (
       <Box
-        flex={true}
+        flex
         align='center'
-        size={{width: 'full'}}>
+        size={{ width: 'full' }}
+      >
         <Heading tag='h2'>
           Change Password
         </Heading>
         <Form
           pad='medium'
           plain={false}
-          onSubmit={passPassword}>
+          onSubmit={passPassword}
+        >
           <fieldset>
             <Paragraph margin='none'>
               Your password should use at least 8 characters. It should
@@ -204,33 +207,37 @@ class Account extends React.Component {
             </Paragraph>
             <FormField
               label='Password'
-              error={this.state.err.password}>
+              error={this.state.err.password}
+            >
               <input
                 name='password'
                 type='password'
                 value={this.state.password}
                 onBlur={this.inputChecking}
                 onFocus={this.handleFocus}
-                onChange={this.handlePasswordChange}/>
+                onChange={this.handlePasswordChange}
+              />
             </FormField>
             <FormField
               label='Confirm Password'
-              error={this.state.err.confirm}>
+              error={this.state.err.confirm}
+            >
               <input
                 name='confirm'
                 type='password'
                 value={this.state.confirm}
                 onBlur={this.inputChecking}
                 onFocus={this.handleFocus}
-                onChange={this.handleInputChange}/>
+                onChange={this.handleInputChange}
+              />
             </FormField>
-            <FormField
-              label='Old Password'>
+            <FormField label='Old Password'>
               <input
                 name='old'
                 type='password'
                 value={this.state.old}
-                onChange={this.handleInputChange}/>
+                onChange={this.handleInputChange}
+              />
             </FormField>
             {passwordMessage}
           </fieldset>
@@ -238,8 +245,9 @@ class Account extends React.Component {
             <Button
               label='Change Password'
               type='submit'
-              primary={true}
-              onClick={passPassword}/>
+              primary
+              onClick={passPassword}
+            />
           </Footer>
         </Form>
         <Heading tag='h2'>
@@ -248,7 +256,8 @@ class Account extends React.Component {
         <Form
           pad='medium'
           plain={false}
-          onSubmit={passEmail}>
+          onSubmit={passEmail}
+        >
           <fieldset>
             <Paragraph margin='none'>
               You use your email to login, so make sure to use your new one
@@ -256,14 +265,16 @@ class Account extends React.Component {
             </Paragraph>
             <FormField
               label='Email'
-              error={this.state.err.email}>
+              error={this.state.err.email}
+            >
               <input
                 name='email'
                 type='email'
                 value={this.state.email}
                 onBlur={this.inputChecking}
                 onFocus={this.handleFocus}
-                onChange={this.handleInputChange}/>
+                onChange={this.handleInputChange}
+              />
             </FormField>
             {emailMessage}
           </fieldset>
@@ -271,8 +282,9 @@ class Account extends React.Component {
             <Button
               label='Change Email'
               type='submit'
-              primary={true}
-              onClick={passEmail}/>
+              primary
+              onClick={passEmail}
+            />
           </Footer>
         </Form>
       </Box>
@@ -281,25 +293,19 @@ class Account extends React.Component {
 }
 
 Account.propTypes = {
-  handlePassword: PropTypes.func,
-  handleEmail: PropTypes.func,
-  user: PropTypes.object,
-  err: PropTypes.object,
-  waiting: PropTypes.object
-};
-
-Account.defaultProps = {
-  user: {
-    email: ''
-  },
-  err: {
-    email: '',
-    password: ''
-  },
-  waiting: {
-    email: false,
-    password: false
-  }
+  handlePassword: PropTypes.func.isRequired,
+  handleEmail: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    email: PropTypes.string.isRequired,
+  }).isRequired,
+  err: PropTypes.shape({
+    password: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }).isRequired,
+  waiting: PropTypes.shape({
+    password: PropTypes.bool.isRequired,
+    email: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default Account;
