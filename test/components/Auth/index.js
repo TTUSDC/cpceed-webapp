@@ -1,3 +1,3 @@
-import testAuth from './test-auth.js';
-import testLogin from './test-login.js';
+import testAuth from './test-auth.jsx';
+import testLogin from './test-login.jsx';
 import testRegister from './test-register.js';
