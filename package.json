@@ -36,6 +36,7 @@
     "grommet": "1.4.0",
     "immutability-helper": "2.1.2",
     "jsonwebtoken": "7.4.1",
+    "loglevel": "1.4.1",
     "mongoose": "4.9.9",
     "morgan": "1.8.1",
     "prop-types": "^15.5.10",

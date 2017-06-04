@@ -1,6 +1,7 @@
 const path = require('path');
 
 const nodePath = path.resolve(__dirname, '../node_modules');
+const commonPath = path.resolve(__dirname, '../common');
 const appPath = path.resolve(__dirname, '../src');
 const shimPath = path.resolve(__dirname, '../src/logger/empty-shim.js');
 
@@ -9,16 +10,9 @@ const base = {
   resolve: {
     modules: [
       nodePath,
-      appPath
-    ],
-    alias: {
-      // Ignore optional bunyan dependencies
-      'dtrace-provider': shimPath,
-      fs: shimPath,
-      'safe-json-stringify': shimPath,
-      mv: shimPath,
-      'source-map-support': shimPath
-    }
+      appPath,
+      commonPath
+    ]
   },
 
   module: {
