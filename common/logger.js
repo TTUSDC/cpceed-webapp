@@ -1,10 +1,8 @@
 const logger = require('loglevel');
 
-console.log(logger)
-
 // Checks current build environment
-var envLevel = null;
-switch(ENV) {
+let envLevel = null;
+switch (ENV) {
   case 'prod':
     envLevel = 'error';
     break;
