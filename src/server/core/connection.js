@@ -1,5 +1,5 @@
 import axios from 'axios';
-import logger from 'logger/logger';
+import logger from 'logger.js';
 
 const instance = axios.create({
   baseURL: 'http://localhost:3000/api', // TODO(asclines): Move this to env

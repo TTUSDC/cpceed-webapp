@@ -7,10 +7,10 @@ switch (ENV) {
     envLevel = 'error';
     break;
   case 'dev':
-    envLevel = 'debug';
+    envLevel = 'trace';
     break;
   default:
-    envLevel = 'debug';
+    envLevel = 'trace';
 }
 
 // Adding date prefix

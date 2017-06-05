@@ -1,5 +1,5 @@
 import * as firebase from 'firebase';
-import logger from 'logger/logger';
+import logger from 'logger.js';
 const firebaseConfig = {
   apiKey: 'AIzaSyCtMk74zXBsAYRYIzamcyRXyGDFP3vKXhA',
   authDomain: 'testing-project-a5d42.firebaseapp.com',
@@ -13,4 +13,3 @@ export default function init() {
     logger.warn('Firebase may not have started.', err);
   }
 }
-

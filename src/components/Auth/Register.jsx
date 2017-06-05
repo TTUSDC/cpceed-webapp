@@ -10,7 +10,7 @@ import Footer from 'grommet/components/Footer';
 import Button from 'grommet/components/Button';
 
 import { AuthStates } from 'redux/actions.js';
-import logger from 'logger/logger.js';
+import logger from 'logger.js';
 import { checkEmail, checkPass, checkConfirm, checkID } from './verify.js';
 
 class Register extends React.Component {
