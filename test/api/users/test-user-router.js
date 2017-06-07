@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const chai = require('chai');
 const sinon = require('sinon');
+const async = require('async');
 const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
@@ -37,7 +38,8 @@ describe('user router & integration', () => {
   });
 
   describe('POST /api/users', () => {
-    beforeEach((done) => {
+    const endpoint = '/api/users';
+    before((done) => {
       sinon.spy(userManager, 'createUser');
       done();
     });
@@ -55,7 +57,7 @@ describe('user router & integration', () => {
     it('should return 201 and the created student UID', (done) => {
       const body = testUsers.student000;
       request(api)
-      .post('/api/users')
+      .post(endpoint)
       .send(body)
       .type('form')
       .expect(201)
@@ -71,6 +73,26 @@ describe('user router & integration', () => {
           done();
         });
       });
+    });
+
+    const requiredKeys = ['email', 'password', 'role'];
+    const createIteratee = (key, createCb) => {
+      const originalStudent = testUsers.student000;
+      const student = JSON.parse(JSON.stringify(originalStudent)); // For object copying
+      delete student[key];
+      it(`should have returned an error for missing key: ${key}`, (innerDone) => {
+        request(api)
+          .post(endpoint)
+          .send(student)
+          .type('form')
+          .expect(400, innerDone);
+      });
+      createCb();
+    };
+
+
+    async.each(requiredKeys, createIteratee, (asyncCreateErr) => {
+      expect(asyncCreateErr).to.be.null;
     });
   });
 });
