@@ -95,4 +95,57 @@ describe('user router & integration', () => {
       expect(asyncCreateErr).to.be.null;
     });
   });
+
+  describe('GET /api/users', () => {
+    const endpoint = '/api/users';
+    it('should create, login, and get the student', (done) => {
+      const student = testUsers.student000;
+
+      const getUserTest = (uid, token) => {
+        request(api)
+        .get(endpoint)
+        .query({
+          uid,
+          token,
+        })
+        .expect(200)
+        .end((getErr, getRes) => {
+          expect(getErr).to.be.null;
+          const returnedStudent = getRes.body;
+          expect(returnedStudent.uid).to.equal(uid);
+          expect(returnedStudent.email).to.equal(student.email);
+          done(getErr);
+        });
+      };
+
+      const loginUserTest = (uid) => {
+        request(api)
+      .post('/api/auth')
+      .send({
+        email: student.email,
+        password: student.password,
+      })
+      .type('form')
+      .expect(201)
+      .end((loginErr, loginRes) => {
+        expect(loginErr).to.be.null;
+        const token = loginRes.body.token;
+        expect(token).to.exist;
+        getUserTest(uid, token);
+      });
+      };
+
+      request(api)
+    .post(endpoint)
+    .send(student)
+    .type('form')
+    .expect(201)
+    .end((createErr, createRes) => {
+      expect(createErr).to.be.null;
+      const uid = createRes.body.uid;
+      expect(uid).to.not.be.null;
+      loginUserTest(uid);
+    });
+    });
+  });
 });
