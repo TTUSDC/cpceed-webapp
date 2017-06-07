@@ -1,12 +1,15 @@
-var prod = require('./webpack/prod.js');
-var dev = require('./webpack/dev.js');
+const prodApp = require('./webpack/prod.js');
+const devApp = require('./webpack/dev.js');
+const devApi = require('./webpack/base-api.js');
 
 function config(env) {
   switch(env) {
-    case 'prod':
-      return prod;
-    case 'dev':
-      return dev;
+    case 'prod-app':
+      return prodApp;
+    case 'dev-app':
+      return devApp;
+    case 'dev-api':
+      return devApi;
   }
 }
 

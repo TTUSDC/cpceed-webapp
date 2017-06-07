@@ -4,10 +4,11 @@
   "description": "Time logging app for the CPCEED program at Texas Tech University",
   "main": "src/index.jsx",
   "scripts": {
-    "start": "npm-run-all start-api start-app",
-    "start-app": "webpack-dev-server --env=dev",
-    "start-api": "node server.js",
-    "build": "webpack --env=prod",
+    "start": "webpack --env=prod-app && webpack --env=prod-api && node build/server.bundle.js",
+    "start-app": "webpack-dev-server --env=dev-app",
+    "start-api": "npm-run-all --parallel observe-api dev-api",
+    "dev-api": "webpack --env=dev-api",
+    "observe-api": "node observer.js",
     "test": "npm-run-all --parallel --continue-on-error test-app test-api",
     "test-app": "karma start karma.conf.js",
     "test-api": "./node_modules/.bin/mocha --recursive test/api",
@@ -43,7 +44,8 @@
     "react-dom": "15.5.4",
     "react-redux": "5.0.5",
     "react-router-dom": "4.1.1",
-    "redux": "3.6.0"
+    "redux": "3.6.0",
+    "source-map-support": "0.4.15"
   },
   "devDependencies": {
     "async": "2.4.0",
@@ -56,6 +58,7 @@
     "chai": "3.5.0",
     "chai-moment": "0.1.0",
     "chai-shallow-deep-equal": "1.4.6",
+    "chokidar": "1.7.0",
     "css-loader": "0.26.1",
     "enzyme": "2.8.2",
     "eslint": "3.19.0",

@@ -5,7 +5,7 @@ const commonPath = path.resolve(__dirname, '../common');
 const appPath = path.resolve(__dirname, '../src');
 
 const base = {
-  // Allows for absolute paths from locations indicated in 'root'
+  // Allows for absolute paths from locations indicated in 'modules'
   resolve: {
     modules: [
       nodePath,
