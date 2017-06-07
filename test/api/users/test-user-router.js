@@ -18,6 +18,42 @@ let api;
 
 mockgoose(mongoose);
 
+/*
+ * Using the API, creates and logins a student.
+ *
+ * cb(uid, token)
+ */
+const createAndLoginStudent = (student, cb) => {
+  const loginUserTest = (uid) => {
+    request(api)
+      .post('/api/auth')
+      .send({
+        email: student.email,
+        password: student.password,
+      })
+      .type('form')
+      .expect(201)
+      .end((loginErr, loginRes) => {
+        expect(loginErr).to.be.null;
+        const token = loginRes.body.token;
+        expect(token).to.exist;
+        cb(uid, token);
+      });
+  };
+
+  request(api)
+    .post('/api/users')
+    .send(student)
+    .type('form')
+    .expect(201)
+    .end((createErr, createRes) => {
+      expect(createErr).to.be.null;
+      const uid = createRes.body.uid;
+      expect(uid).to.not.be.null;
+      loginUserTest(uid);
+    });
+};
+
 describe('user router & integration', () => {
   // before((done) => { mongoose.connect('', done); });
 
@@ -117,35 +153,7 @@ describe('user router & integration', () => {
           done(getErr);
         });
       };
-
-      const loginUserTest = (uid) => {
-        request(api)
-      .post('/api/auth')
-      .send({
-        email: student.email,
-        password: student.password,
-      })
-      .type('form')
-      .expect(201)
-      .end((loginErr, loginRes) => {
-        expect(loginErr).to.be.null;
-        const token = loginRes.body.token;
-        expect(token).to.exist;
-        getUserTest(uid, token);
-      });
-      };
-
-      request(api)
-    .post(endpoint)
-    .send(student)
-    .type('form')
-    .expect(201)
-    .end((createErr, createRes) => {
-      expect(createErr).to.be.null;
-      const uid = createRes.body.uid;
-      expect(uid).to.not.be.null;
-      loginUserTest(uid);
-    });
+      createAndLoginStudent(student, getUserTest);
     });
   });
 });
