@@ -38,7 +38,7 @@ userRouter.get('/',
     authManager.verify,
     authManager.validateUidPermissions,
     (req, res) => {
-      const uid = req.query.uid;
+      const uid = res.locals.uid;
       userManager.getUserById(uid, {}, (err, user) => {
         if (err) {
           res.status(400).send(err).end();

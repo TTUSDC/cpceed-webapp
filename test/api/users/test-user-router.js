@@ -133,27 +133,31 @@ describe('user router & integration', () => {
   });
 
   describe('GET /api/users', () => {
-    const endpoint = '/api/users';
-    it('should create, login, and get the student', (done) => {
-      const student = testUsers.student000;
-
-      const getUserTest = (uid, token) => {
-        request(api)
-        .get(endpoint)
-        .query({
-          uid,
-          token,
-        })
+    const getUserTest = (student, query, done) => {
+      request(api)
+        .get('/api/users')
+        .query(query)
         .expect(200)
         .end((getErr, getRes) => {
           expect(getErr).to.be.null;
           const returnedStudent = getRes.body;
-          expect(returnedStudent.uid).to.equal(uid);
           expect(returnedStudent.email).to.equal(student.email);
           done(getErr);
         });
-      };
-      createAndLoginStudent(student, getUserTest);
+    };
+
+    it('should get the logged in student by passing the UID', (done) => {
+      const student = testUsers.student000;
+      createAndLoginStudent(student, (uid, token) => {
+        getUserTest(student, { uid, token }, done);
+      });
+    });
+
+    it('should get the logged in student WITHOUT passing the UID', (done) => {
+      const student = testUsers.student000;
+      createAndLoginStudent(student, (uid, token) => {
+        getUserTest(student, { token }, done);
+      });
     });
   });
 });
