@@ -2,7 +2,7 @@ import React from 'react';
 import * as firebase from 'firebase';
 import {connect} from 'react-redux';
 
-import Profile from './Profile.js';
+import Profile from './Profile.jsx';
 import {updateUser} from 'redux/actions.js';
 import logger from 'logger/logger.js';
 

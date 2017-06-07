@@ -1,11 +1,12 @@
 import React from 'react';
-import {withRouter} from 'react-router';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import * as firebase from 'firebase';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {logoutUser} from 'redux/actions.js';
+import { logoutUser } from 'redux/actions.js';
 import logger from 'logger/logger.js';
-import NavBar from './NavBar.js';
+import NavBar from './NavBar.jsx';
 
 class NavBarContainer extends React.Component {
   constructor(props) {
@@ -31,13 +32,13 @@ class NavBarContainer extends React.Component {
     doesn't happen until the variable is called as a function.
   */
   navigate(url) {
-    this.props.router.push(url);
+    this.props.history.push(url);
   }
 
   logout() {
     firebase.auth().signOut()
       .then(() => {
-        logger.info("User was signed out");
+        logger.info('User was signed out');
 
         // Set user to guest
         this.props.dispatch(logoutUser());
@@ -46,7 +47,7 @@ class NavBarContainer extends React.Component {
         logger.error(e.message);
       });
 
-    this.props.router.push('/');
+    this.props.history.push('/');
   }
 
   render() {
@@ -60,21 +61,33 @@ class NavBarContainer extends React.Component {
       <NavBar
         user={this.props.user}
         navigate={this.navigate}
-        logout={this.logout}/>
+        logout={this.logout}
+      />
     );
   }
 }
 
-// Used by mapStateToProps to get the current user from the redux store
-const getUser = (user) => {
-  return user;
-}
+NavBarContainer.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    email: PropTypes.string,
+  }).isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+NavBarContainer.defaultProps = {
+  user: {
+    email: '',
+  },
+};
 
 // Used by connect to map user to this.props.user
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
-    user: getUser(state.user)
-  }
+    user: state.user,
+  };
 }
 
-export default connect(mapStateToProps)(withRouter(NavBarContainer));
+export default withRouter(connect(mapStateToProps)(NavBarContainer));

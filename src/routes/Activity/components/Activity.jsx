@@ -1,6 +1,6 @@
 import React from 'react';
 
-import RequireAuth from 'components/Auth/RequireAuth.js';
+import RequireAuth from 'components/Auth/RequireAuth.jsx';
 
 class Activity extends React.Component {
   render() {
@@ -20,7 +20,7 @@ class Activity extends React.Component {
   defined in `actions.js`, just a subset that fits your situation.
 */
 const requiredState = {
-  viewActivity: true
+  viewActivity: true,
 };
 
 // The permissions object is passed as the second argument to RequireAuth
