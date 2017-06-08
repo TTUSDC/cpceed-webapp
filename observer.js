@@ -4,40 +4,51 @@ const spawn = require('child_process').spawn;
 
 const bundle = 'build/api.bundle.js';
 let watcher;
-let child = {};
+let child;
+let running = false;
 
-function start(child) {
-  if (child.exitCode !== null) {
+function start() {
+  if (running === false) {
     child = spawn('node', [bundle]);
-    child.on('exit', () => {
-      console.log('Child exited');
+    running = true;
+
+    child.stdout.on('data', (data) => {
+      console.log(data.toString());
     });
 
-    console.log('Child started');
-  }
+    child.stderr.on('data', (data) => {
+      console.log(data.toString());
+    });
 
-  return child;
+    child.on('exit', (code) => {
+      running = false;
+
+      console.log(`server exited with code: ${code}`);
+    });
+  }
 }
 
-function stop(child) {
-  if (child.exitCode === null && child === null) {
-    child.exit(0);
-
-    console.log('Child stopped');
+function stop() {
+  if (running === true) {
+    child.kill('SIGTERM');
+    running = false;
   }
-
-  return child;
 }
 
-if (fs.existsSync(bundle)) {
-  child = start(child);
+function initialize() {
+  start();
   watcher = chokidar.watch(bundle, {
     persistent: true,
   });
+
   watcher.on('change', () => {
-    child = stop(child);
-    child = start(child);
+    stop();
+    start();
   });
+}
+
+if (fs.existsSync(bundle)) {
+  initialize();
 } else {
   const initial = chokidar.watch('build', {
     persistent: true,
@@ -45,14 +56,7 @@ if (fs.existsSync(bundle)) {
 
   initial.on('add', () => {
     if (fs.existsSync(bundle)) {
-      child = start(child);
-      watcher = chokidar.watch(bundle, {
-        persistent: true,
-      });
-      watcher.on('change', () => {
-        child = stop(child);
-        child = start(child);
-      });
+      initialize();
 
       initial.close();
     }
@@ -60,7 +64,7 @@ if (fs.existsSync(bundle)) {
 }
 
 process.on('SIGINT', () => {
-  child = stop(child);
+  stop();
 
   process.exit(0);
 });
