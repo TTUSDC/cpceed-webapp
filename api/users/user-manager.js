@@ -69,17 +69,16 @@ const createUser = (data, next) => {
  * - name
  * - isApproved
  * - points
+ *
+ * This method does NOT delete fields
  */
 const modifyUser = (userUid, reqData, locals, modifyCallback) => {
   const conditions = { _id: userUid };
-  const update = {
-    name: reqData.name,
-    email: reqData.email,
-  };
-  if (locals.auth.role === 'student') {
-    update.isApproved = reqData.isApproved;
-    update.points = reqData.points;
-  }
+  const update = {};
+
+  Object.keys(reqData).forEach((key) => {
+    update[key] = reqData[key];
+  });
 
   const options = {
     new: true,

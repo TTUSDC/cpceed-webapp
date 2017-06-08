@@ -160,4 +160,38 @@ describe('user router & integration', () => {
       });
     });
   });
+
+  describe('PUT /api/users', () => {
+    it('should update the logged in student', (done) => {
+      const student = testUsers.student000;
+      createAndLoginStudent(student, (uid, token) => {
+        const fieldsToUpdate = {
+          name: `${student.name}_edit`,
+        };
+        request(api)
+        .put('/api/users')
+        .expect(200)
+        .query({ token })
+        .send(fieldsToUpdate)
+        .end((putErr, putRes) => {
+          expect(putErr).to.be.null;
+          expect(putRes).to.not.be.null;
+          const returnedStudent = putRes.body;
+          // Make sure the modified user was returned
+          expect(returnedStudent.name).to.equal(fieldsToUpdate.name);
+          expect(returnedStudent.email).to.equal(student.email);
+
+          Student.findById(uid, (findErr, foundStudent) => {
+            expect(findErr).to.be.null;
+            expect(foundStudent).to.not.be.null;
+
+            // Make sure the modified user was actually saved
+            expect(foundStudent.name).to.equal(fieldsToUpdate.name);
+            expect(foundStudent.email).to.equal(student.email);
+            done();
+          });
+        });
+      });
+    });
+  });
 });

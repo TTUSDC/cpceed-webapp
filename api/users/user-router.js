@@ -16,15 +16,19 @@ userRouter.post('/', (req, res) => {
   });
 });
 
-userRouter.put('/:uid', authManager.verify, (req, res) => {
-  const response = userManager.modifyUser(req.params.uid, req.body, (err) => {
-    if (err) {
-      res.status(400).send(err).end();
-      return;
-    }
-    res.status(200).json(response.object);
-  });
-});
+userRouter.put('/',
+    authManager.verify,
+    authManager.validateUidPermissions,
+    (req, res) => {
+      userManager.modifyUser(res.locals.uid, req.body, res.locals,
+        (err, user) => {
+          if (err) {
+            res.status(400).json(err).end();
+            return;
+          }
+          res.status(200).json(user).end();
+        });
+    });
 
 // Delete User.
 userRouter.delete('/:uid', (req, res) => {
