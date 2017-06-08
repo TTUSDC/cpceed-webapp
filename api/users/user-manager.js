@@ -63,19 +63,38 @@ const createUser = (data, next) => {
   });
 };
 
-var modifyUser = (userUid, reqData, modifyCallback) => {
-  // TODO(ryanfaulkenberry100): Check if modifier is a user or an admin.
-  if ( /*modifying user is student*/ true) {
-    modifyUserAsSelf(userUid, reqData, modifyCallback);
-  } else if ( /*modifying user is admin*/ false) {
-    modifyUserAsAdmin(userUid, reqData, modifyCallback);
+/*
+ * The fields that can be updated are:
+ * - email
+ * - name
+ */
+const modifyUser = (userUid, reqData, locals, modifyCallback) => {
+  const conditions = { _id: userUid };
+  let update = {};
+  if (locals.auth.role === 'admin') {
+    update = {
+      $set: {
+        email: reqData.email,
+        name: reqData.name,
+      },
+    };
   } else {
-    // TODO(ryanfaulkenberry100): Handle errors.
+    update = {
+      $set: {
+        email: reqData.email,
+        name: reqData.name,
+        points: reqData.points,
+        isApproved: reqData.isApproved,
+      },
+    };
   }
 
-  return new response.ResponseObject(200, { "url": "//www.google.com" });
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
+  const options = {
+    new: true,
+  };
+
+  User.findOneAndUpdate(conditions, update, options, modifyCallback);
+};
 
 var deleteUser = (userUid) => {
   // TODO(ryanfaulkenberry100): Delete the specified user and remove console.log.
@@ -107,7 +126,5 @@ const getUserById = (userUid, locals, queryCallback) => {
   });
 };
 
-var modifyUserAsSelf = (userUid, reqData, modifyCallback) => {}
-var modifyUserAsAdmin = (userUid, reqData, modifyCallback) => {}
 
 module.exports = { createUser, modifyUser, deleteUser, getUserById };

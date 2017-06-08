@@ -133,4 +133,35 @@ describe('userManager', () => {
       });
     });
   });
+
+  describe('#modifyUser', () => {
+    it('should update the student', (done) => {
+      const originalStudent = testUsers.student000;
+      const modifiedStudent = JSON.parse(JSON.stringify(originalStudent));
+      modifiedStudent.name = `${originalStudent.name}_edit`;
+      modifiedStudent.email = `${originalStudent.email}_edit`;
+      userManager.createUser(originalStudent, (createErr, uid) => {
+        expect(createErr).to.be.null;
+        expect(uid).to.be.a('string');
+
+        // Make sure it returned the updated student
+        userManager.modifyUser(uid, modifiedStudent, { auth: { role: 'student' } },
+          (modifyErr, realUpdatedUser) => {
+            expect(modifyErr).to.be.null;
+            expect(realUpdatedUser).to.not.be.null;
+            expect(realUpdatedUser.name).to.equal(modifiedStudent.name);
+            expect(realUpdatedUser.email).to.equal(modifiedStudent.email);
+
+            // Make sure it saved the updated student
+            Student.findById(uid, (findErr, foundStudent) => {
+              expect(findErr).to.be.null;
+              expect(foundStudent).to.not.be.null;
+              expect(foundStudent.name).to.equal(modifiedStudent.name);
+              expect(foundStudent.email).to.equal(modifiedStudent.email);
+              done();
+            });
+          });
+      });
+    });
+  });
 });
