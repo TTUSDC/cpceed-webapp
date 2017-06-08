@@ -16,6 +16,7 @@ userRouter.post('/', (req, res) => {
   });
 });
 
+// Modify User
 userRouter.put('/',
     authManager.verify,
     authManager.validateUidPermissions,
@@ -31,11 +32,18 @@ userRouter.put('/',
     });
 
 // Delete User.
-userRouter.delete('/:uid', (req, res) => {
-  const response = userManager.deleteUser(req.params.uid);
-
-  res.status(200).json(response.object);
-});
+userRouter.delete('/',
+    authManager.verify,
+    authManager.validateUidPermissions,
+    (req, res) => {
+      userManager.deleteUser(res.locals.uid, res.locals, (err, result) => {
+        if (err) {
+          res.status(400).json(err).end();
+          return;
+        }
+        res.status(200).json(result).end();
+      });
+    });
 
 // Get User.
 userRouter.get('/',

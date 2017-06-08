@@ -1,4 +1,3 @@
-const response = require('../objects/response.js');
 const userModels = require('./user-models.js');
 
 const User = userModels.User;
@@ -80,20 +79,14 @@ const modifyUser = (userUid, reqData, locals, modifyCallback) => {
     update[key] = reqData[key];
   });
 
-  const options = {
-    new: true,
-  };
+  const options = { new: true };
 
   Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
 };
 
-var deleteUser = (userUid) => {
-  // TODO(ryanfaulkenberry100): Delete the specified user and remove console.log.
-  console.log(userUid);
-
-  return new response.ResponseObject(200, { "url": "//www.google.com" });
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
+const deleteUser = (userUid, locals, deleteCallback) => {
+  User.findOneAndremove({ _id: userUid }, deleteCallback);
+};
 
 const getUserById = (userUid, locals, queryCallback) => {
   User.findById(userUid, (err, results) => {
