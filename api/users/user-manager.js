@@ -67,33 +67,25 @@ const createUser = (data, next) => {
  * The fields that can be updated are:
  * - email
  * - name
+ * - isApproved
+ * - points
  */
 const modifyUser = (userUid, reqData, locals, modifyCallback) => {
   const conditions = { _id: userUid };
-  let update = {};
-  if (locals.auth.role === 'admin') {
-    update = {
-      $set: {
-        email: reqData.email,
-        name: reqData.name,
-      },
-    };
-  } else {
-    update = {
-      $set: {
-        email: reqData.email,
-        name: reqData.name,
-        points: reqData.points,
-        isApproved: reqData.isApproved,
-      },
-    };
+  const update = {
+    name: reqData.name,
+    email: reqData.email,
+  };
+  if (locals.auth.role === 'student') {
+    update.isApproved = reqData.isApproved;
+    update.points = reqData.points;
   }
 
   const options = {
     new: true,
   };
 
-  User.findOneAndUpdate(conditions, update, options, modifyCallback);
+  Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
 };
 
 var deleteUser = (userUid) => {
