@@ -24,8 +24,7 @@ These are the two schemas:
 ### Student
 ```javascript
 {
-  firstName: String,
-  lastName: String,
+  name: String,
   email: {
     type: String,
     unique: true,
@@ -73,8 +72,7 @@ where `pointOption` is:
 
 ```javascript
 {
-  firstName: String,
-  lastName: String,
+  name: String,
   email: {
     type: String,
     unique: true,
