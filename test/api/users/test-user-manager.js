@@ -51,7 +51,7 @@ describe('userManager', () => {
       it('should pass an error to the callback', (done) => {
         const student = {
           email: 'test@test.com',
-          nameame: 'Test',
+          name: 'Test',
           role: 'student',
           studentId: '',
         };
