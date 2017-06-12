@@ -39,7 +39,7 @@ const login = (email, password, next) => {
 
       // The wrong password was provided.
       if (!isMatch) {
-        next(authErrors.invalidPasswordError);
+        next(authErrors.invalidLoginInfoError);
         return;
       }
 

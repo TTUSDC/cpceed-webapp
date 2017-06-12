@@ -14,7 +14,7 @@ const sessionNotFoundError = errorConstructor('No session found.', 400);
 /*
  * Invalid: Did the user give us something that was wrong?
  */
-const invalidPasswordError = errorConstructor('Invalid password.', 401);
+const invalidLoginInfoError = errorConstructor('Invalid username/password.', 401);
 
 const invalidSessionError = errorConstructor('Invalid session token.', 401);
 
@@ -28,7 +28,7 @@ const unauthorizedError = errorConstructor('Unauthorized.', 401);
 module.exports = {
   userNotFoundError,
   sessionNotFoundError,
-  invalidPasswordError,
+  invalidLoginInfoError,
   invalidSessionError,
   missingTokenError,
   unauthorizedError,
