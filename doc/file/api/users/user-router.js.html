@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">CPCEED API Document</title>
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">api/users/user-router.js | CPCEED API Document</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -62,12 +62,117 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://travis-ci.org/TTUSDC/CPCEEDWebApp"><img src="https://travis-ci.org/TTUSDC/CPCEEDWebApp.svg?branch=master" alt="Build Status"></a></p>
-<h1 id="cpceed-web-app">CPCEED Web App</h1>
-<p>This is a time logging app for the CPCEED program at Texas Tech University.</p>
-<h2 id="get-involved">Get Involved</h2>
-<p>Check out <code>CONTRIBUTING.md</code> in the <code>.github</code> folder of this project to learn about how to get started.</p>
-</div>
+<div class="content" data-ice="content"><h1 data-ice="title">api/users/user-router.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const express = require(&apos;express&apos;);
+const userManager = require(&apos;./user-manager&apos;);
+const authManager = require(&apos;../auth/auth-manager&apos;);
+
+const userRouter = express.Router();
+
+/**
+ * Route for creating a new user
+ * @typedef {function} RouteCreateUser
+ * @param {Object} req - Express request object
+ * @param {UserSchema} req.body - User to be created
+ * @param {Object} res - Express result object
+ * @param {string} res.body - UID of the created user if successful, else the
+ *                          error message
+ * @param {number} res.status - Indicates success or not
+ */
+userRouter.post(&apos;/&apos;, (req, res) =&gt; {
+  userManager.createUser(req.body, (err, uid) =&gt; {
+    if (err) {
+      res.status(400).json(err).end();
+    } else {
+      // A User was created.
+      res.status(201).json({ uid }).end();
+    }
+  });
+});
+
+/**
+ * Route for modiying an existing user
+ *
+ * @endpoint /
+ * @verb PUT
+ * @param {Object}      req           Express request object
+ * @param {string}      req.query.uid (OPTIONAL) UID of user ot be modified
+ * @param {USER}        req.body      Updated fields of the user
+ * @param {Object}      res           Express result object
+ * @param {number}      status        200 on success, 400 if error
+ * @param {USER|string} res.body      Modified user | error message
+ * @param {TOKEN}       token         Admin | Modified User
+ */
+userRouter.put(&apos;/&apos;,
+    authManager.verify,
+    authManager.validateUidPermissions,
+    (req, res) =&gt; {
+      userManager.modifyUser(res.locals.uid, req.body, res.locals,
+        (err, user) =&gt; {
+          if (err) {
+            res.status(400).json(err).end();
+            return;
+          }
+          res.status(200).json(user).end();
+        });
+    });
+
+/**
+ * Route for deleting an existing user
+ *
+ * @endpoint /
+ * @verb DELETE
+ * @param {Object} req           Express request object
+ * @param {string} req.query.uid (OPTIONAL) UID of user to be deleted
+ * @param {TOKEN}  token         Admin | User to be deleted
+ * @param {Object} res           Express result object
+ */
+userRouter.delete(&apos;/&apos;,
+    authManager.verify,
+    authManager.validateUidPermissions,
+    (req, res) =&gt; {
+      userManager.deleteUser(res.locals.uid, res.locals, (err, result) =&gt; {
+        if (err) {
+          res.status(400).json(err).end();
+          return;
+        }
+        res.status(200).json(result).end();
+      });
+    });
+
+/**
+ * Route for getting an existing user
+ *
+ * @endpoint /
+ * @verb GET
+ * @param {Object} req           Express request object
+ * @param {string} req.query.uid (OPTIONAL) UID of user to be retrieved
+ * @param {TOKEN}  token          Admin | User being retrieved
+ * @param {Object} res            Express result object
+ */
+userRouter.get(&apos;/&apos;,
+    authManager.verify,
+    authManager.validateUidPermissions,
+    (req, res) =&gt; {
+      const uid = res.locals.uid;
+      userManager.getUserById(uid, {}, (err, user) =&gt; {
+        if (err) {
+          res.status(400).send(err).end();
+          return;
+        }
+
+        if (!user) {
+          res.status(404).end();
+          return;
+        }
+
+        res.status(200).json(user).end();
+      });
+    });
+
+module.exports = { userRouter };
+</code></pre>
+
 </div>
 
 <footer class="footer">

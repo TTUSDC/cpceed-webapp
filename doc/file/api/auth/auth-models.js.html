@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">CPCEED API Document</title>
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">api/auth/auth-models.js | CPCEED API Document</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -62,12 +62,31 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://travis-ci.org/TTUSDC/CPCEEDWebApp"><img src="https://travis-ci.org/TTUSDC/CPCEEDWebApp.svg?branch=master" alt="Build Status"></a></p>
-<h1 id="cpceed-web-app">CPCEED Web App</h1>
-<p>This is a time logging app for the CPCEED program at Texas Tech University.</p>
-<h2 id="get-involved">Get Involved</h2>
-<p>Check out <code>CONTRIBUTING.md</code> in the <code>.github</code> folder of this project to learn about how to get started.</p>
-</div>
+<div class="content" data-ice="content"><h1 data-ice="title">api/auth/auth-models.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const mongoose = require(&apos;mongoose&apos;);
+
+// Set up session model.
+const sessionSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  token: {
+    type: String,
+    required: true,
+  },
+});
+
+sessionSchema.methods.compareToken = function compareToken(token, next) {
+  next(token === this.token);
+};
+
+const Session = mongoose.model(&apos;Session&apos;, sessionSchema);
+
+module.exports = { Session };
+</code></pre>
+
 </div>
 
 <footer class="footer">

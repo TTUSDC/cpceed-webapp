@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">CPCEED API Document</title>
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">api/reports/report-models.js | CPCEED API Document</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -62,12 +62,38 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://travis-ci.org/TTUSDC/CPCEEDWebApp"><img src="https://travis-ci.org/TTUSDC/CPCEEDWebApp.svg?branch=master" alt="Build Status"></a></p>
-<h1 id="cpceed-web-app">CPCEED Web App</h1>
-<p>This is a time logging app for the CPCEED program at Texas Tech University.</p>
-<h2 id="get-involved">Get Involved</h2>
-<p>Check out <code>CONTRIBUTING.md</code> in the <code>.github</code> folder of this project to learn about how to get started.</p>
-</div>
+<div class="content" data-ice="content"><h1 data-ice="title">api/reports/report-models.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">var mongoose = require(&apos;mongoose&apos;);
+var Schema = mongoose.Schema;
+
+var options = {discriminatorKey: &apos;type&apos;};
+
+var reportSchema = new Schema({
+      approvalStatus: Boolean,
+      student: String,
+    },
+    options);
+
+var eventReportSchema = new Schema({event: String}, options);
+
+var otherReportSchema = new Schema({
+      category: String,
+      datetime: Date,
+      location: String,
+      title: String,
+      description: String,
+    },
+    options);
+
+var Report = mongoose.model(&apos;Report&apos;, reportSchema);
+
+var EventReport = Report.discriminator(&apos;EventReport&apos;, eventReportSchema);
+
+var OtherReport = Report.discriminator(&apos;OtherReport&apos;, otherReportSchema);
+
+module.exports = {Report, EventReport, OtherReport};
+</code></pre>
+
 </div>
 
 <footer class="footer">

@@ -1,8 +1,8 @@
 {
-  "source": "./api/users",
+  "source": "./api",
   "destination": "./doc",
   "unexportIdentifier": true,
-  "undocumentIdentifier": true,
+  "undocumentIdentifier": false,
   "title": "CPCEED",
   "experimentalProposal": {
     "classProperties": true,

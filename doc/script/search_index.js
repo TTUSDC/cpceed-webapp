@@ -1,141 +1,117 @@
 window.esdocSearchIndex = [
   [
-    "cpceed-web-app/users/user-manager.js~admin",
-    "variable/index.html#static-variable-Admin",
-    "<span>Admin</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
-    "variable"
+    "cpceed-web-app/api/auth/auth-manager.js~changepassword",
+    "function/index.html#static-function-changePassword",
+    "<span>changePassword</span> <span class=\"search-result-import-path\">cpceed-web-app/api/auth/auth-manager.js</span>",
+    "function"
   ],
   [
-    "cpceed-web-app/users/user-models.js~admin",
-    "variable/index.html#static-variable-Admin",
-    "<span>Admin</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~schema",
-    "variable/index.html#static-variable-Schema",
-    "<span>Schema</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-manager.js~student",
-    "variable/index.html#static-variable-Student",
-    "<span>Student</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~student",
-    "variable/index.html#static-variable-Student",
-    "<span>Student</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-manager.js~user",
-    "variable/index.html#static-variable-User",
-    "<span>User</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~user",
-    "variable/index.html#static-variable-User",
-    "<span>User</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~adminschema",
-    "variable/index.html#static-variable-adminSchema",
-    "<span>adminSchema</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-router.js~authmanager",
-    "variable/index.html#static-variable-authManager",
-    "<span>authManager</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-router.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~bcrypt",
-    "variable/index.html#static-variable-bcrypt",
-    "<span>bcrypt</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~comparepassword",
+    "cpceed-web-app/api/users/user-models.js~comparepassword",
     "function/index.html#static-function-comparePassword",
-    "<span>comparePassword</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
+    "<span>comparePassword</span> <span class=\"search-result-import-path\">cpceed-web-app/api/users/user-models.js</span>",
     "function"
   ],
   [
-    "cpceed-web-app/users/user-manager.js~createuser",
+    "cpceed-web-app/api/events/event-manager.js~createevent",
+    "function/index.html#static-function-createEvent",
+    "<span>createEvent</span> <span class=\"search-result-import-path\">cpceed-web-app/api/events/event-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/reports/report-manager.js~createreport",
+    "function/index.html#static-function-createReport",
+    "<span>createReport</span> <span class=\"search-result-import-path\">cpceed-web-app/api/reports/report-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/users/user-manager.js~createuser",
     "function/index.html#static-function-createUser",
-    "<span>createUser</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
+    "<span>createUser</span> <span class=\"search-result-import-path\">cpceed-web-app/api/users/user-manager.js</span>",
     "function"
   ],
   [
-    "cpceed-web-app/users/user-manager.js~deleteuser",
+    "cpceed-web-app/api/events/event-manager.js~deleteevent",
+    "function/index.html#static-function-deleteEvent",
+    "<span>deleteEvent</span> <span class=\"search-result-import-path\">cpceed-web-app/api/events/event-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/reports/report-manager.js~deletereport",
+    "function/index.html#static-function-deleteReport",
+    "<span>deleteReport</span> <span class=\"search-result-import-path\">cpceed-web-app/api/reports/report-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/users/user-manager.js~deleteuser",
     "function/index.html#static-function-deleteUser",
-    "<span>deleteUser</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
+    "<span>deleteUser</span> <span class=\"search-result-import-path\">cpceed-web-app/api/users/user-manager.js</span>",
     "function"
   ],
   [
-    "cpceed-web-app/users/user-router.js~express",
-    "variable/index.html#static-variable-express",
-    "<span>express</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-router.js</span>",
-    "variable"
+    "cpceed-web-app/api/reports/report-manager.js~getallreports",
+    "function/index.html#static-function-getAllReports",
+    "<span>getAllReports</span> <span class=\"search-result-import-path\">cpceed-web-app/api/reports/report-manager.js</span>",
+    "function"
   ],
   [
-    "cpceed-web-app/users/user-manager.js~getuserbyid",
+    "cpceed-web-app/api/events/event-manager.js~geteventbyid",
+    "function/index.html#static-function-getEventById",
+    "<span>getEventById</span> <span class=\"search-result-import-path\">cpceed-web-app/api/events/event-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/reports/report-manager.js~getreportbyid",
+    "function/index.html#static-function-getReportById",
+    "<span>getReportById</span> <span class=\"search-result-import-path\">cpceed-web-app/api/reports/report-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/users/user-manager.js~getuserbyid",
     "function/index.html#static-function-getUserById",
-    "<span>getUserById</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
+    "<span>getUserById</span> <span class=\"search-result-import-path\">cpceed-web-app/api/users/user-manager.js</span>",
     "function"
   ],
   [
-    "cpceed-web-app/users/user-manager.js~modifyuser",
+    "cpceed-web-app/api/auth/auth-manager.js~login",
+    "function/index.html#static-function-login",
+    "<span>login</span> <span class=\"search-result-import-path\">cpceed-web-app/api/auth/auth-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/auth/auth-manager.js~logout",
+    "function/index.html#static-function-logout",
+    "<span>logout</span> <span class=\"search-result-import-path\">cpceed-web-app/api/auth/auth-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/events/event-manager.js~modifyevent",
+    "function/index.html#static-function-modifyEvent",
+    "<span>modifyEvent</span> <span class=\"search-result-import-path\">cpceed-web-app/api/events/event-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/reports/report-manager.js~modifyreport",
+    "function/index.html#static-function-modifyReport",
+    "<span>modifyReport</span> <span class=\"search-result-import-path\">cpceed-web-app/api/reports/report-manager.js</span>",
+    "function"
+  ],
+  [
+    "cpceed-web-app/api/users/user-manager.js~modifyuser",
     "function/index.html#static-function-modifyUser",
-    "<span>modifyUser</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
+    "<span>modifyUser</span> <span class=\"search-result-import-path\">cpceed-web-app/api/users/user-manager.js</span>",
     "function"
   ],
   [
-    "cpceed-web-app/users/user-models.js~mongoose",
-    "variable/index.html#static-variable-mongoose",
-    "<span>mongoose</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
+    "cpceed-web-app/api/core/utils.js~newifpresent",
+    "function/index.html#static-function-newIfPresent",
+    "<span>newIfPresent</span> <span class=\"search-result-import-path\">cpceed-web-app/api/core/utils.js</span>",
+    "function"
   ],
   [
-    "cpceed-web-app/users/user-models.js~options",
-    "variable/index.html#static-variable-options",
-    "<span>options</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~pointoption",
-    "variable/index.html#static-variable-pointOption",
-    "<span>pointOption</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-models.js~studentschema",
-    "variable/index.html#static-variable-studentSchema",
-    "<span>studentSchema</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-models.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-router.js~usermanager",
-    "variable/index.html#static-variable-userManager",
-    "<span>userManager</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-router.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-manager.js~usermodels",
-    "variable/index.html#static-variable-userModels",
-    "<span>userModels</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-manager.js</span>",
-    "variable"
-  ],
-  [
-    "cpceed-web-app/users/user-router.js~userrouter",
-    "variable/index.html#static-variable-userRouter",
-    "<span>userRouter</span> <span class=\"search-result-import-path\">cpceed-web-app/users/user-router.js</span>",
-    "variable"
+    "cpceed-web-app/api/auth/auth-manager.js~verify",
+    "function/index.html#static-function-verify",
+    "<span>verify</span> <span class=\"search-result-import-path\">cpceed-web-app/api/auth/auth-manager.js</span>",
+    "function"
   ],
   [
     "builtinexternal/ecmascriptexternal.js~array",
@@ -468,57 +444,135 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
-    "users/user-manager.js",
-    "file/users/user-manager.js.html",
-    "users/user-manager.js",
+    "api/auth/auth-manager.js",
+    "file/api/auth/auth-manager.js.html",
+    "api/auth/auth-manager.js",
     "file"
   ],
   [
-    "users/user-manager.js~createusercallback",
+    "api/auth/auth-models.js",
+    "file/api/auth/auth-models.js.html",
+    "api/auth/auth-models.js",
+    "file"
+  ],
+  [
+    "api/auth/auth-router.js",
+    "file/api/auth/auth-router.js.html",
+    "api/auth/auth-router.js",
+    "file"
+  ],
+  [
+    "api/core/utils.js",
+    "file/api/core/utils.js.html",
+    "api/core/utils.js",
+    "file"
+  ],
+  [
+    "api/errors/auth-errors.js",
+    "file/api/errors/auth-errors.js.html",
+    "api/errors/auth-errors.js",
+    "file"
+  ],
+  [
+    "api/events/event-manager.js",
+    "file/api/events/event-manager.js.html",
+    "api/events/event-manager.js",
+    "file"
+  ],
+  [
+    "api/events/event-models.js",
+    "file/api/events/event-models.js.html",
+    "api/events/event-models.js",
+    "file"
+  ],
+  [
+    "api/objects/response.js",
+    "file/api/objects/response.js.html",
+    "api/objects/response.js",
+    "file"
+  ],
+  [
+    "api/reports/report-manager.js",
+    "file/api/reports/report-manager.js.html",
+    "api/reports/report-manager.js",
+    "file"
+  ],
+  [
+    "api/reports/report-models.js",
+    "file/api/reports/report-models.js.html",
+    "api/reports/report-models.js",
+    "file"
+  ],
+  [
+    "api/reports/report-router.js",
+    "file/api/reports/report-router.js.html",
+    "api/reports/report-router.js",
+    "file"
+  ],
+  [
+    "api/server.js",
+    "file/api/server.js.html",
+    "api/server.js",
+    "file"
+  ],
+  [
+    "api/users/user-manager.js",
+    "file/api/users/user-manager.js.html",
+    "api/users/user-manager.js",
+    "file"
+  ],
+  [
+    "api/users/user-manager.js~createusercallback",
     "typedef/index.html#static-typedef-CreateUserCallback",
-    "users/user-manager.js~CreateUserCallback",
+    "api/users/user-manager.js~CreateUserCallback",
     "typedef"
   ],
   [
-    "users/user-manager.js~deleteusercallback",
+    "api/users/user-manager.js~deleteusercallback",
     "typedef/index.html#static-typedef-DeleteUserCallback",
-    "users/user-manager.js~DeleteUserCallback",
+    "api/users/user-manager.js~DeleteUserCallback",
     "typedef"
   ],
   [
-    "users/user-manager.js~getusercallback",
+    "api/users/user-manager.js~getusercallback",
     "typedef/index.html#static-typedef-GetUserCallback",
-    "users/user-manager.js~GetUserCallback",
+    "api/users/user-manager.js~GetUserCallback",
     "typedef"
   ],
   [
-    "users/user-manager.js~modifyusercallback",
+    "api/users/user-manager.js~modifyusercallback",
     "typedef/index.html#static-typedef-ModifyUserCallback",
-    "users/user-manager.js~ModifyUserCallback",
+    "api/users/user-manager.js~ModifyUserCallback",
     "typedef"
   ],
   [
-    "users/user-models.js",
-    "file/users/user-models.js.html",
-    "users/user-models.js",
+    "api/users/user-models.js",
+    "file/api/users/user-models.js.html",
+    "api/users/user-models.js",
     "file"
   ],
   [
-    "users/user-models.js~comparepasswordnext",
+    "api/users/user-models.js~comparepasswordnext",
     "typedef/index.html#static-typedef-ComparePasswordNext",
-    "users/user-models.js~ComparePasswordNext",
+    "api/users/user-models.js~ComparePasswordNext",
     "typedef"
   ],
   [
-    "users/user-models.js~userschema",
+    "api/users/user-models.js~userschema",
     "typedef/index.html#static-typedef-UserSchema",
-    "users/user-models.js~UserSchema",
+    "api/users/user-models.js~UserSchema",
     "typedef"
   ],
   [
-    "users/user-router.js",
-    "file/users/user-router.js.html",
-    "users/user-router.js",
+    "api/users/user-router.js",
+    "file/api/users/user-router.js.html",
+    "api/users/user-router.js",
     "file"
+  ],
+  [
+    "api/users/user-router.js~routecreateuser",
+    "typedef/index.html#static-typedef-RouteCreateUser",
+    "api/users/user-router.js~RouteCreateUser",
+    "typedef"
   ]
 ]

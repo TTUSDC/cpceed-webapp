@@ -6,15 +6,13 @@ const userRouter = express.Router();
 
 /**
  * Route for creating a new user
- *
- * @endpoint /
- * @verb POST
- * @param {Object} req        Express request object
- * @param {USER}   req.body   User to be created
- * @param {Object} res        Express result object
- * @param {string} res.body   UID of the created user if successful, else the
- *                            error message
- * @param {number} res.status Indicates success or not
+ * @typedef {function} RouteCreateUser
+ * @param {Object} req - Express request object
+ * @param {UserSchema} req.body - User to be created
+ * @param {Object} res - Express result object
+ * @param {string} res.body - UID of the created user if successful, else the
+ *                          error message
+ * @param {number} res.status - Indicates success or not
  */
 userRouter.post('/', (req, res) => {
   userManager.createUser(req.body, (err, uid) => {

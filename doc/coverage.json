@@ -1,43 +1,37 @@
 {
-  "coverage": "21.73%",
-  "expectCount": 23,
-  "actualCount": 5,
+  "coverage": "100%",
+  "expectCount": 19,
+  "actualCount": 19,
   "files": {
-    "users/user-manager.js": {
-      "expectCount": 8,
-      "actualCount": 4,
-      "undocumentLines": [
-        5,
-        4,
-        3,
-        1
-      ]
-    },
-    "users/user-models.js": {
-      "expectCount": 11,
-      "actualCount": 1,
-      "undocumentLines": [
-        116,
-        4,
-        115,
-        113,
-        111,
-        2,
-        1,
-        6,
-        7,
-        93
-      ]
-    },
-    "users/user-router.js": {
+    "api/auth/auth-manager.js": {
       "expectCount": 4,
-      "actualCount": 0,
-      "undocumentLines": [
-        3,
-        1,
-        2,
-        5
-      ]
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "api/users/user-models.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "api/events/event-manager.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "api/reports/report-manager.js": {
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
+    },
+    "api/users/user-manager.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "api/core/utils.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
     }
   }
 }
