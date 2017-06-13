@@ -11,6 +11,7 @@ const pointOption = {
 };
 
 const userSchema = new Schema({
+  name: String,
   firstName: String,
   lastName: String,
   email: {
@@ -24,7 +25,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['Student', 'Admin'],
+    enum: ['student', 'admin'],
     required: true,
   },
   isApproved: {
@@ -84,7 +85,7 @@ const adminSchema = new Schema({}, options);
 
 const User = mongoose.model('User', userSchema);
 
-const Student = User.discriminator('Student', studentSchema);
-const Admin = User.discriminator('Admin', adminSchema);
+const Student = User.discriminator('student', studentSchema);
+const Admin = User.discriminator('admin', adminSchema);
 
 module.exports = { Student, Admin, User };

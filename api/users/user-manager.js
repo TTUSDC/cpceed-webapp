@@ -1,4 +1,3 @@
-const response = require('../objects/response.js');
 const userModels = require('./user-models.js');
 
 const User = userModels.User;
@@ -32,18 +31,17 @@ const createUser = (data, next) => {
   const info = {
     email: data.email,
     password: data.password,
-    firstName: data.firstName,
-    lastName: data.lastName,
+    name: data.name,
     role: data.role,
   };
 
   let user;
 
-  if (data.role === 'Student') {
+  if (data.role === 'student') {
     // Create a student.
     info.studentId = data.studentId;
     user = new Student(info);
-  } else if (data.role === 'Admin') {
+  } else if (data.role === 'admin') {
     // Create an admin.
     user = new Admin(info);
   } else {
@@ -64,45 +62,53 @@ const createUser = (data, next) => {
   });
 };
 
-var modifyUser = (userUid, reqData, modifyCallback) => {
-  // TODO(ryanfaulkenberry100): Check if modifier is a user or an admin.
-  if ( /*modifying user is student*/ true) {
-    modifyUserAsSelf(userUid, reqData, modifyCallback);
-  } else if ( /*modifying user is admin*/ false) {
-    modifyUserAsAdmin(userUid, reqData, modifyCallback);
-  } else {
-    // TODO(ryanfaulkenberry100): Handle errors.
-  }
+/*
+ * The fields that can be updated are:
+ * - email
+ * - name
+ * - isApproved
+ * - points
+ *
+ * This method does NOT delete fields
+ */
+const modifyUser = (userUid, reqData, locals, modifyCallback) => {
+  const conditions = { _id: userUid };
+  const update = {};
 
-  return new response.ResponseObject(200, { "url": "//www.google.com" });
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
-
-var deleteUser = (userUid) => {
-  // TODO(ryanfaulkenberry100): Delete the specified user and remove console.log.
-  console.log(userUid);
-
-  return new response.ResponseObject(200, { "url": "//www.google.com" });
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
-
-var getUser = (userUid) => {
-  // Returns a user.
-
-  // TODO(ryanfaulkenberry100): Find the user and remove placeholder User variable.
-  var User = new Admin({
-    // Placeholder
-    email: "nobody@gmail.com",
-    firstName: "John",
-    lastName: "Doe",
-    role: "Admin",
+  Object.keys(reqData).forEach((key) => {
+    update[key] = reqData[key];
   });
 
-  return new response.ResponseObject(200, User);
-  // TODO(ryanfaulkenberry100): Return actual data.
-}
+  const options = { new: true };
 
-var modifyUserAsSelf = (userUid, reqData, modifyCallback) => {}
-var modifyUserAsAdmin = (userUid, reqData, modifyCallback) => {}
+  Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
+};
 
-module.exports = { createUser, modifyUser, deleteUser, getUser };
+const deleteUser = (userUid, locals, deleteCallback) => {
+  User.findOneAndremove({ _id: userUid }, deleteCallback);
+};
+
+const getUserById = (userUid, locals, queryCallback) => {
+  User.findById(userUid, (err, results) => {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+    const user = {
+      uid: results.id,
+      email: results.email,
+      name: results.name,
+      role: results.role,
+    };
+
+    if (user.role === 'student') {
+      user.points = results.points;
+      user.isApproved = results.isApproved;
+    }
+
+    queryCallback(err, user);
+  });
+};
+
+
+module.exports = { createUser, modifyUser, deleteUser, getUserById };
