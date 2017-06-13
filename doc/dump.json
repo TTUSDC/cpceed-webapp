@@ -1,0 +1,1700 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "users/user-manager.js",
+    "content": "const userModels = require('./user-models.js');\n\nconst User = userModels.User;\nconst Student = userModels.Student;\nconst Admin = userModels.Admin;\n\n/**\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {Number} id - The user UID.\n */\n\n/**\n * Given User information, create a User.\n * @param {Object} data - The request body data.\n * @param {String} data.role - The user role.\n * @param {String} data.email - The user email address.\n * @param {String} data.password - The user password.\n * @param {CreateUserCallback} next - The callback function to run after this function\n *     finishes.\n */\nconst createUser = (data, next) => {\n  // Ensure the required data is available.\n  if (!data) {\n    next({ err: 'Required parameters not found.' });\n    return;\n  }\n\n  const info = {\n    email: data.email,\n    password: data.password,\n    name: data.name,\n    role: data.role,\n  };\n\n  let user;\n\n  if (data.role === 'student') {\n    // Create a student.\n    info.studentId = data.studentId;\n    user = new Student(info);\n  } else if (data.role === 'admin') {\n    // Create an admin.\n    user = new Admin(info);\n  } else {\n    next({ err: 'Valid role not found.' });\n    return;\n  }\n\n  User.findOne({ email: user.email }, (userErr, existingUser) => {\n    if (userErr) {\n      next(userErr);\n    } else if (existingUser) {\n      next({ err: 'Account with that email address already exists.' });\n    } else {\n      user.save((saveErr, dbUser) => {\n        next(saveErr, (dbUser || {}).id);\n      });\n    }\n  });\n};\n\n/**\n* Callback for {@link modifyUser}\n* @typedef {Object} ModifyUserCallback\n* @param {Object} - The error\n* @param {UserSchema} - The modified user object\n*/\n\n\n /**\n * Updates the user with the passed in values.\n * This method does NOT delete fields\n * @param {string} userUid - The UID of the user to be updated\n * @param {Object} reqData - The request data\n * @param {Object} locals\n * @param {ModifyUserCallback} modifyCallback\n */\nconst modifyUser = (userUid, reqData, locals, modifyCallback) => {\n  const conditions = { _id: userUid };\n  const update = {};\n\n  Object.keys(reqData).forEach((key) => {\n    update[key] = reqData[key];\n  });\n\n  const options = { new: true };\n\n  Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);\n};\n\n/**\n* Callback for {@link deleteUser}\n* @typedef {Object} DeleteUserCallback\n* @param {Object} - error\n*/\n\n\n\n/**\n* Deletes the user from the database.\n* @param {string} userUid - The UID of the user to be updated.\n* @param {Object} locals\n* @param {DeleteUserCallback} deleteCallback\n*/\nconst deleteUser = (userUid, locals, deleteCallback) => {\n  User.findOneAndremove({ _id: userUid }, deleteCallback);\n};\n\n\n/**\n* Callback for {@link getUserById}\n* @typedef {Object} GetUserCallback\n* @param {Object} - error\n* @param {UserSchemas} - Retrieved user\n*/\n\n/**\n* Retrieves the user.\n* @param {string} userUid - The UID of the user to be updated\n* @param {Object} locals\n* @param {GetUserCallback} queryCallback\n*/\nconst getUserById = (userUid, locals, queryCallback) => {\n  User.findById(userUid, (err, results) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n    const user = {\n      uid: results.id,\n      email: results.email,\n      name: results.name,\n      role: results.role,\n    };\n\n    if (user.role === 'student') {\n      user.points = results.points;\n      user.isApproved = results.isApproved;\n    }\n\n    queryCallback(err, user);\n  });\n};\n\n\nmodule.exports = { createUser, modifyUser, deleteUser, getUserById };\n",
+    "static": true,
+    "longname": "users/user-manager.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "variable",
+    "name": "userModels",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~userModels",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 2,
+    "kind": "variable",
+    "name": "User",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~User",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 3,
+    "kind": "variable",
+    "name": "Student",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~Student",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "variable",
+    "name": "Admin",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~Admin",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "typedef",
+    "name": "CreateUserCallback",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~CreateUserCallback",
+    "access": null,
+    "description": "Callback for {@link createUser}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "err",
+        "description": "The error."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": "The user UID."
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "CreateUserCallback"
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "function",
+    "name": "createUser",
+    "memberof": "users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "users/user-manager.js~createUser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": "Given User information, create a User.",
+    "lineNumber": 23,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": "The request body data."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "String"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.role",
+        "description": "The user role."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "String"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.email",
+        "description": "The user email address."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "String"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.password",
+        "description": "The user password."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "CreateUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": "The callback function to run after this function\n    finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 7,
+    "kind": "typedef",
+    "name": "ModifyUserCallback",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~ModifyUserCallback",
+    "access": null,
+    "description": "Callback for {@link modifyUser}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "The error"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "UserSchema"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "The modified user object"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "ModifyUserCallback"
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "function",
+    "name": "modifyUser",
+    "memberof": "users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "users/user-manager.js~modifyUser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": "Updates the user with the passed in values.\nThis method does NOT delete fields",
+    "lineNumber": 80,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "userUid",
+        "description": "The UID of the user to be updated"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reqData",
+        "description": "The request data"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "ModifyUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "modifyCallback",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 9,
+    "kind": "typedef",
+    "name": "DeleteUserCallback",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~DeleteUserCallback",
+    "access": null,
+    "description": "Callback for {@link deleteUser}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "error"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "DeleteUserCallback"
+    }
+  },
+  {
+    "__docId__": 10,
+    "kind": "function",
+    "name": "deleteUser",
+    "memberof": "users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "users/user-manager.js~deleteUser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": "Deletes the user from the database.",
+    "lineNumber": 107,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "userUid",
+        "description": "The UID of the user to be updated."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "DeleteUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "deleteCallback",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 11,
+    "kind": "typedef",
+    "name": "GetUserCallback",
+    "memberof": "users/user-manager.js",
+    "static": true,
+    "longname": "users/user-manager.js~GetUserCallback",
+    "access": null,
+    "description": "Callback for {@link getUserById}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "error"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "UserSchemas"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "Retrieved user"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "GetUserCallback"
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "function",
+    "name": "getUserById",
+    "memberof": "users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "users/user-manager.js~getUserById",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-manager.js",
+    "importStyle": null,
+    "description": "Retrieves the user.",
+    "lineNumber": 125,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "userUid",
+        "description": "The UID of the user to be updated"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "GetUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queryCallback",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 13,
+    "kind": "file",
+    "name": "users/user-models.js",
+    "content": "const mongoose = require('mongoose');\nconst bcrypt = require('bcrypt');\n\nconst Schema = mongoose.Schema;\n\nconst options = { discriminatorKey: 'type' };\nconst pointOption = {\n  type: Number,\n  required: true,\n  default: 0,\n};\n\n/**\n* User Object\n* @typedef {Object} UserSchema\n* @param {string} name - Screen name for user\n* @param {string} firstName - DEPRECATED\n* @param {string} lastName - DEPRECATED\n* @param {string} email\n* @param {string} password\n* @param {string} role - ENUM: student, admin\n* @param {boolean} isApproved\n*/\nconst userSchema = new Schema({\n  name: String,\n  firstName: String,\n  lastName: String,\n  email: {\n    type: String,\n    unique: true,\n    required: true,\n  },\n  password: {\n    type: String,\n    required: true,\n  },\n  role: {\n    type: String,\n    enum: ['student', 'admin'],\n    required: true,\n  },\n  isApproved: {\n    type: Boolean,\n    required: true,\n    default: false,\n  },\n}, options);\n\n/**\n*  Updates and saves the user's password\n*/\nuserSchema.pre('save', function pre(next) {\n  const user = this;\n\n  // If the password is not modified, continue saving the user.\n  if (!user.isModified('password')) {\n    next();\n    return;\n  }\n\n  bcrypt.genSalt(Number(process.env.SALT), (saltErr, salt) => {\n    if (saltErr) {\n      next(saltErr);\n      return;\n    }\n\n    bcrypt.hash(user.password, salt, (hashErr, hash) => {\n      user.password = hash;\n      next(hashErr);\n    });\n  });\n});\n\n\n/**\n* Callback for {@link userSchema.methods.comparePassword}\n* @typedef {Object} ComparePasswordNext\n* @param {Object} err - error\n* @param {boolean} isMatch - Whether or not the passwords matched\n*/\n\n/**\n* Helper method to check users password\n* @param {string} password - The password to be compared to the user's password\n* @param {ComparePasswordNext} next\n*/\nuserSchema.methods.comparePassword = function comparePassword(password, next) {\n  bcrypt.compare(password, this.password, (err, isMatch) => {\n    next(err, isMatch);\n  });\n};\n\nconst studentSchema = new Schema({\n  points: {\n    career: pointOption,\n    community: pointOption,\n    firstother: pointOption,\n    firstworkshops: pointOption,\n    mentor: pointOption,\n    other: pointOption,\n    outreach: pointOption,\n    professor: pointOption,\n    staff: pointOption,\n    misc: pointOption,\n  },\n  studentId: {\n    type: String,\n  },\n}, options);\n\nconst adminSchema = new Schema({}, options);\n\nconst User = mongoose.model('User', userSchema);\n\nconst Student = User.discriminator('student', studentSchema);\nconst Admin = User.discriminator('admin', adminSchema);\n\nmodule.exports = { Student, Admin, User };\n",
+    "static": true,
+    "longname": "users/user-models.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 14,
+    "kind": "variable",
+    "name": "mongoose",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~mongoose",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 15,
+    "kind": "variable",
+    "name": "bcrypt",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~bcrypt",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 16,
+    "kind": "variable",
+    "name": "Schema",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~Schema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 17,
+    "kind": "variable",
+    "name": "options",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~options",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"discriminatorKey\": string}"
+      ]
+    }
+  },
+  {
+    "__docId__": 18,
+    "kind": "variable",
+    "name": "pointOption",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~pointOption",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"type\": *, \"required\": boolean, \"default\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 19,
+    "kind": "typedef",
+    "name": "UserSchema",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~UserSchema",
+    "access": null,
+    "description": "User Object",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "name",
+        "description": "Screen name for user"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "firstName",
+        "description": "DEPRECATED"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "lastName",
+        "description": "DEPRECATED"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "email",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "password",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "role",
+        "description": "ENUM: student, admin"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "isApproved",
+        "description": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "UserSchema"
+    }
+  },
+  {
+    "__docId__": 20,
+    "kind": "typedef",
+    "name": "ComparePasswordNext",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~ComparePasswordNext",
+    "access": null,
+    "description": "Callback for {@link userSchema.methods.comparePassword}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "err",
+        "description": "error"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "isMatch",
+        "description": "Whether or not the passwords matched"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "ComparePasswordNext"
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "function",
+    "name": "comparePassword",
+    "memberof": "users/user-models.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "users/user-models.js~comparePassword",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": "Helper method to check users password",
+    "lineNumber": 87,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "password",
+        "description": "The password to be compared to the user's password"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "ComparePasswordNext"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 22,
+    "kind": "variable",
+    "name": "studentSchema",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~studentSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 93,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 23,
+    "kind": "variable",
+    "name": "adminSchema",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~adminSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 111,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 24,
+    "kind": "variable",
+    "name": "User",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~User",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 113,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 25,
+    "kind": "variable",
+    "name": "Student",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~Student",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 115,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 26,
+    "kind": "variable",
+    "name": "Admin",
+    "memberof": "users/user-models.js",
+    "static": true,
+    "longname": "users/user-models.js~Admin",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 116,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 27,
+    "kind": "file",
+    "name": "users/user-router.js",
+    "content": "const express = require('express');\nconst userManager = require('./user-manager');\nconst authManager = require('../auth/auth-manager');\n\nconst userRouter = express.Router();\n\n/**\n * Route for creating a new user\n *\n * @endpoint /\n * @verb POST\n * @param {Object} req        Express request object\n * @param {USER}   req.body   User to be created\n * @param {Object} res        Express result object\n * @param {string} res.body   UID of the created user if successful, else the\n *                            error message\n * @param {number} res.status Indicates success or not\n */\nuserRouter.post('/', (req, res) => {\n  userManager.createUser(req.body, (err, uid) => {\n    if (err) {\n      res.status(400).json(err).end();\n    } else {\n      // A User was created.\n      res.status(201).json({ uid }).end();\n    }\n  });\n});\n\n/**\n * Route for modiying an existing user\n *\n * @endpoint /\n * @verb PUT\n * @param {Object}      req           Express request object\n * @param {string}      req.query.uid (OPTIONAL) UID of user ot be modified\n * @param {USER}        req.body      Updated fields of the user\n * @param {Object}      res           Express result object\n * @param {number}      status        200 on success, 400 if error\n * @param {USER|string} res.body      Modified user | error message\n * @param {TOKEN}       token         Admin | Modified User\n */\nuserRouter.put('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      userManager.modifyUser(res.locals.uid, req.body, res.locals,\n        (err, user) => {\n          if (err) {\n            res.status(400).json(err).end();\n            return;\n          }\n          res.status(200).json(user).end();\n        });\n    });\n\n/**\n * Route for deleting an existing user\n *\n * @endpoint /\n * @verb DELETE\n * @param {Object} req           Express request object\n * @param {string} req.query.uid (OPTIONAL) UID of user to be deleted\n * @param {TOKEN}  token         Admin | User to be deleted\n * @param {Object} res           Express result object\n */\nuserRouter.delete('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      userManager.deleteUser(res.locals.uid, res.locals, (err, result) => {\n        if (err) {\n          res.status(400).json(err).end();\n          return;\n        }\n        res.status(200).json(result).end();\n      });\n    });\n\n/**\n * Route for getting an existing user\n *\n * @endpoint /\n * @verb GET\n * @param {Object} req           Express request object\n * @param {string} req.query.uid (OPTIONAL) UID of user to be retrieved\n * @param {TOKEN}  token          Admin | User being retrieved\n * @param {Object} res            Express result object\n */\nuserRouter.get('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      const uid = res.locals.uid;\n      userManager.getUserById(uid, {}, (err, user) => {\n        if (err) {\n          res.status(400).send(err).end();\n          return;\n        }\n\n        if (!user) {\n          res.status(404).end();\n          return;\n        }\n\n        res.status(200).json(user).end();\n      });\n    });\n\nmodule.exports = { userRouter };\n",
+    "static": true,
+    "longname": "users/user-router.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 28,
+    "kind": "variable",
+    "name": "express",
+    "memberof": "users/user-router.js",
+    "static": true,
+    "longname": "users/user-router.js~express",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 29,
+    "kind": "variable",
+    "name": "userManager",
+    "memberof": "users/user-router.js",
+    "static": true,
+    "longname": "users/user-router.js~userManager",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "variable",
+    "name": "authManager",
+    "memberof": "users/user-router.js",
+    "static": true,
+    "longname": "users/user-router.js~authManager",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 31,
+    "kind": "variable",
+    "name": "userRouter",
+    "memberof": "users/user-router.js",
+    "static": true,
+    "longname": "users/user-router.js~userRouter",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 33,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 34,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 35,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 36,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 37,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 38,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 39,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 40,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 41,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 42,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 43,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 44,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 45,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 46,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 47,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 48,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 49,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 50,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 51,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 53,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 66,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 67,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 68,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 69,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 70,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 71,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 72,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "lineNumber": 193,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "external",
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "external",
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "external",
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "external",
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "external",
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 86,
+    "kind": "external",
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "external",
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "external",
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 34,
+    "builtinExternal": true
+  }
+]

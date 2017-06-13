@@ -1,0 +1,43 @@
+{
+  "coverage": "21.73%",
+  "expectCount": 23,
+  "actualCount": 5,
+  "files": {
+    "users/user-manager.js": {
+      "expectCount": 8,
+      "actualCount": 4,
+      "undocumentLines": [
+        5,
+        4,
+        3,
+        1
+      ]
+    },
+    "users/user-models.js": {
+      "expectCount": 11,
+      "actualCount": 1,
+      "undocumentLines": [
+        116,
+        4,
+        115,
+        113,
+        111,
+        2,
+        1,
+        6,
+        7,
+        93
+      ]
+    },
+    "users/user-router.js": {
+      "expectCount": 4,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        1,
+        2,
+        5
+      ]
+    }
+  }
+}
