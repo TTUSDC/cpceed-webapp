@@ -10,6 +10,17 @@ const pointOption = {
   default: 0,
 };
 
+/**
+* User Object
+* @typedef {Object} UserSchema
+* @param {string} name - Screen name for user
+* @param {string} firstName - DEPRECATED
+* @param {string} lastName - DEPRECATED
+* @param {string} email
+* @param {string} password
+* @param {string} role - ENUM: student, admin
+* @param {boolean} isApproved
+*/
 const userSchema = new Schema({
   name: String,
   firstName: String,
@@ -35,6 +46,9 @@ const userSchema = new Schema({
   },
 }, options);
 
+/**
+*  Updates and saves the user's password
+*/
 userSchema.pre('save', function pre(next) {
   const user = this;
 
@@ -57,6 +71,19 @@ userSchema.pre('save', function pre(next) {
   });
 });
 
+
+/**
+* Callback for {@link userSchema.methods.comparePassword}
+* @typedef {Object} ComparePasswordNext
+* @param {Object} err - error
+* @param {boolean} isMatch - Whether or not the passwords matched
+*/
+
+/**
+* Helper method to check users password
+* @param {string} password - The password to be compared to the user's password
+* @param {ComparePasswordNext} next
+*/
 userSchema.methods.comparePassword = function comparePassword(password, next) {
   bcrypt.compare(password, this.password, (err, isMatch) => {
     next(err, isMatch);
