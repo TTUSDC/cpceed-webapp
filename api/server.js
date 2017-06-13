@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 // Routers.
 const auth = require('./auth/auth-router.js');
-//const event = require('./events/router.js');
+const event = require('./events/event-router.js');
 const report = require('./reports/report-router.js');
 const user = require('./users/user-router.js');
 
