@@ -1,6 +1,6 @@
 {
   "source": "./api",
-  "destination": "./doc",
+  "destination": "./docs",
   "unexportIdentifier": true,
   "undocumentIdentifier": false,
   "title": "CPCEED",
