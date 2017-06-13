@@ -6,7 +6,12 @@ const userRouter = express.Router();
 
 /**
  * Route for creating a new user
- * @typedef {function} RouteCreateUser
+ * # API
+ * - Endpoint: `/api/users`
+ * - Verb: POST
+ * - Success Code: 201
+ *
+ * @typedef {function} Route-CreateUser
  * @param {Object} req - Express request object
  * @param {UserSchema} req.body - User to be created
  * @param {Object} res - Express result object
@@ -27,16 +32,19 @@ userRouter.post('/', (req, res) => {
 
 /**
  * Route for modiying an existing user
+ * # API
+ * - Endpoint: `/api/users`
+ * - Verb: PUT
+ * - Success Code: 200
  *
- * @endpoint /
- * @verb PUT
- * @param {Object}      req           Express request object
- * @param {string}      req.query.uid (OPTIONAL) UID of user ot be modified
- * @param {USER}        req.body      Updated fields of the user
- * @param {Object}      res           Express result object
- * @param {number}      status        200 on success, 400 if error
- * @param {USER|string} res.body      Modified user | error message
- * @param {TOKEN}       token         Admin | Modified User
+ * @typedef {function} Route-ModifyUser
+ * @param {Object} req - Express request object
+ * @param {string} [req.query.uid] UID of user ot be modified
+ * @param {UserSchema} req.body - Updated fields of the user
+ * @param {Object} res - Express result object
+ * @param {number} status - 200 on success, 400 if error
+ * @param {UserSchema|string} res.body - Modified user | error message
+ * @param {string} token - Admin | Modified User
  */
 userRouter.put('/',
     authManager.verify,
@@ -54,13 +62,16 @@ userRouter.put('/',
 
 /**
  * Route for deleting an existing user
+ * # API
+ * - Endpoint: `/api/users`
+ * - Verb: DELETE
+ * - Success Code: 200
  *
- * @endpoint /
- * @verb DELETE
- * @param {Object} req           Express request object
- * @param {string} req.query.uid (OPTIONAL) UID of user to be deleted
- * @param {TOKEN}  token         Admin | User to be deleted
- * @param {Object} res           Express result object
+ * @typedef {function} Route-DeleteUser
+ * @param {Object} req - Express request object
+ * @param {string} [req.query.uid] - UID of user to be deleted
+ * @param {string}  token - Admin | User to be deleted
+ * @param {Object} res - Express result object
  */
 userRouter.delete('/',
     authManager.verify,
@@ -77,13 +88,16 @@ userRouter.delete('/',
 
 /**
  * Route for getting an existing user
+ * # API
+ * - Endpoint: `/api/users`
+ * - Verb: GET
+ * - Success Code: 200
  *
- * @endpoint /
- * @verb GET
- * @param {Object} req           Express request object
- * @param {string} req.query.uid (OPTIONAL) UID of user to be retrieved
- * @param {TOKEN}  token          Admin | User being retrieved
- * @param {Object} res            Express result object
+ * @typedef {function} Route-GetUser
+ * @param {Object} req - Express request object
+ * @param {string} [req.query.uid] - UID of user to be retrieved
+ * @param {string} token - Admin | User being retrieved
+ * @param {Object} res - Express result object
  */
 userRouter.get('/',
     authManager.verify,

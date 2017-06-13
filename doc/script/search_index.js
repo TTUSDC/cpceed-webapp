@@ -570,9 +570,27 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "api/users/user-router.js~routecreateuser",
-    "typedef/index.html#static-typedef-RouteCreateUser",
-    "api/users/user-router.js~RouteCreateUser",
+    "api/users/user-router.js~route-createuser",
+    "typedef/index.html#static-typedef-Route-CreateUser",
+    "api/users/user-router.js~Route-CreateUser",
+    "typedef"
+  ],
+  [
+    "api/users/user-router.js~route-deleteuser",
+    "typedef/index.html#static-typedef-Route-DeleteUser",
+    "api/users/user-router.js~Route-DeleteUser",
+    "typedef"
+  ],
+  [
+    "api/users/user-router.js~route-getuser",
+    "typedef/index.html#static-typedef-Route-GetUser",
+    "api/users/user-router.js~Route-GetUser",
+    "typedef"
+  ],
+  [
+    "api/users/user-router.js~route-modifyuser",
+    "typedef/index.html#static-typedef-Route-ModifyUser",
+    "api/users/user-router.js~Route-ModifyUser",
     "typedef"
   ]
 ]
