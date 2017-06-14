@@ -4,6 +4,7 @@
   "unexportIdentifier": true,
   "undocumentIdentifier": false,
   "title": "CPCEED",
+  "lint": false,
   "experimentalProposal": {
     "classProperties": true,
     "objectRestSpread": true,
