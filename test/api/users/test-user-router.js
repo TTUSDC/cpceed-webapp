@@ -114,14 +114,14 @@ describe('User Router & Integration', () => {
 
     it('should get the logged in student by passing the UID', (done) => {
       const student = testUsers.student000;
-      utilsUser.createAndLoginStudent(api, student, (uid, token) => {
+      utilsUser.createAndLoginUser(api, student, (uid, token) => {
         getUserTest(student, { uid, token }, done);
       });
     });
 
     it('should get the logged in student WITHOUT passing the UID', (done) => {
       const student = testUsers.student000;
-      utilsUser.createAndLoginStudent(api, student, (uid, token) => {
+      utilsUser.createAndLoginUser(api, student, (uid, token) => {
         getUserTest(student, { token }, done);
       });
     });
@@ -130,7 +130,7 @@ describe('User Router & Integration', () => {
   describe('PUT /api/users', () => {
     it('should update the logged in student', (done) => {
       const student = testUsers.student000;
-      utilsUser.createAndLoginStudent(api, student, (uid, token) => {
+      utilsUser.createAndLoginUser(api, student, (uid, token) => {
         const fieldsToUpdate = {
           name: `${student.name}_edit`,
         };

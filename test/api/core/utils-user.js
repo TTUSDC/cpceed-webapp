@@ -14,24 +14,25 @@ const expect = chai.expect;
  */
 
 /**
- * Uses the API to create and login a student user.
+ * Uses the API to create and login a user.
  * This allows for easily getting a token of a valid user for other testing.
  * If there is an issue with creating or logging in, this method throws the
  * appropriate errors to stop the test.
  *
  * @param {Object} api - Running API server
- * @param {Object} student - Data needed to login student
- * @param {string} student.email - Email that isn't already in database
- * @param {string} student.password - Password for student
+ * @param {Object} user - Data needed to login user
+ * @param {string} user.email - Email that isn't already in database
+ * @param {string} user.password - Password for user
+ * @param {string} [user.role='student'] - Role for user
  * @param {CreateAndLoginCallback} cb - Called upon success creation and login.
  */
-const createAndLoginStudent = (api, student, cb) => {
+const createAndLoginUser = (api, user, cb) => {
   const loginUserTest = (uid) => {
     request(api)
       .post('/api/auth')
       .send({
-        email: student.email,
-        password: student.password,
+        email: user.email,
+        password: user.password,
       })
       .type('form')
       .expect(201)
@@ -45,7 +46,7 @@ const createAndLoginStudent = (api, student, cb) => {
 
   request(api)
     .post('/api/users')
-    .send(student)
+    .send(user)
     .type('form')
     .expect(201)
     .end((createErr, createRes) => {
@@ -56,4 +57,4 @@ const createAndLoginStudent = (api, student, cb) => {
     });
 };
 
-module.exports = { createAndLoginStudent };
+module.exports = { createAndLoginUser };

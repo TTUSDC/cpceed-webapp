@@ -6,6 +6,7 @@ const sinon = require('sinon');
 const importFresh = require('import-fresh');
 const importClear = require('clear-module');
 const utilsUser = require('../core/utils-user');
+const utilsEvents = require('../core/utils-events');
 const testUsers = require('../../core/users');
 const testEvents = require('../../core/events');
 const eventManager = require('../../../api/events/event-manager');
@@ -31,9 +32,10 @@ describe('Event Router & Integration', () => {
   });
 
   after((done) => {
-    // api.close();
+    api.close();
     // mongoose.disconnect();
     mongoose.unmock(done);
+    importClear('../../../server');
   });
 
   describe('POST /api/events', () => {
@@ -48,16 +50,13 @@ describe('Event Router & Integration', () => {
     });
 
     after((done) => {
-      api.close();
       eventManager.createEvent.restore();
-      importClear('../../../server');
       done();
     });
 
     it('should return 201 and the created event UID', (done) => {
       const testStudent = testUsers.student000;
-      testStudent.email = 'something@else.com';
-      utilsUser.createAndLoginStudent(api, testStudent, (userUid, token) => {
+      utilsUser.createAndLoginUser(api, testStudent, (userUid, token) => {
         const testEvent = testEvents.generateEventData(userUid);
         request(api)
           .post('/api/events')
@@ -79,4 +78,12 @@ describe('Event Router & Integration', () => {
       });
     });
   });
+
+  // describe('GET /api/events', () => {
+  //   it('should return the correct event', () => {
+  //     const admin = testUsers.admin000;
+
+  //     utilsUser.createAndLoginStudent(api, student, )
+  //   });
+  // });
 });
