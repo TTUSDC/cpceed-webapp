@@ -4,6 +4,7 @@ const request = require('supertest');
 const chai = require('chai');
 const sinon = require('sinon');
 const async = require('async');
+const importFresh = require('import-fresh');
 const utilsUser = require('../core/utils-user');
 const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
@@ -24,7 +25,7 @@ describe('User Router & Integration', () => {
 
   before(() => {
     // The following line is temp until API does not auto start during testing
-    api = require('../../../server'); // eslint-disable-line global-require
+    api = importFresh('../../../server'); // eslint-disable-line global-require
   });
 
   beforeEach((done) => {

@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const chai = require('chai');
 const sinon = require('sinon');
+const importFresh = require('import-fresh');
+const importClear = require('clear-module');
 const utilsUser = require('../core/utils-user');
 const testUsers = require('../../core/users');
 const testEvents = require('../../core/events');
@@ -20,7 +22,7 @@ mockgoose(mongoose);
 describe('Event Router & Integration', () => {
   before(() => {
     // The following line is temp until API does not auto start during testing
-    api = require('../../../server'); // eslint-disable-line global-require
+    api = importFresh('../../../server'); // eslint-disable-line global-require
   });
 
   beforeEach((done) => {
@@ -46,7 +48,9 @@ describe('Event Router & Integration', () => {
     });
 
     after((done) => {
+      api.close();
       eventManager.createEvent.restore();
+      importClear('../../../server');
       done();
     });
 
