@@ -19,7 +19,7 @@ let api;
 
 mockgoose(mongoose);
 
-describe('user router & integration', () => {
+describe('User Router & Integration', () => {
   // before((done) => { mongoose.connect('', done); });
 
   before(() => {

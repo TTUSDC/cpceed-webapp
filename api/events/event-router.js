@@ -22,7 +22,7 @@ eventRouter.post('/', (req, res) => {
       res.status(400).json(err).end();
       return;
     }
-    res.status(201).json(event.id).end();
+    res.status(201).json({ uid: event.id }).end();
   });
 });
 
@@ -125,4 +125,4 @@ eventRouter.get('/all', (req, res) => {
   });
 });
 
-module.exports = eventRouter;
+module.exports = { eventRouter };

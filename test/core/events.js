@@ -58,13 +58,16 @@ const randomItem = items => items[Math.floor(Math.random() * items.length)];
  * @param {string} [data.title]
  * @param {string} [data.description]
  */
-const generateEventData = (creator, data) => ({
-  creator,
-  category: data.category || randomItem(categories),
-  datetime: data.datetime || new Date(),
-  location: data.location || randomItem(locations),
-  title: data.title || randomItem(titles),
-  description: data.description || randomItem(descriptions),
-});
+const generateEventData = (creator, data) => {
+  const template = data || {};
+  return {
+    creator,
+    category: template.category || randomItem(categories),
+    datetime: template.datetime || new Date(),
+    location: template.location || randomItem(locations),
+    title: template.title || randomItem(titles),
+    description: template.description || randomItem(descriptions),
+  };
+};
 
 module.exports = { generateEventData };
