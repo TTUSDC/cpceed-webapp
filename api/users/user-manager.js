@@ -5,9 +5,8 @@ const Student = userModels.Student;
 const Admin = userModels.Admin;
 
 /**
- * Callback for sending the response to the client.
- *
- * @callback createResponse
+ * Callback for {@link createUser}
+ * @typedef {Object} CreateUserCallback
  * @param {Object} err - The error.
  * @param {Number} id - The user UID.
  */
@@ -18,7 +17,7 @@ const Admin = userModels.Admin;
  * @param {String} data.role - The user role.
  * @param {String} data.email - The user email address.
  * @param {String} data.password - The user password.
- * @param {createResponse} next - The callback function to run after this function
+ * @param {CreateUserCallback} next - The callback function to run after this function
  *     finishes.
  */
 const createUser = (data, next) => {
@@ -62,14 +61,21 @@ const createUser = (data, next) => {
   });
 };
 
-/*
- * The fields that can be updated are:
- * - email
- * - name
- * - isApproved
- * - points
- *
+/**
+* Callback for {@link modifyUser}
+* @typedef {Object} ModifyUserCallback
+* @param {Object} - The error
+* @param {UserSchema} - The modified user object
+*/
+
+
+ /**
+ * Updates the user with the passed in values.
  * This method does NOT delete fields
+ * @param {string} userUid - The UID of the user to be updated
+ * @param {Object} reqData - The request data
+ * @param {Object} locals
+ * @param {ModifyUserCallback} modifyCallback
  */
 const modifyUser = (userUid, reqData, locals, modifyCallback) => {
   const conditions = { _id: userUid };
@@ -84,10 +90,38 @@ const modifyUser = (userUid, reqData, locals, modifyCallback) => {
   Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
 };
 
+/**
+* Callback for {@link deleteUser}
+* @typedef {Object} DeleteUserCallback
+* @param {Object} - error
+*/
+
+
+
+/**
+* Deletes the user from the database.
+* @param {string} userUid - The UID of the user to be updated.
+* @param {Object} locals
+* @param {DeleteUserCallback} deleteCallback
+*/
 const deleteUser = (userUid, locals, deleteCallback) => {
   User.findOneAndremove({ _id: userUid }, deleteCallback);
 };
 
+
+/**
+* Callback for {@link getUserById}
+* @typedef {Object} GetUserCallback
+* @param {Object} - error
+* @param {UserSchemas} - Retrieved user
+*/
+
+/**
+* Retrieves the user.
+* @param {string} userUid - The UID of the user to be updated
+* @param {Object} locals
+* @param {GetUserCallback} queryCallback
+*/
 const getUserById = (userUid, locals, queryCallback) => {
   User.findById(userUid, (err, results) => {
     if (err) {
