@@ -1,4 +1,6 @@
 const spawn = require('child_process').spawn;
+const fs = require('fs');
+const path = require('path');
 
 function WebpackWatchPlugin() {}
 
@@ -30,6 +32,25 @@ WebpackWatchPlugin.prototype.apply = (compiler) => {
   });
 
   process.on('SIGINT', () => {
+    const files = fs.readdirSync('build/');
+    let filename;
+    let stat;
+
+    for (let i = 0; i < files.length; i += 1) {
+      filename = path.resolve(__dirname, `../build/${files[i]}`);
+      stat = fs.lstatSync(filename);
+
+      if (stat.isFile()) {
+        if (/.hot-update.json$/.test(filename)) {
+          fs.unlinkSync(filename);
+        } else if (/.hot-update.js$/.test(filename)) {
+          fs.unlinkSync(filename);
+        } else if (/.hot-update.js.map$/.test(filename)) {
+          fs.unlinkSync(filename);
+        }
+      }
+    }
+
     process.exit(0);
   });
 };
