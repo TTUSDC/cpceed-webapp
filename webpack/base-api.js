@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const WebpackWatchPlugin = require('./webpack-watch-plugin.js');
 const fs = require('fs');
 
 const nodePath = path.resolve(__dirname, '../node_modules');
@@ -18,7 +19,7 @@ const baseApi = {
 
   output: {
     path: buildPath,
-    filename: "api.bundle.js"
+    filename: 'api.bundle.js',
   },
 
   target: 'node',
@@ -26,8 +27,8 @@ const baseApi = {
   // Allows for absolute paths from locations indicated in 'modules'
   resolve: {
     modules: [
-      commonPath
-    ]
+      commonPath,
+    ],
   },
 
   externals: externals,
@@ -39,15 +40,16 @@ const baseApi = {
 
   plugins: [
     new webpack.DefinePlugin({
-      ENV: JSON.stringify('dev')
+      ENV: JSON.stringify('dev'),
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.BannerPlugin({
-        banner: 'require("source-map-support").install();',
-        raw: true,
-        entryOnly: false
-    })
-  ]
+      banner: 'require("source-map-support").install();',
+      raw: true,
+      entryOnly: false,
+    }),
+    new WebpackWatchPlugin(),
+  ],
 };
 
 module.exports = baseApi;
