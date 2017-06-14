@@ -1,0 +1,4327 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "api/auth/auth-manager.js",
+    "content": "const jwt = require('jsonwebtoken');\nconst authErrors = require('../errors/auth-errors');\nconst User = require('../users/user-models').User;\nconst Session = require('./auth-models').Session;\n\n/**\n * Callback for sending the response to the client.\n *\n * @callback loginResponse\n * @param {Object} err - The error.\n * @param {string} token - The JWT token.\n */\n\n/**\n * Given a valid email/password, generates and returns a JWT.\n * @param {string} email - The user's email address.\n * @param {string} password - The user's password.\n * @param {loginResponse} next - The callback function to run after this function\n *     finishes.\n */\nconst login = (email, password, next) => {\n  User.findOne({ email }, (findErr, user) => {\n    if (findErr) {\n      next(findErr);\n      return;\n    }\n\n    // No user found for the given email address.\n    if (!user) {\n      next(authErrors.userNotFoundError);\n      return;\n    }\n\n    user.comparePassword(password, (passwordErr, isMatch) => {\n      if (passwordErr) {\n        next(passwordErr);\n        return;\n      }\n\n      // The wrong password was provided.\n      if (!isMatch) {\n        next(authErrors.invalidLoginInfoError);\n        return;\n      }\n\n      Session.findOne({ email }, (sessionErr, session) => {\n        // If a session token exists, return the session token.\n        if (sessionErr || session) {\n          next(sessionErr, session.token);\n          return;\n        }\n\n        // If no session currently exists, create a new session.\n        const jwtData = {\n          email,\n          role: user.role,\n          isApproved: user.isApproved,\n          id: user.id,\n        };\n\n        // Sign and save the session.\n        jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS512' }, (signErr, token) => {\n          if (signErr) {\n            next(signErr);\n            return;\n          }\n\n          const newSession = new Session({ email, token });\n          newSession.save((saveErr) => { next(saveErr, token); });\n        });\n      });\n    });\n  });\n};\n\n/**\n * Callback for sending the response to the client.\n *\n * @callback logoutResponse\n * @param {Object} err - The error.\n * @param {string} err.err - The error message.\n */\n\n/**\n * Delete the user's JWT from the DB.\n * @param {string} email - The user's email address.\n * @param {logoutResponse} next - The callback function to run after this function\n *     finishes.\n */\nconst logout = (email, next) => {\n  // Delete the session from the DB.\n  Session.findOneAndRemove({ email }, (err) => { next(err); });\n};\n\n/**\n * Callback for sending the response to the client.\n *\n * @callback changePasswordResponse\n */\n\n/**\n * Delete the user's JWT from the DB.\n * @param {string} email - The user's email address.\n * @param {string} newPassword - The user's new password.\n * @param {changePasswordResponse} next - The callback function to run after this function\n  *     finishes.\n */\nconst changePassword = (email, password, next) => {\n  // TODO(the-pat): Update the user's password and regen the JWT.\n  next();\n};\n\n/**\n * Middleware to verify the JWT.\n * For valid tokens, an `auth` object is added to the response.locals object.\n * @param {Object} req - The request object.\n * @param {Object} res - The response object.\n * @param {function} next - Invoke the next middleware or route.\n */\nconst verify = (req, res, next) => {\n  const token = req.body.token || req.query.token || req.headers['x-access-token'];\n  // If no token is provided, inform the client.\n  if (!token) {\n    res.locals.err = new Error(authErrors.missingTokenError);\n    next();\n    return;\n  }\n\n  // Verify the client token has a valid signature.\n  jwt.verify(token, process.env.SECRET, (verifyErr, decoded) => {\n    if (verifyErr) {\n      res.locals.err = new Error(verifyErr);\n      next();\n      return;\n    }\n\n    // Verify that the session is current.\n    Session.findOne({ email: decoded.email }, (sessionErr, session) => {\n      if (sessionErr) {\n        res.locals.err = new Error(sessionErr);\n        next();\n        return;\n      }\n\n      // If no session is found, then the user was logged out of their account.\n      if (!session) {\n        res.locals.err = new Error(authErrors.sessionNotFoundError);\n        next();\n        return;\n      }\n\n      // Verify that the stored token and the client token are the same.\n      session.compareToken(token, (isMatch) => {\n        // The token is expired.\n        if (!isMatch) {\n          res.locals.err = new Error(authErrors.invalidSessionError);\n          next();\n          return;\n        }\n\n        // Add the token information to `res.locals.auth`.\n        res.locals.auth = decoded;\n        next();\n      });\n    });\n  });\n};\n\n/*\n * Middleware to verify the user has access permissions of some document.\n * For valid tokens, an `uid` object is added to the response.locals object.\n * The `uid` object is the uid of the owner of the document being accessed.\n * @param {Object} req - The request object.\n * @param {Object} res - The response object.\n * @param {function} next - Invoke the next middleware or route.\n */\nconst validateUidPermissions = (req, res, next) => {\n  let uid = res.locals.auth.id;\n  if (!uid) {\n    res.locals.err = authErrors.missingTokenError;\n    next();\n    return;\n  }\n  if (req.query.uid) {\n    if (res.locals.auth.role === 'admin') {\n      uid = req.query.uid;\n    } else if (req.query.uid !== uid) {\n      res.locals.err = authErrors.unauthorizedError;\n      next(authErrors.unauthorizedError);\n      return;\n    }\n  }\n  res.locals.uid = uid;\n  next();\n};\n\nmodule.exports = {\n  changePassword,\n  login,\n  logout,\n  verify,\n  validateUidPermissions,\n};\n",
+    "static": true,
+    "longname": "api/auth/auth-manager.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "variable",
+    "name": "jwt",
+    "memberof": "api/auth/auth-manager.js",
+    "static": true,
+    "longname": "api/auth/auth-manager.js~jwt",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 2,
+    "kind": "variable",
+    "name": "authErrors",
+    "memberof": "api/auth/auth-manager.js",
+    "static": true,
+    "longname": "api/auth/auth-manager.js~authErrors",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 3,
+    "kind": "variable",
+    "name": "User",
+    "memberof": "api/auth/auth-manager.js",
+    "static": true,
+    "longname": "api/auth/auth-manager.js~User",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "variable",
+    "name": "Session",
+    "memberof": "api/auth/auth-manager.js",
+    "static": true,
+    "longname": "api/auth/auth-manager.js~Session",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "function",
+    "name": "login",
+    "memberof": "api/auth/auth-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/auth/auth-manager.js~login",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": "Given a valid email/password, generates and returns a JWT.",
+    "lineNumber": 21,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "email",
+        "description": "The user's email address."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "password",
+        "description": "The user's password."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "loginResponse"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": "The callback function to run after this function\n    finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 6,
+    "kind": "function",
+    "name": "logout",
+    "memberof": "api/auth/auth-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/auth/auth-manager.js~logout",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": "Delete the user's JWT from the DB.",
+    "lineNumber": 90,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "email",
+        "description": "The user's email address."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "logoutResponse"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": "The callback function to run after this function\n    finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 7,
+    "kind": "function",
+    "name": "changePassword",
+    "memberof": "api/auth/auth-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/auth/auth-manager.js~changePassword",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": "Delete the user's JWT from the DB.",
+    "lineNumber": 108,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "email",
+        "description": "The user's email address."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "newPassword",
+        "description": "The user's new password."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "changePasswordResponse"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": "The callback function to run after this function\n    finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 8,
+    "kind": "function",
+    "name": "verify",
+    "memberof": "api/auth/auth-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/auth/auth-manager.js~verify",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": "Middleware to verify the JWT.\nFor valid tokens, an `auth` object is added to the response.locals object.",
+    "lineNumber": 120,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "The request object."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "The response object."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": "Invoke the next middleware or route."
+      }
+    ]
+  },
+  {
+    "__docId__": 9,
+    "kind": "function",
+    "name": "validateUidPermissions",
+    "memberof": "api/auth/auth-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/auth/auth-manager.js~validateUidPermissions",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 177,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "req",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "res",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "next",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 10,
+    "kind": "file",
+    "name": "api/auth/auth-models.js",
+    "content": "const mongoose = require('mongoose');\n\n// Set up session model.\nconst sessionSchema = new mongoose.Schema({\n  email: {\n    type: String,\n    unique: true,\n    required: true,\n  },\n  token: {\n    type: String,\n    required: true,\n  },\n});\n\nsessionSchema.methods.compareToken = function compareToken(token, next) {\n  next(token === this.token);\n};\n\nconst Session = mongoose.model('Session', sessionSchema);\n\nmodule.exports = { Session };\n",
+    "static": true,
+    "longname": "api/auth/auth-models.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 11,
+    "kind": "variable",
+    "name": "mongoose",
+    "memberof": "api/auth/auth-models.js",
+    "static": true,
+    "longname": "api/auth/auth-models.js~mongoose",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "variable",
+    "name": "sessionSchema",
+    "memberof": "api/auth/auth-models.js",
+    "static": true,
+    "longname": "api/auth/auth-models.js~sessionSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 13,
+    "kind": "function",
+    "name": "compareToken",
+    "memberof": "api/auth/auth-models.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/auth/auth-models.js~compareToken",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "token",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "next",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 14,
+    "kind": "variable",
+    "name": "Session",
+    "memberof": "api/auth/auth-models.js",
+    "static": true,
+    "longname": "api/auth/auth-models.js~Session",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 20,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 15,
+    "kind": "file",
+    "name": "api/auth/auth-router.js",
+    "content": "const express = require('express');\nconst authManager = require('./auth-manager');\n\nconst authErrors = require('../errors/auth-errors');\nconst authRouter = express.Router();\n\n// Get the current User's role.\nauthRouter.get('/', authManager.verify, (req, res) => {\n  if (res.locals.err) {\n    res.status(400).json(res.locals.err).end();\n  } else if (!res.locals.auth) {\n    res.status(400).json(new Error('User not verified.')).end();\n  } else {\n    res.status(200).json({ role: res.locals.auth.role }).end();\n  }\n});\n\n// Log the User in (uses same token across all devices).\nauthRouter.post('/', (req, res) => {\n  authManager.login(req.body.email, req.body.password, (err, token) => {\n    if (err) {\n      res.status(400).json(err).end();\n      return;\n    }\n\n    res.status(201).json({ token }).end();\n  });\n});\n\n// Log the User out of all devices.\nauthRouter.delete('/', authManager.verify, (req, res) => {\n  if (res.locals.err) {\n    res.status(400).json(res.locals.err).end();\n    return;\n  }\n\n  if (!res.locals.auth) {\n    res.status(400).json(new Error('User not verified.')).end();\n    return;\n  }\n  authManager.logout(res.locals.auth.email, (logoutErr) => {\n    if (logoutErr) {\n      res.status(400).json(logoutErr).end();\n    } else {\n      res.status(204).end();\n    }\n  });\n});\n\nmodule.exports = { router: authRouter };\n",
+    "static": true,
+    "longname": "api/auth/auth-router.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 16,
+    "kind": "variable",
+    "name": "express",
+    "memberof": "api/auth/auth-router.js",
+    "static": true,
+    "longname": "api/auth/auth-router.js~express",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 17,
+    "kind": "variable",
+    "name": "authManager",
+    "memberof": "api/auth/auth-router.js",
+    "static": true,
+    "longname": "api/auth/auth-router.js~authManager",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 18,
+    "kind": "variable",
+    "name": "authErrors",
+    "memberof": "api/auth/auth-router.js",
+    "static": true,
+    "longname": "api/auth/auth-router.js~authErrors",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 19,
+    "kind": "variable",
+    "name": "authRouter",
+    "memberof": "api/auth/auth-router.js",
+    "static": true,
+    "longname": "api/auth/auth-router.js~authRouter",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/auth/auth-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 20,
+    "kind": "file",
+    "name": "api/core/utils.js",
+    "content": "/**\n * If the new value is defined and non-null, returns the new value.  Otherwise,\n * returns the old value.\n * @param {T} newValue - A new value value that may or may not be defined and\n *     non-null.\n * @param {T} oldValue - A old value that is defined and non-null.\n * @return {T} The new value if it is defined and non-null.  The old value if\n *     the new value is undefined or null.\n * @template T\n */\nconst newIfPresent = (newValue, oldValue) => {\n  if (newValue === undefined || newValue == null) {\n    return oldValue;\n  }\n  return newValue;\n};\n\nmodule.exports = { newIfPresent };\n",
+    "static": true,
+    "longname": "api/core/utils.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 21,
+    "kind": "function",
+    "name": "newIfPresent",
+    "memberof": "api/core/utils.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/core/utils.js~newIfPresent",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/core/utils.js",
+    "importStyle": null,
+    "description": "If the new value is defined and non-null, returns the new value.  Otherwise,\nreturns the old value.",
+    "lineNumber": 11,
+    "unknown": [
+      {
+        "tagName": "@template",
+        "tagValue": "T"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "T"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "newValue",
+        "description": "A new value value that may or may not be defined and\n    non-null."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "T"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "oldValue",
+        "description": "A old value that is defined and non-null."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "T"
+      ],
+      "spread": false,
+      "description": "The new value if it is defined and non-null.  The old value if\n    the new value is undefined or null."
+    }
+  },
+  {
+    "__docId__": 22,
+    "kind": "file",
+    "name": "api/errors/auth-errors.js",
+    "content": "const errorConstructor = (message, statusCode) => {\n  const error = new Error(message);\n  error.status = statusCode;\n  return error;\n};\n\n/*\n * Not Found: Could we not find something in the databases?\n */\nconst userNotFoundError = errorConstructor('User not found.', 400);\n\nconst sessionNotFoundError = errorConstructor('No session found.', 400);\n\n/*\n * Invalid: Did the user give us something that was wrong?\n */\nconst invalidLoginInfoError = errorConstructor('Invalid username/password.', 401);\n\nconst invalidSessionError = errorConstructor('Invalid session token.', 401);\n\n/*\n * Missing: Did the user forget to give us something?\n */\nconst missingTokenError = errorConstructor('Token not found.', 400);\n\nconst unauthorizedError = errorConstructor('Unauthorized.', 401);\n\nmodule.exports = {\n  userNotFoundError,\n  sessionNotFoundError,\n  invalidLoginInfoError,\n  invalidSessionError,\n  missingTokenError,\n  unauthorizedError,\n};\n",
+    "static": true,
+    "longname": "api/errors/auth-errors.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 23,
+    "kind": "function",
+    "name": "errorConstructor",
+    "memberof": "api/errors/auth-errors.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/errors/auth-errors.js~errorConstructor",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/errors/auth-errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "message",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "statusCode",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 24,
+    "kind": "variable",
+    "name": "userNotFoundError",
+    "memberof": "api/errors/auth-errors.js",
+    "static": true,
+    "longname": "api/errors/auth-errors.js~userNotFoundError",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/errors/auth-errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 25,
+    "kind": "variable",
+    "name": "sessionNotFoundError",
+    "memberof": "api/errors/auth-errors.js",
+    "static": true,
+    "longname": "api/errors/auth-errors.js~sessionNotFoundError",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/errors/auth-errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 26,
+    "kind": "variable",
+    "name": "invalidLoginInfoError",
+    "memberof": "api/errors/auth-errors.js",
+    "static": true,
+    "longname": "api/errors/auth-errors.js~invalidLoginInfoError",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/errors/auth-errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 27,
+    "kind": "variable",
+    "name": "invalidSessionError",
+    "memberof": "api/errors/auth-errors.js",
+    "static": true,
+    "longname": "api/errors/auth-errors.js~invalidSessionError",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/errors/auth-errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 28,
+    "kind": "variable",
+    "name": "missingTokenError",
+    "memberof": "api/errors/auth-errors.js",
+    "static": true,
+    "longname": "api/errors/auth-errors.js~missingTokenError",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/errors/auth-errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 24,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 29,
+    "kind": "variable",
+    "name": "unauthorizedError",
+    "memberof": "api/errors/auth-errors.js",
+    "static": true,
+    "longname": "api/errors/auth-errors.js~unauthorizedError",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/errors/auth-errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 26,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "file",
+    "name": "api/events/event-manager.js",
+    "content": "const eventModels = require('./event-models');\n\nconst Event = eventModels.Event;\n\n/**\n * Callback used by event CRUD methods that returns a single event.\n * @callback eventCallback\n * @param {Error} err - An error that occurred during the operation. Null if no\n *    errors occurred.\n * @param {Event} event - The event operated on.\n */\n\n/**\n * Creates a event using fields from the request object then calls back when\n * the database save finishes.\n * @param {Object} reqData - The request object containing the event data to\n *   be created.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {eventCallback} createCallback - Called once the operation finishes.\n */\nconst createEvent = (reqData, locals, createCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n\n  const event = new Event({\n    creator: reqData.creator,\n    category: reqData.category,\n    datetime: reqData.datetime,\n    location: reqData.location,\n    title: reqData.title,\n    description: reqData.description,\n  });\n  event.save(createCallback);\n};\n\n/**\n * Modifies a specific event with the fields in the request object then calls\n * back when the database update finishes.\n * @param {string} event Uid - The UID corresponding to the event to be\n *   modified.\n * @param {Object} reqData - The request object containing the new event fields.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {eventCallback} modifyCallback - Called once the operation finishes.\n */\nconst modifyEvent = (eventUid, reqData, locals, modifyCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n  const conditions = { _id: eventUid };\n  const update = {\n    $set: {\n      creator: reqData.creator,\n      category: reqData.category,\n      datetime: reqData.datetime,\n      location: reqData.location,\n      title: reqData.title,\n      description: reqData.description,\n    },\n  };\n\n  const options = {\n    new: true,\n  };\n  Event.findOneAndUpdate(conditions, update, options, modifyCallback);\n};\n\n\n/**\n * Deletes a specific event and calls back once database deletion finishes.\n * @param {string} eventUid - The UID of the event to be deleted.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {eventCallback} deleteCallback - Called once the operation is done.\n */\nconst deleteEvent = (eventUid, locals, deleteCallback) => {\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n\n  // TODO(asclines): Look into better error handling.\n\n  Event.findByIdAndRemove(eventUid, deleteCallback);\n};\n\n/**\n * Finds a specific event and calls back once find operation finishes.\n * @param {string} eventUid - The UID of the event to be found.\n * @param {Object} locals - An object containing the current request's\n *   local variables.\n * @param {eventCallback} getCallback - Called once the operation is done.\n */\nconst getEventById = (eventUid, locals, getCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // have permisssion to get this event.\n\n  Event.findById(eventUid, getCallback);\n};\n\nconst getAllEvents = (reqData, locals, getAllCallback) => {\n // TODO(asclines): Add checks for required data and expection handling\n\n//   // TODO(asclines): Check the UID of the logged in user and make sure they\n//   // have permission to call this method.\n\n  const conditions = locals.conditions || {};\n  Event.find(conditions, (err, events) => {\n    if (err) {\n      getAllCallback(err);\n      return;\n    }\n\n    const results = {};\n    events.forEach((event) => {\n      results[event.id] = event;\n    });\n\n    getAllCallback(err, results);\n  });\n};\n\n\nmodule.exports = {\n  createEvent,\n  modifyEvent,\n  deleteEvent,\n  getEventById,\n  getAllEvents,\n};\n",
+    "static": true,
+    "longname": "api/events/event-manager.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 31,
+    "kind": "variable",
+    "name": "eventModels",
+    "memberof": "api/events/event-manager.js",
+    "static": true,
+    "longname": "api/events/event-manager.js~eventModels",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 32,
+    "kind": "variable",
+    "name": "Event",
+    "memberof": "api/events/event-manager.js",
+    "static": true,
+    "longname": "api/events/event-manager.js~Event",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 33,
+    "kind": "function",
+    "name": "createEvent",
+    "memberof": "api/events/event-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/events/event-manager.js~createEvent",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-manager.js",
+    "importStyle": null,
+    "description": "Creates a event using fields from the request object then calls back when\nthe database save finishes.",
+    "lineNumber": 22,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reqData",
+        "description": "The request object containing the event data to\n  be created."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containg the current request's local\n  variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "eventCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "createCallback",
+        "description": "Called once the operation finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 34,
+    "kind": "function",
+    "name": "modifyEvent",
+    "memberof": "api/events/event-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/events/event-manager.js~modifyEvent",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-manager.js",
+    "importStyle": null,
+    "description": "Modifies a specific event with the fields in the request object then calls\nback when the database update finishes.",
+    "lineNumber": 49,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "event",
+        "description": "Uid - The UID corresponding to the event to be\n  modified."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reqData",
+        "description": "The request object containing the new event fields."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containg the current request's local\n  variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "eventCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "modifyCallback",
+        "description": "Called once the operation finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 35,
+    "kind": "function",
+    "name": "deleteEvent",
+    "memberof": "api/events/event-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/events/event-manager.js~deleteEvent",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-manager.js",
+    "importStyle": null,
+    "description": "Deletes a specific event and calls back once database deletion finishes.",
+    "lineNumber": 80,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "eventUid",
+        "description": "The UID of the event to be deleted."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containg the current request's local\n  variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "eventCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "deleteCallback",
+        "description": "Called once the operation is done."
+      }
+    ]
+  },
+  {
+    "__docId__": 36,
+    "kind": "function",
+    "name": "getEventById",
+    "memberof": "api/events/event-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/events/event-manager.js~getEventById",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-manager.js",
+    "importStyle": null,
+    "description": "Finds a specific event and calls back once find operation finishes.",
+    "lineNumber": 96,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "eventUid",
+        "description": "The UID of the event to be found."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containing the current request's\n  local variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "eventCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "getCallback",
+        "description": "Called once the operation is done."
+      }
+    ]
+  },
+  {
+    "__docId__": 37,
+    "kind": "function",
+    "name": "getAllEvents",
+    "memberof": "api/events/event-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/events/event-manager.js~getAllEvents",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 105,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "reqData",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "locals",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "getAllCallback",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 38,
+    "kind": "file",
+    "name": "api/events/event-models.js",
+    "content": "const mongoose = require('mongoose');\n\nconst Schema = mongoose.Schema;\n\nconst options = {\n  timestamps: true,\n};\n\nconst eventSchema = new Schema({\n  creator: String,\n  category: String,\n  datetime: Date,\n  location: String,\n  title: String,\n  description: String,\n}, options);\n\nconst Event = mongoose.model('Event', eventSchema);\n\nmodule.exports = { Event };\n",
+    "static": true,
+    "longname": "api/events/event-models.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 39,
+    "kind": "variable",
+    "name": "mongoose",
+    "memberof": "api/events/event-models.js",
+    "static": true,
+    "longname": "api/events/event-models.js~mongoose",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 40,
+    "kind": "variable",
+    "name": "Schema",
+    "memberof": "api/events/event-models.js",
+    "static": true,
+    "longname": "api/events/event-models.js~Schema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 41,
+    "kind": "variable",
+    "name": "options",
+    "memberof": "api/events/event-models.js",
+    "static": true,
+    "longname": "api/events/event-models.js~options",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"timestamps\": boolean}"
+      ]
+    }
+  },
+  {
+    "__docId__": 42,
+    "kind": "variable",
+    "name": "eventSchema",
+    "memberof": "api/events/event-models.js",
+    "static": true,
+    "longname": "api/events/event-models.js~eventSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 43,
+    "kind": "variable",
+    "name": "Event",
+    "memberof": "api/events/event-models.js",
+    "static": true,
+    "longname": "api/events/event-models.js~Event",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 44,
+    "kind": "file",
+    "name": "api/objects/response.js",
+    "content": "const ResponseObject = (status, object) => {\n  this.status = status;\n  this.object = object;\n};\n\nmodule.exports = { ResponseObject };\n",
+    "static": true,
+    "longname": "api/objects/response.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 45,
+    "kind": "function",
+    "name": "ResponseObject",
+    "memberof": "api/objects/response.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/objects/response.js~ResponseObject",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/objects/response.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "status",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "object",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 46,
+    "kind": "file",
+    "name": "api/reports/report-manager.js",
+    "content": "var reportModels = require('./report-models');\nvar newIfPresent = require('../core/utils').newIfPresent;\nvar Report = reportModels.Report;\nvar EventReport = reportModels.EventReport;\nvar OtherReport = reportModels.OtherReport;\n\n/**\n * Callback used by report CRUD methods that return only one report.\n * @callback reportCallback\n * @param {Error} err - An error that occurred during the operation.  Null if no\n *     errors occurred.\n * @param {Report} report - The report operated on.\n */\n\n/**\n * Creates a report with the fields in the request object, and calls a callback\n * when the database save finishes.\n * @param {Object} reqData - The request object representing the report to be\n *     created.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} createCallback - Called once the operation finishes.\n */\nvar createReport = (reqData, locals, createCallback) => {\n  // TODO(jmtaber129): Check that the student UID matches the requesting user,\n  // or the requesting user is an admin.\n  var report;\n  if (reqData.type == 'event') {\n    report = new EventReport({\n      approvalStatus: false,\n      student: reqData.student,\n      event: reqData.event,\n    });\n  } else if (reqData.type == 'other') {\n    report = new OtherReport({\n      approvalStatus: false,\n      student: reqData.student,\n      category: reqData.category,\n      datetime: reqData.datetime,\n      location: reqData.location,\n      title: reqData.title,\n      description: reqData.description,\n    });\n  } else {\n    // TODO(jmtaber129): Better error handling for invalid report types.\n    createCallback({message: \"Invalid report type.\"});\n    return;\n  }\n\n  report.save(createCallback);\n};\n\n/**\n * Modifies a specific report according to the fields in the request object, and\n * calls a callback when the database save finishes.\n * @param {string} reportUid - The UID corresponding to the report to be\n *     modified.\n * @param {Object} reqData - The request object containing the fields to be\n *     modified.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} modifyCallback - Called once the operation finishes.\n */\nvar modifyReport = (reportUid, reqData, locals, modifyCallback) => {\n  Report.findById(reportUid, (err, report) => {\n    if (err) {\n      modifyCallback(err);\n      return;\n    }\n\n    // If the report's student UID does not match the user UID, and the user is\n    // not an admin, the report should not be updated.\n    // TODO(jmtaber129): Check report's student UID and user UID, and add error\n    // handling.\n\n    // Update fields by checking if the field in the request is defined and\n    // non-null, then setting the document field to the request field if it is.\n\n    // Generic fields.\n    report.approvalStatus =\n        newIfPresent(reqData.approvalStatus, report.approvalStatus);\n    report.student = newIfPresent(reqData.student, report.student);\n\n    if (report.type == EventReport.modelName) {\n      // Fields specific to event reports.\n      report.event = newIfPresent(reqData.event, report.event);\n\n    } else if (report.type == OtherReport.modelName) {\n      // Fields specific to other reports.\n      report.category = newIfPresent(reqData.category, report.category);\n      report.datetime = newIfPresent(reqData.datetime, report.datetime);\n      report.location = newIfPresent(reqData.location, report.location);\n      report.title = newIfPresent(reqData.title, report.title);\n      report.description =\n          newIfPresent(reqData.description, report.description);\n    }\n\n    report.save(modifyCallback);\n  });\n};\n\n/**\n * Deletes a specific report, and calls a callback once the database deletion\n * finishes.\n * @param {string} reportUid - The UID corresponding to the report to be\n *     deleted.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} deleteCallback - Called once the operation finishes.\n */\nvar deleteReport = (reportUid, locals, deleteCallback) => {\n  Report.findById(reportUid, (err, report) => {\n    if (err) {\n      deleteCallback(err);\n      return;\n    }\n\n    if (!report) {\n      // TODO(jmtaber129): Better error handling when report can't be found.\n      deleteCallback({message: 'Report not found.'});\n      return;\n    }\n\n    // If the report's student UID does not match the user UID, and the user is\n    // not an admin, 'report' should not be deleted.\n    // TODO(jmtaber129): Check report's student UID and user UID, and add error\n    // handling.\n\n    report.remove(deleteCallback);\n  });\n};\n\n/**\n * Finds a specific report, and calls a callback once the report is found.\n * @param {string} reportUid - The UID corresponding to the report to be found.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} queryCallback - Called once the operation finishes.\n */\nvar getReportById = (reportUid, locals, queryCallback) => {\n  Report.findById(reportUid, (err, report) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n\n    // If the report's student UID does not match the user UID, and the user is\n    // not an admin, 'report' should not be returned.\n    // TODO(jmtaber129): Check report's student UID and user UID, and add error\n    // handling.\n\n    queryCallback(err, report);\n  });\n};\n\n/**\n * Callback used by report CRUD methods that return multiple reports.\n * @callback multipleReportsCallback\n * @param {Error} err - An error that occurred during the operation.  Null if no\n *     errors occurred.\n * @param {Object.<string, Report>} reports - An object of reports with their\n *     UIDs as keys.\n */\n\n/**\n * Finds all reports, and calls a callback once all reports are found.\n * @param {Object} reqData - An object containing additional search parameters\n *     (not yet implemented).\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {multipleReportsCallback} queryCallback - Called once the operation\n *     finishes.\n */\nvar getAllReports = (reqData, locals, queryCallback) => {\n  conditions = {};\n\n  // If the user is not an admin, limit the results to reports with the user's\n  // UID.  If the user is not an admin, and one of the query parameters is a\n  // student UID other than their own, handle it as an error.\n  // TODO(jmtaber129): Set conditions.student to user UID for non-admins.\n  // TODO(jmtaber129): Add error handling for requesting reports with student\n  // UIDs other than the UID of a non-admin user.\n\n  // TODO(jmtaber129): Set additional conditions once query parameters are\n  // accepted in the request object.\n\n  // Both report types are in the same collection, and querying a model queries\n  // the entire collection, so querying one report model will return results for\n  // both report types.\n  Report.find(conditions, (err, reports) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n\n    returnObject = {};\n\n    reports.forEach((report) => {\n      returnObject[report.id] = report;\n\n      // TODO(jmtaber129): Add point value to report in 'returnObject'.\n    });\n\n    queryCallback(err, returnObject);\n  });\n\n};\n\nmodule.exports = {createReport, modifyReport, deleteReport, getReportById,\n                  getAllReports};\n",
+    "static": true,
+    "longname": "api/reports/report-manager.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 47,
+    "kind": "variable",
+    "name": "reportModels",
+    "memberof": "api/reports/report-manager.js",
+    "static": true,
+    "longname": "api/reports/report-manager.js~reportModels",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 48,
+    "kind": "variable",
+    "name": "newIfPresent",
+    "memberof": "api/reports/report-manager.js",
+    "static": true,
+    "longname": "api/reports/report-manager.js~newIfPresent",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 49,
+    "kind": "variable",
+    "name": "Report",
+    "memberof": "api/reports/report-manager.js",
+    "static": true,
+    "longname": "api/reports/report-manager.js~Report",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 50,
+    "kind": "variable",
+    "name": "EventReport",
+    "memberof": "api/reports/report-manager.js",
+    "static": true,
+    "longname": "api/reports/report-manager.js~EventReport",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 51,
+    "kind": "variable",
+    "name": "OtherReport",
+    "memberof": "api/reports/report-manager.js",
+    "static": true,
+    "longname": "api/reports/report-manager.js~OtherReport",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 52,
+    "kind": "function",
+    "name": "createReport",
+    "memberof": "api/reports/report-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/reports/report-manager.js~createReport",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": "Creates a report with the fields in the request object, and calls a callback\nwhen the database save finishes.",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reqData",
+        "description": "The request object representing the report to be\n    created."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containing the current request's local\n    variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "reportCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "createCallback",
+        "description": "Called once the operation finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 53,
+    "kind": "function",
+    "name": "modifyReport",
+    "memberof": "api/reports/report-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/reports/report-manager.js~modifyReport",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": "Modifies a specific report according to the fields in the request object, and\ncalls a callback when the database save finishes.",
+    "lineNumber": 64,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reportUid",
+        "description": "The UID corresponding to the report to be\n    modified."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reqData",
+        "description": "The request object containing the fields to be\n    modified."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containing the current request's local\n    variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "reportCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "modifyCallback",
+        "description": "Called once the operation finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 54,
+    "kind": "function",
+    "name": "deleteReport",
+    "memberof": "api/reports/report-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/reports/report-manager.js~deleteReport",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": "Deletes a specific report, and calls a callback once the database deletion\nfinishes.",
+    "lineNumber": 111,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reportUid",
+        "description": "The UID corresponding to the report to be\n    deleted."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containing the current request's local\n    variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "reportCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "deleteCallback",
+        "description": "Called once the operation finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 55,
+    "kind": "function",
+    "name": "getReportById",
+    "memberof": "api/reports/report-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/reports/report-manager.js~getReportById",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": "Finds a specific report, and calls a callback once the report is found.",
+    "lineNumber": 140,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reportUid",
+        "description": "The UID corresponding to the report to be found."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containing the current request's local\n    variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "reportCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queryCallback",
+        "description": "Called once the operation finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 56,
+    "kind": "function",
+    "name": "getAllReports",
+    "memberof": "api/reports/report-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/reports/report-manager.js~getAllReports",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-manager.js",
+    "importStyle": null,
+    "description": "Finds all reports, and calls a callback once all reports are found.",
+    "lineNumber": 174,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reqData",
+        "description": "An object containing additional search parameters\n    (not yet implemented)."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": "An object containing the current request's local\n    variables."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "multipleReportsCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queryCallback",
+        "description": "Called once the operation\n    finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 57,
+    "kind": "file",
+    "name": "api/reports/report-models.js",
+    "content": "var mongoose = require('mongoose');\nvar Schema = mongoose.Schema;\n\nvar options = {discriminatorKey: 'type'};\n\nvar reportSchema = new Schema({\n      approvalStatus: Boolean,\n      student: String,\n    },\n    options);\n\nvar eventReportSchema = new Schema({event: String}, options);\n\nvar otherReportSchema = new Schema({\n      category: String,\n      datetime: Date,\n      location: String,\n      title: String,\n      description: String,\n    },\n    options);\n\nvar Report = mongoose.model('Report', reportSchema);\n\nvar EventReport = Report.discriminator('EventReport', eventReportSchema);\n\nvar OtherReport = Report.discriminator('OtherReport', otherReportSchema);\n\nmodule.exports = {Report, EventReport, OtherReport};\n",
+    "static": true,
+    "longname": "api/reports/report-models.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 58,
+    "kind": "variable",
+    "name": "mongoose",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~mongoose",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 59,
+    "kind": "variable",
+    "name": "Schema",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~Schema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 60,
+    "kind": "variable",
+    "name": "options",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~options",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"discriminatorKey\": string}"
+      ]
+    }
+  },
+  {
+    "__docId__": 61,
+    "kind": "variable",
+    "name": "reportSchema",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~reportSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 62,
+    "kind": "variable",
+    "name": "eventReportSchema",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~eventReportSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 63,
+    "kind": "variable",
+    "name": "otherReportSchema",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~otherReportSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 64,
+    "kind": "variable",
+    "name": "Report",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~Report",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 23,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 65,
+    "kind": "variable",
+    "name": "EventReport",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~EventReport",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "variable",
+    "name": "OtherReport",
+    "memberof": "api/reports/report-models.js",
+    "static": true,
+    "longname": "api/reports/report-models.js~OtherReport",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 27,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 67,
+    "kind": "file",
+    "name": "api/reports/report-router.js",
+    "content": "var express = require('express');\nvar mongoose = require('mongoose');\nvar reportManager = require('./report-manager');\nvar reportRouter = express.Router();\n\nreportRouter.post('/', (req, res) => {\n  reportManager.createReport(req.body, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    console.log({\n      message: 'report created',\n      id: report.id,\n    });\n\n    res.status(201).location(report.id).end();\n  });\n});\n\nreportRouter.put('/:uid', (req, res) => {\n  reportManager.modifyReport(req.params.uid, req.body, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    res.status(200).json(report).end();\n  });\n});\n\nreportRouter.delete('/:uid', (req, res) => {\n  reportManager.deleteReport(req.params.uid, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    res.status(204).end();\n  });\n});\n\nreportRouter.get('/:uid', (req, res) => {\n  reportManager.getReportById(req.params.uid, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    if (!report) {\n      // Report was not found.\n      // TODO(jmtaber129): Add error handling for when a user is not authorized\n      // to view the report.\n      res.status(404).end();\n      return;\n    }\n\n    res.status(200).json(report).end();\n  });\n});\n\nreportRouter.get('/', (req, res) => {\n  reportManager.getAllReports(req.params, {}, (err, reports) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    res.status(200).json(reports).end();\n  });\n});\n\nmodule.exports = {reportRouter};\n",
+    "static": true,
+    "longname": "api/reports/report-router.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 68,
+    "kind": "variable",
+    "name": "express",
+    "memberof": "api/reports/report-router.js",
+    "static": true,
+    "longname": "api/reports/report-router.js~express",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 69,
+    "kind": "variable",
+    "name": "mongoose",
+    "memberof": "api/reports/report-router.js",
+    "static": true,
+    "longname": "api/reports/report-router.js~mongoose",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 70,
+    "kind": "variable",
+    "name": "reportManager",
+    "memberof": "api/reports/report-router.js",
+    "static": true,
+    "longname": "api/reports/report-router.js~reportManager",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "variable",
+    "name": "reportRouter",
+    "memberof": "api/reports/report-router.js",
+    "static": true,
+    "longname": "api/reports/report-router.js~reportRouter",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/reports/report-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 72,
+    "kind": "file",
+    "name": "api/server.js",
+    "content": "const bodyParser = require('body-parser');\nconst cookieParser = require('cookie-parser');\nconst express = require('express'); //saved\nconst logger = require('morgan');\nconst mongoose = require('mongoose');\n\n\n// Routers.\nconst auth = require('./auth/auth-router.js');\n//const event = require('./events/router.js');\nconst report = require('./reports/report-router.js');\nconst user = require('./users/user-router.js');\n\n\n// App routes.\nconst router = express.Router();\nrouter.use('/users', user.userRouter);\n//router.use('/events', event.eventRouter);\nrouter.use('/reports', report.reportRouter);\nrouter.use('/auth', auth.router);\n\n\nmodule.exports = router;\n",
+    "static": true,
+    "longname": "api/server.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 73,
+    "kind": "variable",
+    "name": "bodyParser",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~bodyParser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 74,
+    "kind": "variable",
+    "name": "cookieParser",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~cookieParser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 75,
+    "kind": "variable",
+    "name": "express",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~express",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 76,
+    "kind": "variable",
+    "name": "logger",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~logger",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 77,
+    "kind": "variable",
+    "name": "mongoose",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~mongoose",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 78,
+    "kind": "variable",
+    "name": "auth",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~auth",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 79,
+    "kind": "variable",
+    "name": "report",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~report",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 80,
+    "kind": "variable",
+    "name": "user",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~user",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 81,
+    "kind": "variable",
+    "name": "router",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~router",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 82,
+    "kind": "file",
+    "name": "api/users/user-manager.js",
+    "content": "const userModels = require('./user-models.js');\n\nconst User = userModels.User;\nconst Student = userModels.Student;\nconst Admin = userModels.Admin;\n\n/**\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {Number} id - The user UID.\n */\n\n/**\n * Given User information, create a User.\n * @param {Object} data - The request body data.\n * @param {String} data.role - The user role.\n * @param {String} data.email - The user email address.\n * @param {String} data.password - The user password.\n * @param {CreateUserCallback} next - The callback function to run after this function\n *     finishes.\n */\nconst createUser = (data, next) => {\n  // Ensure the required data is available.\n  if (!data) {\n    next({ err: 'Required parameters not found.' });\n    return;\n  }\n\n  const info = {\n    email: data.email,\n    password: data.password,\n    name: data.name,\n    role: data.role,\n  };\n\n  let user;\n\n  if (data.role === 'student') {\n    // Create a student.\n    info.studentId = data.studentId;\n    user = new Student(info);\n  } else if (data.role === 'admin') {\n    // Create an admin.\n    user = new Admin(info);\n  } else {\n    next({ err: 'Valid role not found.' });\n    return;\n  }\n\n  User.findOne({ email: user.email }, (userErr, existingUser) => {\n    if (userErr) {\n      next(userErr);\n    } else if (existingUser) {\n      next({ err: 'Account with that email address already exists.' });\n    } else {\n      user.save((saveErr, dbUser) => {\n        next(saveErr, (dbUser || {}).id);\n      });\n    }\n  });\n};\n\n/**\n* Callback for {@link modifyUser}\n* @typedef {Object} ModifyUserCallback\n* @param {Object} - The error\n* @param {UserSchema} - The modified user object\n*/\n\n\n /**\n * Updates the user with the passed in values.\n * This method does NOT delete fields\n * @param {string} userUid - The UID of the user to be updated\n * @param {Object} reqData - The request data\n * @param {Object} locals\n * @param {ModifyUserCallback} modifyCallback\n */\nconst modifyUser = (userUid, reqData, locals, modifyCallback) => {\n  const conditions = { _id: userUid };\n  const update = {};\n\n  Object.keys(reqData).forEach((key) => {\n    update[key] = reqData[key];\n  });\n\n  const options = { new: true };\n\n  Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);\n};\n\n/**\n* Callback for {@link deleteUser}\n* @typedef {Object} DeleteUserCallback\n* @param {Object} - error\n*/\n\n\n\n/**\n* Deletes the user from the database.\n* @param {string} userUid - The UID of the user to be updated.\n* @param {Object} locals\n* @param {DeleteUserCallback} deleteCallback\n*/\nconst deleteUser = (userUid, locals, deleteCallback) => {\n  User.findOneAndremove({ _id: userUid }, deleteCallback);\n};\n\n\n/**\n* Callback for {@link getUserById}\n* @typedef {Object} GetUserCallback\n* @param {Object} - error\n* @param {UserSchemas} - Retrieved user\n*/\n\n/**\n* Retrieves the user.\n* @param {string} userUid - The UID of the user to be updated\n* @param {Object} locals\n* @param {GetUserCallback} queryCallback\n*/\nconst getUserById = (userUid, locals, queryCallback) => {\n  User.findById(userUid, (err, results) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n    const user = {\n      uid: results.id,\n      email: results.email,\n      name: results.name,\n      role: results.role,\n    };\n\n    if (user.role === 'student') {\n      user.points = results.points;\n      user.isApproved = results.isApproved;\n    }\n\n    queryCallback(err, user);\n  });\n};\n\n\nmodule.exports = { createUser, modifyUser, deleteUser, getUserById };\n",
+    "static": true,
+    "longname": "api/users/user-manager.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 83,
+    "kind": "variable",
+    "name": "userModels",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~userModels",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 84,
+    "kind": "variable",
+    "name": "User",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~User",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 85,
+    "kind": "variable",
+    "name": "Student",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~Student",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 86,
+    "kind": "variable",
+    "name": "Admin",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~Admin",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 87,
+    "kind": "typedef",
+    "name": "CreateUserCallback",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~CreateUserCallback",
+    "access": null,
+    "description": "Callback for {@link createUser}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "err",
+        "description": "The error."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": "The user UID."
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "CreateUserCallback"
+    }
+  },
+  {
+    "__docId__": 88,
+    "kind": "function",
+    "name": "createUser",
+    "memberof": "api/users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/users/user-manager.js~createUser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": "Given User information, create a User.",
+    "lineNumber": 23,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data",
+        "description": "The request body data."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "String"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.role",
+        "description": "The user role."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "String"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.email",
+        "description": "The user email address."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "String"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "data.password",
+        "description": "The user password."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "CreateUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": "The callback function to run after this function\n    finishes."
+      }
+    ]
+  },
+  {
+    "__docId__": 89,
+    "kind": "typedef",
+    "name": "ModifyUserCallback",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~ModifyUserCallback",
+    "access": null,
+    "description": "Callback for {@link modifyUser}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "The error"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "UserSchema"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "The modified user object"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "ModifyUserCallback"
+    }
+  },
+  {
+    "__docId__": 90,
+    "kind": "function",
+    "name": "modifyUser",
+    "memberof": "api/users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/users/user-manager.js~modifyUser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": "Updates the user with the passed in values.\nThis method does NOT delete fields",
+    "lineNumber": 80,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "userUid",
+        "description": "The UID of the user to be updated"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "reqData",
+        "description": "The request data"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "ModifyUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "modifyCallback",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 91,
+    "kind": "typedef",
+    "name": "DeleteUserCallback",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~DeleteUserCallback",
+    "access": null,
+    "description": "Callback for {@link deleteUser}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "error"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "DeleteUserCallback"
+    }
+  },
+  {
+    "__docId__": 92,
+    "kind": "function",
+    "name": "deleteUser",
+    "memberof": "api/users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/users/user-manager.js~deleteUser",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": "Deletes the user from the database.",
+    "lineNumber": 107,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "userUid",
+        "description": "The UID of the user to be updated."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "DeleteUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "deleteCallback",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 93,
+    "kind": "typedef",
+    "name": "GetUserCallback",
+    "memberof": "api/users/user-manager.js",
+    "static": true,
+    "longname": "api/users/user-manager.js~GetUserCallback",
+    "access": null,
+    "description": "Callback for {@link getUserById}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "error"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "UserSchemas"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "-",
+        "description": "Retrieved user"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "GetUserCallback"
+    }
+  },
+  {
+    "__docId__": 94,
+    "kind": "function",
+    "name": "getUserById",
+    "memberof": "api/users/user-manager.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/users/user-manager.js~getUserById",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-manager.js",
+    "importStyle": null,
+    "description": "Retrieves the user.",
+    "lineNumber": 125,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "userUid",
+        "description": "The UID of the user to be updated"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "locals",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "GetUserCallback"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queryCallback",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 95,
+    "kind": "file",
+    "name": "api/users/user-models.js",
+    "content": "const mongoose = require('mongoose');\nconst bcrypt = require('bcrypt');\n\nconst Schema = mongoose.Schema;\n\nconst options = { discriminatorKey: 'type' };\nconst pointOption = {\n  type: Number,\n  required: true,\n  default: 0,\n};\n\n/**\n* User Object\n* @typedef {Object} UserSchema\n* @param {string} name - Screen name for user\n* @param {string} firstName - DEPRECATED\n* @param {string} lastName - DEPRECATED\n* @param {string} email\n* @param {string} password\n* @param {string} role - ENUM: student, admin\n* @param {boolean} isApproved\n*/\nconst userSchema = new Schema({\n  name: String,\n  firstName: String,\n  lastName: String,\n  email: {\n    type: String,\n    unique: true,\n    required: true,\n  },\n  password: {\n    type: String,\n    required: true,\n  },\n  role: {\n    type: String,\n    enum: ['student', 'admin'],\n    required: true,\n  },\n  isApproved: {\n    type: Boolean,\n    required: true,\n    default: false,\n  },\n}, options);\n\n/**\n*  Updates and saves the user's password\n*/\nuserSchema.pre('save', function pre(next) {\n  const user = this;\n\n  // If the password is not modified, continue saving the user.\n  if (!user.isModified('password')) {\n    next();\n    return;\n  }\n\n  bcrypt.genSalt(Number(process.env.SALT), (saltErr, salt) => {\n    if (saltErr) {\n      next(saltErr);\n      return;\n    }\n\n    bcrypt.hash(user.password, salt, (hashErr, hash) => {\n      user.password = hash;\n      next(hashErr);\n    });\n  });\n});\n\n\n/**\n* Callback for {@link userSchema.methods.comparePassword}\n* @typedef {Object} ComparePasswordNext\n* @param {Object} err - error\n* @param {boolean} isMatch - Whether or not the passwords matched\n*/\n\n/**\n* Helper method to check users password\n* @param {string} password - The password to be compared to the user's password\n* @param {ComparePasswordNext} next\n*/\nuserSchema.methods.comparePassword = function comparePassword(password, next) {\n  bcrypt.compare(password, this.password, (err, isMatch) => {\n    next(err, isMatch);\n  });\n};\n\nconst studentSchema = new Schema({\n  points: {\n    career: pointOption,\n    community: pointOption,\n    firstother: pointOption,\n    firstworkshops: pointOption,\n    mentor: pointOption,\n    other: pointOption,\n    outreach: pointOption,\n    professor: pointOption,\n    staff: pointOption,\n    misc: pointOption,\n  },\n  studentId: {\n    type: String,\n  },\n}, options);\n\nconst adminSchema = new Schema({}, options);\n\nconst User = mongoose.model('User', userSchema);\n\nconst Student = User.discriminator('student', studentSchema);\nconst Admin = User.discriminator('admin', adminSchema);\n\nmodule.exports = { Student, Admin, User };\n",
+    "static": true,
+    "longname": "api/users/user-models.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 96,
+    "kind": "variable",
+    "name": "mongoose",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~mongoose",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 97,
+    "kind": "variable",
+    "name": "bcrypt",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~bcrypt",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 98,
+    "kind": "variable",
+    "name": "Schema",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~Schema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 99,
+    "kind": "variable",
+    "name": "options",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~options",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"discriminatorKey\": string}"
+      ]
+    }
+  },
+  {
+    "__docId__": 100,
+    "kind": "variable",
+    "name": "pointOption",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~pointOption",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"type\": *, \"required\": boolean, \"default\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 101,
+    "kind": "typedef",
+    "name": "UserSchema",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~UserSchema",
+    "access": null,
+    "description": "User Object",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "name",
+        "description": "Screen name for user"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "firstName",
+        "description": "DEPRECATED"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "lastName",
+        "description": "DEPRECATED"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "email",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "password",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "role",
+        "description": "ENUM: student, admin"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "isApproved",
+        "description": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "UserSchema"
+    }
+  },
+  {
+    "__docId__": 102,
+    "kind": "typedef",
+    "name": "ComparePasswordNext",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~ComparePasswordNext",
+    "access": null,
+    "description": "Callback for {@link userSchema.methods.comparePassword}",
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "err",
+        "description": "error"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "boolean"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "isMatch",
+        "description": "Whether or not the passwords matched"
+      }
+    ],
+    "type": {
+      "types": [
+        "Object"
+      ],
+      "optional": false,
+      "name": "ComparePasswordNext"
+    }
+  },
+  {
+    "__docId__": 103,
+    "kind": "function",
+    "name": "comparePassword",
+    "memberof": "api/users/user-models.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "api/users/user-models.js~comparePassword",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": "Helper method to check users password",
+    "lineNumber": 87,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "password",
+        "description": "The password to be compared to the user's password"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "ComparePasswordNext"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "next",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 104,
+    "kind": "variable",
+    "name": "studentSchema",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~studentSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 93,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 105,
+    "kind": "variable",
+    "name": "adminSchema",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~adminSchema",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 111,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Schema"
+      ]
+    }
+  },
+  {
+    "__docId__": 106,
+    "kind": "variable",
+    "name": "User",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~User",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 113,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 107,
+    "kind": "variable",
+    "name": "Student",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~Student",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 115,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 108,
+    "kind": "variable",
+    "name": "Admin",
+    "memberof": "api/users/user-models.js",
+    "static": true,
+    "longname": "api/users/user-models.js~Admin",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-models.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 116,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 109,
+    "kind": "file",
+    "name": "api/users/user-router.js",
+    "content": "const express = require('express');\nconst userManager = require('./user-manager');\nconst authManager = require('../auth/auth-manager');\n\nconst userRouter = express.Router();\n\n/**\n * Route for creating a new user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: POST\n * - Success Code: 201\n *\n * @typedef {function} Route-CreateUser\n * @param {Object} req - Express request object\n * @param {UserSchema} req.body - User to be created\n * @param {Object} res - Express result object\n * @param {string} res.body - UID of the created user if successful, else the\n *                          error message\n * @param {number} res.status - Indicates success or not\n */\nuserRouter.post('/', (req, res) => {\n  userManager.createUser(req.body, (err, uid) => {\n    if (err) {\n      res.status(400).json(err).end();\n    } else {\n      // A User was created.\n      res.status(201).json({ uid }).end();\n    }\n  });\n});\n\n/**\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user ot be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n */\nuserRouter.put('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      userManager.modifyUser(res.locals.uid, req.body, res.locals,\n        (err, user) => {\n          if (err) {\n            res.status(400).json(err).end();\n            return;\n          }\n          res.status(200).json(user).end();\n        });\n    });\n\n/**\n * Route for deleting an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: DELETE\n * - Success Code: 200\n *\n * @typedef {function} Route-DeleteUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] - UID of user to be deleted\n * @param {string}  token - Admin | User to be deleted\n * @param {Object} res - Express result object\n */\nuserRouter.delete('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      userManager.deleteUser(res.locals.uid, res.locals, (err, result) => {\n        if (err) {\n          res.status(400).json(err).end();\n          return;\n        }\n        res.status(200).json(result).end();\n      });\n    });\n\n/**\n * Route for getting an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: GET\n * - Success Code: 200\n *\n * @typedef {function} Route-GetUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] - UID of user to be retrieved\n * @param {string} token - Admin | User being retrieved\n * @param {Object} res - Express result object\n */\nuserRouter.get('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      const uid = res.locals.uid;\n      userManager.getUserById(uid, {}, (err, user) => {\n        if (err) {\n          res.status(400).send(err).end();\n          return;\n        }\n\n        if (!user) {\n          res.status(404).end();\n          return;\n        }\n\n        res.status(200).json(user).end();\n      });\n    });\n\nmodule.exports = { userRouter };\n",
+    "static": true,
+    "longname": "api/users/user-router.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 110,
+    "kind": "variable",
+    "name": "express",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~express",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 111,
+    "kind": "variable",
+    "name": "userManager",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~userManager",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 112,
+    "kind": "variable",
+    "name": "authManager",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~authManager",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 113,
+    "kind": "variable",
+    "name": "userRouter",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~userRouter",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/users/user-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 114,
+    "kind": "typedef",
+    "name": "Route-CreateUser",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~Route-CreateUser",
+    "access": null,
+    "description": "Route for creating a new user\n# API\n- Endpoint: `/api/users`\n- Verb: POST\n- Success Code: 201",
+    "lineNumber": 22,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "UserSchema"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req.body",
+        "description": "User to be created"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.body",
+        "description": "UID of the created user if successful, else the\n                         error message"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.status",
+        "description": "Indicates success or not"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-CreateUser"
+    }
+  },
+  {
+    "__docId__": 115,
+    "kind": "typedef",
+    "name": "Route-ModifyUser",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~Route-ModifyUser",
+    "access": null,
+    "description": "Route for modiying an existing user\n# API\n- Endpoint: `/api/users`\n- Verb: PUT\n- Success Code: 200",
+    "lineNumber": 49,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "req.query.uid",
+        "description": "UID of user ot be modified"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "UserSchema"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req.body",
+        "description": "Updated fields of the user"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "status",
+        "description": "200 on success, 400 if error"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "UserSchema",
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.body",
+        "description": "Modified user | error message"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "token",
+        "description": "Admin | Modified User"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-ModifyUser"
+    }
+  },
+  {
+    "__docId__": 116,
+    "kind": "typedef",
+    "name": "Route-DeleteUser",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~Route-DeleteUser",
+    "access": null,
+    "description": "Route for deleting an existing user\n# API\n- Endpoint: `/api/users`\n- Verb: DELETE\n- Success Code: 200",
+    "lineNumber": 76,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "req.query.uid",
+        "description": "UID of user to be deleted"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "token",
+        "description": "Admin | User to be deleted"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-DeleteUser"
+    }
+  },
+  {
+    "__docId__": 117,
+    "kind": "typedef",
+    "name": "Route-GetUser",
+    "memberof": "api/users/user-router.js",
+    "static": true,
+    "longname": "api/users/user-router.js~Route-GetUser",
+    "access": null,
+    "description": "Route for getting an existing user\n# API\n- Endpoint: `/api/users`\n- Verb: GET\n- Success Code: 200",
+    "lineNumber": 102,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "req.query.uid",
+        "description": "UID of user to be retrieved"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "token",
+        "description": "Admin | User being retrieved"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-GetUser"
+    }
+  },
+  {
+    "__docId__": 119,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 120,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 121,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 122,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 123,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 124,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 125,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 126,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 127,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 128,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 129,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 130,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 131,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 132,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 133,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 134,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 135,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 136,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 137,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 138,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 139,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 140,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 141,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 142,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 143,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 144,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 145,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 146,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 147,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 148,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 149,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 150,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 151,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 152,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 153,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 154,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 155,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 156,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 157,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 158,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 159,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 160,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 161,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 162,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 163,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 164,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 165,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "lineNumber": 193,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 167,
+    "kind": "external",
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 168,
+    "kind": "external",
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 169,
+    "kind": "external",
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 170,
+    "kind": "external",
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 171,
+    "kind": "external",
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 172,
+    "kind": "external",
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 173,
+    "kind": "external",
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 174,
+    "kind": "external",
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 34,
+    "builtinExternal": true
+  }
+]
