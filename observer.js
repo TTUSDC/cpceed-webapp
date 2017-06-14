@@ -1,16 +1,35 @@
 const fs = require('fs');
 const chokidar = require('chokidar');
 const spawn = require('child_process').spawn;
+const ps = require('ps-node');
 
 const bundle = 'build/api.bundle.js';
 let watcher;
 let child;
-let running = false;
+let pid;
+
+function isRunning() {
+  ps.lookup({ pid }, (err, resultList) => {
+    if (err) {
+      console.log('Couldn\'t lookup process');
+    }
+
+    let output;
+
+    if (resultList[0]) {
+      output = true;
+    } else {
+      output = false;
+    }
+
+    return output;
+  });
+}
 
 function start() {
-  if (running === false) {
+  if (!isRunning()) {
     child = spawn('node', [bundle]);
-    running = true;
+    pid = child.pid;
 
     child.stdout.on('data', (data) => {
       console.log(data.toString());
@@ -21,17 +40,14 @@ function start() {
     });
 
     child.on('exit', (code) => {
-      running = false;
-
       console.log(`server exited with code: ${code}`);
     });
   }
 }
 
 function stop() {
-  if (running === true) {
+  if (isRunning()) {
     child.kill('SIGTERM');
-    running = false;
   }
 }
 
