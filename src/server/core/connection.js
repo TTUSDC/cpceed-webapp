@@ -1,14 +1,38 @@
 import axios from 'axios';
 import logger from 'logger/logger';
 
+/**
+ * The connection information for the server hosting the API.
+ *
+ * @param {string} baseURL - Base URL including the /api endpoint
+ * @param {number} timeout - Time in ms that each call should take
+ */
 const instance = axios.create({
   baseURL: 'http://localhost:3000/api', // TODO(asclines): Move this to env
   timeout: 5000,
 });
+
 instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-export const post = (endpoint, data, onSuccess, onError) => {
-  instance.post(endpoint, data)
+/**
+ * Promise callback for when API call finishes
+ *
+ * @typedef {function} OnApiCallFinished
+ * @param {Object} - Response from API
+ * @param {number} - Response status code
+ */
+
+/**
+ * Generic method to POST to API
+ *
+ * @param {string} endpoint - URL after /api
+ * @param {Object} data - Data that goes into the body
+ * @param {Object} params - Data that goes into the query
+ * @param {OnApiCallFinished} onSuccess - Called with response body
+ * @param {OnApiCallFinished} onError - Called with response error
+ */
+export const post = (endpoint, data, params, onSuccess, onError) => {
+  instance.post(endpoint, params, data)
     .then((res) => {
       onSuccess(res.data);
     })
@@ -18,9 +42,18 @@ export const post = (endpoint, data, onSuccess, onError) => {
     });
 };
 
-// Because delete is a non fun word to use
-export const del = (endpoint, data, onSuccess, onError) => {
-  instance.delete(endpoint, data)
+/**
+ * Generic method to DELETE to API
+ * This method is `del` instead of `delete` to make Node.JS happy
+ *
+ * @param {string} endpoint - URL after /api
+ * @param {Object} data - Data that goes into the body
+ * @param {Object} params - Data that goes into the query
+ * @param {OnApiCallFinished} onSuccess - Called with response body
+ * @param {OnApiCallFinisihed} onError - Called with response err
+ */
+export const del = (endpoint, data, params, onSuccess, onError) => {
+  instance.delete(endpoint, params, data)
     .then((res) => {
       onSuccess(res);
     })
