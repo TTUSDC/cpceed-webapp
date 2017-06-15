@@ -93,7 +93,6 @@ export const del = (endpoint, data, params, onSuccess, onError) => {
 
 /**
  * Generic method to PUT to API
- * This method is `del` instead of `delete` to make Node.JS happy
  *
  * @param {string} endpoint - URL after /api
  * @param {Object} data - Data that goes into the body
@@ -114,5 +113,24 @@ export const put = (endpoint, data, params, onSuccess, onError) => {
   .catch((err) => { errorHandler(err, onError); });
 };
 
+/**
+ * Generic method to GET to API
+ *
+ * @param {string} endpoint - URL after /api
+ * @param {Object} data - Data that goes into the body
+ * @param {Object} params - Data that goes into the query
+ * @param {OnApiCallFinished} onSuccess - Called with response body
+ * @param {OnApiCallFinisihed} onError - Called with response err
+ */
+export const get = (endpoint, data, params, onSuccess, onError) => {
+  const config = {
+    data,
+    params,
+  };
+
+  instance.get(endpoint, config).then(onSuccess).catch((err) => {
+    errorHandler(err, onError);
+  });
+};
 
 export default instance;

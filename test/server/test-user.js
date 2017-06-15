@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 // import logger from 'logger/logger';
-import { createUser, deleteUser, modifyUser } from 'server/user';
+import { createUser, deleteUser, modifyUser, getUser } from 'server/user';
 import * as connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 import { user38257001 as testUser } from './core/users';
@@ -18,6 +18,7 @@ export default describe('Server API: User', () => {
     sandbox.stub(connection, 'post');
     sandbox.stub(connection, 'del');
     sandbox.stub(connection, 'put');
+    sandbox.stub(connection, 'get');
     sandbox.stub(tokenManager, 'getToken').callsFake(() => testToken.token);
     sandbox.spy(tokenManager, 'decode');
   });
@@ -79,6 +80,25 @@ export default describe('Server API: User', () => {
         });
       modifyUser(fieldsToUpdate, testUser.uid).then(() => {
         expect(connection.put).to.have.been.calledOnce;
+        done();
+      }).catch(done);
+    });
+  });
+
+  describe('#getUser', () => {
+    it('should return the requested user with passed in UID', (done) => {
+      connection.get.callsFake(
+        (endpoint, data, params, onSuccess) => {
+          expect(endpoint).to.equal('/users');
+          expect(params).to.not.be.null;
+          expect(params.uid).to.equal(testUser.uid);
+          expect(tokenManager.getToken).to.have.been.calledOnce;
+          expect(tokenManager.decode).to.have.not.been.called;
+          onSuccess(testUser);
+        });
+      getUser(testUser.uid).then((userData) => {
+        expect(connection.get).to.have.been.calledOnce;
+        expect(userData).to.equal(testUser);
         done();
       }).catch(done);
     });
