@@ -88,10 +88,8 @@ const userRouter = express.Router();
  * @param {number} res.status - Indicates success or not
  */
 userRouter.post(&apos;/&apos;, (req, res) =&gt; {
-  console.log(req.body);
   userManager.createUser(req.body, (err, uid) =&gt; {
     if (err) {
-      console.error(err);
       res.status(400).json(err).end();
     } else {
       // A User was created.
@@ -109,7 +107,7 @@ userRouter.post(&apos;/&apos;, (req, res) =&gt; {
  *
  * @typedef {function} Route-ModifyUser
  * @param {Object} req - Express request object
- * @param {string} [req.query.uid] UID of user ot be modified
+ * @param {string} [req.query.uid] UID of user to be modified
  * @param {UserSchema} req.body - Updated fields of the user
  * @param {Object} res - Express result object
  * @param {number} status - 200 on success, 400 if error
