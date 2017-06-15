@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">CPCEED API Document</title>
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">api/events/event-router.js | CPCEED API Document</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -71,12 +71,135 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://travis-ci.org/TTUSDC/CPCEEDWebApp"><img src="https://travis-ci.org/TTUSDC/CPCEEDWebApp.svg?branch=master" alt="Build Status"></a></p>
-<h1 id="cpceed-web-app">CPCEED Web App</h1>
-<p>This is a time logging app for the CPCEED program at Texas Tech University.</p>
-<h2 id="get-involved">Get Involved</h2>
-<p>Check out <code>CONTRIBUTING.md</code> in the <code>.github</code> folder of this project to learn about how to get started.</p>
-</div>
+<div class="content" data-ice="content"><h1 data-ice="title">api/events/event-router.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const express = require(&apos;express&apos;);
+const eventManager = require(&apos;./event-manager&apos;);
+
+const eventRouter = express.Router();
+
+/**
+ * Route for creating a new event
+ * # API
+ * - Endpoint: `/api/events`
+ * - Verb: POST
+ *
+ * @typedef {function} Route-CreateEvent
+ * @param {Object} req - Express request object
+ * @param {EventSchema} req.body - The event to be created
+ * @param {Object} res - Express result object
+ * @param {string} res.body - UID of created event or error message
+ * @param {number} res.status - 201 on success
+ */
+eventRouter.post(&apos;/&apos;, (req, res) =&gt; {
+  eventManager.createEvent(req.body, {}, (err, event) =&gt; {
+    if (err) {
+      res.status(400).json(err).end();
+      return;
+    }
+    res.status(201).json({ uid: event.id }).end();
+  });
+});
+
+/**
+ * Route for modifying an existing event
+ * # API
+ * - Endpoint: `/api/events`
+ * - Verb: PUT
+ *
+ * @typedef {function} Route-ModifyEvent
+ * @param {Object} req - Express request object
+ * @param {string} req.query.uid - UID of event to be updated
+ * @param {EventSchema} req.body - Updated fields of the event
+ * @param {Object} res - Express result object
+ * @param {EventSchema|string} res.body - Modified event | error message
+ * @param {number} res.status - 200 on success
+ * @param {string} token - Admin or creator of event
+ */
+eventRouter.put(&apos;/&apos;, (req, res) =&gt; {
+  eventManager.modifyEvent(req.query.uid, req.body, res.locals,
+    (err, eventData) =&gt; {
+      if (err) {
+        res.status(400).json(err).end();
+        return;
+      }
+      res.status(200).json(eventData).end();
+    });
+});
+
+/**
+ * Route for deleting an existing event
+ * # API
+ * - Endpoint: `/api/events`
+ * - Verb: DELETE
+ *
+ * @typedef {function} Route-DeleteEvent
+ * @param {Object} req - Express request object
+ * @param {string} req.query.uid - UID of event to be deleted
+ * @param {string} token - Admin or creator of event
+ * @param {Object} res - Express result object
+ * @param {number} res.status - 200 on success
+ */
+eventRouter.delete(&apos;/&apos;, (req, res) =&gt; {
+  eventManager.deleteEvent(req.query.uid, res.locals, (err, result) =&gt; {
+    if (err) {
+      res.status(400).json(err).end();
+      return;
+    }
+
+    res.status(200).json(result).end();
+  });
+});
+
+/**
+ * Route for retrieving a single, existing event by its UID
+ * # API
+ * - Endpoint: `/api/events`
+ * - Verb: GET
+ *
+ * @typedef {function} Route-GetEventById
+ * @param {Object} req - Express request object
+ * @param {string} req.query.uid - UID of event to be retrieved
+ * @param {string} token
+ * @param {Object} res - Express result object
+ * @param {number} res.status - 200 on success
+ */
+eventRouter.get(&apos;/&apos;, (req, res) =&gt; {
+  eventManager.getEventById(req.query.uid, {},
+    (err, event) =&gt; {
+      if (err) {
+        res.status(400).json(err).end();
+        return;
+      }
+      res.status(200).json(event).end();
+    });
+});
+
+/**
+ * Route for retrieving all events
+ * # API
+ * - Endpoint: `/api/events/all`
+ * - Verb: GET
+ *
+ * @typedef {function} Route-GetAllEvents
+ * @param {Object} req - Express request object
+ * @param {string} token
+ * @param {Object} res - Express result object
+ * @param {number} res.status - 200 on success
+ */
+eventRouter.get(&apos;/all&apos;, (req, res) =&gt; {
+  eventManager.getAllEvents(req.body, {}, (err, results) =&gt; {
+    if (err) {
+      res.status(400).json(err).end();
+      return;
+    }
+
+    res.status(200).json(results).end();
+  });
+});
+
+module.exports = { eventRouter };
+</code></pre>
+
 </div>
 
 <footer class="footer">

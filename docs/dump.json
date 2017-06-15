@@ -856,7 +856,7 @@
     "__docId__": 30,
     "kind": "file",
     "name": "api/events/event-manager.js",
-    "content": "const eventModels = require('./event-models');\n\nconst Event = eventModels.Event;\n\n/**\n * Callback used by event CRUD methods that returns a single event.\n * @callback eventCallback\n * @param {Error} err - An error that occurred during the operation. Null if no\n *    errors occurred.\n * @param {Event} event - The event operated on.\n */\n\n/**\n * Creates a event using fields from the request object then calls back when\n * the database save finishes.\n * @param {Object} reqData - The request object containing the event data to\n *   be created.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {eventCallback} createCallback - Called once the operation finishes.\n */\nconst createEvent = (reqData, locals, createCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n\n  const event = new Event({\n    creator: reqData.creator,\n    category: reqData.category,\n    datetime: reqData.datetime,\n    location: reqData.location,\n    title: reqData.title,\n    description: reqData.description,\n  });\n  event.save(createCallback);\n};\n\n/**\n * Modifies a specific event with the fields in the request object then calls\n * back when the database update finishes.\n * @param {string} event Uid - The UID corresponding to the event to be\n *   modified.\n * @param {Object} reqData - The request object containing the new event fields.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {eventCallback} modifyCallback - Called once the operation finishes.\n */\nconst modifyEvent = (eventUid, reqData, locals, modifyCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n  const conditions = { _id: eventUid };\n  const update = {\n    $set: {\n      creator: reqData.creator,\n      category: reqData.category,\n      datetime: reqData.datetime,\n      location: reqData.location,\n      title: reqData.title,\n      description: reqData.description,\n    },\n  };\n\n  const options = {\n    new: true,\n  };\n  Event.findOneAndUpdate(conditions, update, options, modifyCallback);\n};\n\n\n/**\n * Deletes a specific event and calls back once database deletion finishes.\n * @param {string} eventUid - The UID of the event to be deleted.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {eventCallback} deleteCallback - Called once the operation is done.\n */\nconst deleteEvent = (eventUid, locals, deleteCallback) => {\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n\n  // TODO(asclines): Look into better error handling.\n\n  Event.findByIdAndRemove(eventUid, deleteCallback);\n};\n\n/**\n * Finds a specific event and calls back once find operation finishes.\n * @param {string} eventUid - The UID of the event to be found.\n * @param {Object} locals - An object containing the current request's\n *   local variables.\n * @param {eventCallback} getCallback - Called once the operation is done.\n */\nconst getEventById = (eventUid, locals, getCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // have permisssion to get this event.\n\n  Event.findById(eventUid, getCallback);\n};\n\nconst getAllEvents = (reqData, locals, getAllCallback) => {\n // TODO(asclines): Add checks for required data and expection handling\n\n//   // TODO(asclines): Check the UID of the logged in user and make sure they\n//   // have permission to call this method.\n\n  const conditions = locals.conditions || {};\n  Event.find(conditions, (err, events) => {\n    if (err) {\n      getAllCallback(err);\n      return;\n    }\n\n    const results = {};\n    events.forEach((event) => {\n      results[event.id] = event;\n    });\n\n    getAllCallback(err, results);\n  });\n};\n\n\nmodule.exports = {\n  createEvent,\n  modifyEvent,\n  deleteEvent,\n  getEventById,\n  getAllEvents,\n};\n",
+    "content": "const eventModels = require('./event-models');\n\nconst Event = eventModels.Event;\n\n/**\n * Callback used by event CRUD methods that returns a single event.\n * @typdef {function} EventCallback\n * @param {Error} err - An error that occurred during the operation. Null if no\n *    errors occurred.\n * @param {Event} event - The event operated on.\n */\n\n/**\n * Creates a event using fields from the request object then calls back when\n * the database save finishes.\n * @param {Object} reqData - The request object containing the event data to\n *   be created.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {EventCallback} createCallback - Called once the operation finishes.\n */\nconst createEvent = (reqData, locals, createCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n\n  const event = new Event({\n    creator: reqData.creator,\n    category: reqData.category,\n    datetime: reqData.datetime,\n    location: reqData.location,\n    title: reqData.title,\n    description: reqData.description,\n  });\n  event.save(createCallback);\n};\n\n/**\n * Modifies a specific event with the fields in the request object then calls\n * back when the database update finishes.\n * @param {string} event Uid - The UID corresponding to the event to be\n *   modified.\n * @param {Object} reqData - The request object containing the new event fields.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {EventCallback} modifyCallback - Called once the operation finishes.\n */\nconst modifyEvent = (eventUid, reqData, locals, modifyCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n  const conditions = { _id: eventUid };\n  const update = {};\n\n  Object.keys(reqData).forEach((key) => {\n    update[key] = reqData[key];\n  });\n\n  const options = { new: true };\n  Event.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);\n};\n\n\n/**\n * Deletes a specific event and calls back once database deletion finishes.\n * @param {string} eventUid - The UID of the event to be deleted.\n * @param {Object} locals - An object containg the current request's local\n *   variables.\n * @param {EventCallback} deleteCallback - Called once the operation is done.\n */\nconst deleteEvent = (eventUid, locals, deleteCallback) => {\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // are either the creator of the event or an admin.\n\n  // TODO(asclines): Look into better error handling.\n\n  Event.findByIdAndRemove(eventUid, deleteCallback);\n};\n\n/**\n * Finds a specific event and calls back once find operation finishes.\n * @param {string} eventUid - The UID of the event to be found.\n * @param {Object} locals - An object containing the current request's\n *   local variables.\n * @param {EventCallback} getCallback - Called once the operation is done.\n */\nconst getEventById = (eventUid, locals, getCallback) => {\n  // TODO(asclines): Add checks for required data and expection handling\n\n  // TODO(asclines): Check the UID of the logged in user and make sure they\n  // have permisssion to get this event.\n\n  Event.findById(eventUid, (err, results) => {\n    const eventData = {\n      creator: results.creator,\n      category: results.category,\n      datetime: results.datetime,\n      location: results.location,\n      title: results.title,\n      description: results.description,\n    };\n    getCallback(err, eventData);\n  });\n};\n\nconst getAllEvents = (reqData, locals, getAllCallback) => {\n // TODO(asclines): Add checks for required data and expection handling\n\n//   // TODO(asclines): Check the UID of the logged in user and make sure they\n//   // have permission to call this method.\n\n  const conditions = locals.conditions || {};\n  Event.find(conditions, (err, events) => {\n    if (err) {\n      getAllCallback(err);\n      return;\n    }\n\n    const results = {};\n    events.forEach((event) => {\n      results[event.id] = event;\n    });\n\n    getAllCallback(err, results);\n  });\n};\n\n\nmodule.exports = {\n  createEvent,\n  modifyEvent,\n  deleteEvent,\n  getEventById,\n  getAllEvents,\n};\n",
     "static": true,
     "longname": "api/events/event-manager.js",
     "access": null,
@@ -954,7 +954,7 @@
       {
         "nullable": null,
         "types": [
-          "eventCallback"
+          "EventCallback"
         ],
         "spread": false,
         "optional": false,
@@ -1012,7 +1012,7 @@
       {
         "nullable": null,
         "types": [
-          "eventCallback"
+          "EventCallback"
         ],
         "spread": false,
         "optional": false,
@@ -1035,7 +1035,7 @@
     "importPath": "cpceed-web-app/api/events/event-manager.js",
     "importStyle": null,
     "description": "Deletes a specific event and calls back once database deletion finishes.",
-    "lineNumber": 80,
+    "lineNumber": 73,
     "params": [
       {
         "nullable": null,
@@ -1060,7 +1060,7 @@
       {
         "nullable": null,
         "types": [
-          "eventCallback"
+          "EventCallback"
         ],
         "spread": false,
         "optional": false,
@@ -1083,7 +1083,7 @@
     "importPath": "cpceed-web-app/api/events/event-manager.js",
     "importStyle": null,
     "description": "Finds a specific event and calls back once find operation finishes.",
-    "lineNumber": 96,
+    "lineNumber": 89,
     "params": [
       {
         "nullable": null,
@@ -1108,7 +1108,7 @@
       {
         "nullable": null,
         "types": [
-          "eventCallback"
+          "EventCallback"
         ],
         "spread": false,
         "optional": false,
@@ -1131,7 +1131,7 @@
     "importPath": "cpceed-web-app/api/events/event-manager.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 105,
+    "lineNumber": 108,
     "undocument": true,
     "unknown": [
       {
@@ -1164,7 +1164,7 @@
     "__docId__": 38,
     "kind": "file",
     "name": "api/events/event-models.js",
-    "content": "const mongoose = require('mongoose');\n\nconst Schema = mongoose.Schema;\n\nconst options = {\n  timestamps: true,\n};\n\nconst eventSchema = new Schema({\n  creator: String,\n  category: String,\n  datetime: Date,\n  location: String,\n  title: String,\n  description: String,\n}, options);\n\nconst Event = mongoose.model('Event', eventSchema);\n\nmodule.exports = { Event };\n",
+    "content": "const mongoose = require('mongoose');\n\nconst Schema = mongoose.Schema;\n\nconst options = {\n  timestamps: true,\n};\n\n/**\n * Event Object\n * @typedef {Object} EventSchema\n * @param {string} creator - UID of event creator\n * @param {string} category - Category of the event\n * @param {Date} datetime - Date & time of the event\n * @param {string} location - Location of event\n * @param {string} title - Title of the event\n * @param {string} description - Description of the event\n */\nconst eventSchema = new Schema({\n  creator: String,\n  category: String,\n  datetime: Date,\n  location: String,\n  title: String,\n  description: String,\n}, options);\n\nconst Event = mongoose.model('Event', eventSchema);\n\nmodule.exports = { Event };\n",
     "static": true,
     "longname": "api/events/event-models.js",
     "access": null,
@@ -1251,28 +1251,82 @@
   },
   {
     "__docId__": 42,
-    "kind": "variable",
-    "name": "eventSchema",
+    "kind": "typedef",
+    "name": "EventSchema",
     "memberof": "api/events/event-models.js",
     "static": true,
-    "longname": "api/events/event-models.js~eventSchema",
+    "longname": "api/events/event-models.js~EventSchema",
     "access": null,
-    "export": false,
-    "importPath": "cpceed-web-app/api/events/event-models.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 9,
-    "undocument": true,
-    "unknown": [
+    "description": "Event Object",
+    "lineNumber": 19,
+    "params": [
       {
-        "tagName": "@_undocument",
-        "tagValue": ""
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "creator",
+        "description": "UID of event creator"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "category",
+        "description": "Category of the event"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Date"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "datetime",
+        "description": "Date & time of the event"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "location",
+        "description": "Location of event"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "title",
+        "description": "Title of the event"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "description",
+        "description": "Description of the event"
       }
     ],
     "type": {
       "types": [
-        "Schema"
-      ]
+        "Object"
+      ],
+      "optional": false,
+      "name": "EventSchema"
     }
   },
   {
@@ -1287,7 +1341,7 @@
     "importPath": "cpceed-web-app/api/events/event-models.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 28,
     "undocument": true,
     "unknown": [
       {
@@ -1304,6 +1358,456 @@
   {
     "__docId__": 44,
     "kind": "file",
+    "name": "api/events/event-router.js",
+    "content": "const express = require('express');\nconst eventManager = require('./event-manager');\n\nconst eventRouter = express.Router();\n\n/**\n * Route for creating a new event\n * # API\n * - Endpoint: `/api/events`\n * - Verb: POST\n *\n * @typedef {function} Route-CreateEvent\n * @param {Object} req - Express request object\n * @param {EventSchema} req.body - The event to be created\n * @param {Object} res - Express result object\n * @param {string} res.body - UID of created event or error message\n * @param {number} res.status - 201 on success\n */\neventRouter.post('/', (req, res) => {\n  eventManager.createEvent(req.body, {}, (err, event) => {\n    if (err) {\n      res.status(400).json(err).end();\n      return;\n    }\n    res.status(201).json({ uid: event.id }).end();\n  });\n});\n\n/**\n * Route for modifying an existing event\n * # API\n * - Endpoint: `/api/events`\n * - Verb: PUT\n *\n * @typedef {function} Route-ModifyEvent\n * @param {Object} req - Express request object\n * @param {string} req.query.uid - UID of event to be updated\n * @param {EventSchema} req.body - Updated fields of the event\n * @param {Object} res - Express result object\n * @param {EventSchema|string} res.body - Modified event | error message\n * @param {number} res.status - 200 on success\n * @param {string} token - Admin or creator of event\n */\neventRouter.put('/', (req, res) => {\n  eventManager.modifyEvent(req.query.uid, req.body, res.locals,\n    (err, eventData) => {\n      if (err) {\n        res.status(400).json(err).end();\n        return;\n      }\n      res.status(200).json(eventData).end();\n    });\n});\n\n/**\n * Route for deleting an existing event\n * # API\n * - Endpoint: `/api/events`\n * - Verb: DELETE\n *\n * @typedef {function} Route-DeleteEvent\n * @param {Object} req - Express request object\n * @param {string} req.query.uid - UID of event to be deleted\n * @param {string} token - Admin or creator of event\n * @param {Object} res - Express result object\n * @param {number} res.status - 200 on success\n */\neventRouter.delete('/', (req, res) => {\n  eventManager.deleteEvent(req.query.uid, res.locals, (err, result) => {\n    if (err) {\n      res.status(400).json(err).end();\n      return;\n    }\n\n    res.status(200).json(result).end();\n  });\n});\n\n/**\n * Route for retrieving a single, existing event by its UID\n * # API\n * - Endpoint: `/api/events`\n * - Verb: GET\n *\n * @typedef {function} Route-GetEventById\n * @param {Object} req - Express request object\n * @param {string} req.query.uid - UID of event to be retrieved\n * @param {string} token\n * @param {Object} res - Express result object\n * @param {number} res.status - 200 on success\n */\neventRouter.get('/', (req, res) => {\n  eventManager.getEventById(req.query.uid, {},\n    (err, event) => {\n      if (err) {\n        res.status(400).json(err).end();\n        return;\n      }\n      res.status(200).json(event).end();\n    });\n});\n\n/**\n * Route for retrieving all events\n * # API\n * - Endpoint: `/api/events/all`\n * - Verb: GET\n *\n * @typedef {function} Route-GetAllEvents\n * @param {Object} req - Express request object\n * @param {string} token\n * @param {Object} res - Express result object\n * @param {number} res.status - 200 on success\n */\neventRouter.get('/all', (req, res) => {\n  eventManager.getAllEvents(req.body, {}, (err, results) => {\n    if (err) {\n      res.status(400).json(err).end();\n      return;\n    }\n\n    res.status(200).json(results).end();\n  });\n});\n\nmodule.exports = { eventRouter };\n",
+    "static": true,
+    "longname": "api/events/event-router.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 45,
+    "kind": "variable",
+    "name": "express",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~express",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 46,
+    "kind": "variable",
+    "name": "eventManager",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~eventManager",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 47,
+    "kind": "variable",
+    "name": "eventRouter",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~eventRouter",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/events/event-router.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 48,
+    "kind": "typedef",
+    "name": "Route-CreateEvent",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~Route-CreateEvent",
+    "access": null,
+    "description": "Route for creating a new event\n# API\n- Endpoint: `/api/events`\n- Verb: POST",
+    "lineNumber": 19,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "EventSchema"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req.body",
+        "description": "The event to be created"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.body",
+        "description": "UID of created event or error message"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.status",
+        "description": "201 on success"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-CreateEvent"
+    }
+  },
+  {
+    "__docId__": 49,
+    "kind": "typedef",
+    "name": "Route-ModifyEvent",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~Route-ModifyEvent",
+    "access": null,
+    "description": "Route for modifying an existing event\n# API\n- Endpoint: `/api/events`\n- Verb: PUT",
+    "lineNumber": 44,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req.query.uid",
+        "description": "UID of event to be updated"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "EventSchema"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req.body",
+        "description": "Updated fields of the event"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "EventSchema",
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.body",
+        "description": "Modified event | error message"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.status",
+        "description": "200 on success"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "token",
+        "description": "Admin or creator of event"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-ModifyEvent"
+    }
+  },
+  {
+    "__docId__": 50,
+    "kind": "typedef",
+    "name": "Route-DeleteEvent",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~Route-DeleteEvent",
+    "access": null,
+    "description": "Route for deleting an existing event\n# API\n- Endpoint: `/api/events`\n- Verb: DELETE",
+    "lineNumber": 68,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req.query.uid",
+        "description": "UID of event to be deleted"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "token",
+        "description": "Admin or creator of event"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.status",
+        "description": "200 on success"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-DeleteEvent"
+    }
+  },
+  {
+    "__docId__": 51,
+    "kind": "typedef",
+    "name": "Route-GetEventById",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~Route-GetEventById",
+    "access": null,
+    "description": "Route for retrieving a single, existing event by its UID\n# API\n- Endpoint: `/api/events`\n- Verb: GET",
+    "lineNumber": 92,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req.query.uid",
+        "description": "UID of event to be retrieved"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "token",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.status",
+        "description": "200 on success"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-GetEventById"
+    }
+  },
+  {
+    "__docId__": 52,
+    "kind": "typedef",
+    "name": "Route-GetAllEvents",
+    "memberof": "api/events/event-router.js",
+    "static": true,
+    "longname": "api/events/event-router.js~Route-GetAllEvents",
+    "access": null,
+    "description": "Route for retrieving all events\n# API\n- Endpoint: `/api/events/all`\n- Verb: GET",
+    "lineNumber": 115,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "req",
+        "description": "Express request object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "token",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res",
+        "description": "Express result object"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "res.status",
+        "description": "200 on success"
+      }
+    ],
+    "type": {
+      "types": [
+        "function"
+      ],
+      "optional": false,
+      "name": "Route-GetAllEvents"
+    }
+  },
+  {
+    "__docId__": 53,
+    "kind": "file",
     "name": "api/objects/response.js",
     "content": "const ResponseObject = (status, object) => {\n  this.status = status;\n  this.object = object;\n};\n\nmodule.exports = { ResponseObject };\n",
     "static": true,
@@ -1313,7 +1817,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 45,
+    "__docId__": 54,
     "kind": "function",
     "name": "ResponseObject",
     "memberof": "api/objects/response.js",
@@ -1350,7 +1854,7 @@
     ]
   },
   {
-    "__docId__": 46,
+    "__docId__": 55,
     "kind": "file",
     "name": "api/reports/report-manager.js",
     "content": "var reportModels = require('./report-models');\nvar newIfPresent = require('../core/utils').newIfPresent;\nvar Report = reportModels.Report;\nvar EventReport = reportModels.EventReport;\nvar OtherReport = reportModels.OtherReport;\n\n/**\n * Callback used by report CRUD methods that return only one report.\n * @callback reportCallback\n * @param {Error} err - An error that occurred during the operation.  Null if no\n *     errors occurred.\n * @param {Report} report - The report operated on.\n */\n\n/**\n * Creates a report with the fields in the request object, and calls a callback\n * when the database save finishes.\n * @param {Object} reqData - The request object representing the report to be\n *     created.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} createCallback - Called once the operation finishes.\n */\nvar createReport = (reqData, locals, createCallback) => {\n  // TODO(jmtaber129): Check that the student UID matches the requesting user,\n  // or the requesting user is an admin.\n  var report;\n  if (reqData.type == 'event') {\n    report = new EventReport({\n      approvalStatus: false,\n      student: reqData.student,\n      event: reqData.event,\n    });\n  } else if (reqData.type == 'other') {\n    report = new OtherReport({\n      approvalStatus: false,\n      student: reqData.student,\n      category: reqData.category,\n      datetime: reqData.datetime,\n      location: reqData.location,\n      title: reqData.title,\n      description: reqData.description,\n    });\n  } else {\n    // TODO(jmtaber129): Better error handling for invalid report types.\n    createCallback({message: \"Invalid report type.\"});\n    return;\n  }\n\n  report.save(createCallback);\n};\n\n/**\n * Modifies a specific report according to the fields in the request object, and\n * calls a callback when the database save finishes.\n * @param {string} reportUid - The UID corresponding to the report to be\n *     modified.\n * @param {Object} reqData - The request object containing the fields to be\n *     modified.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} modifyCallback - Called once the operation finishes.\n */\nvar modifyReport = (reportUid, reqData, locals, modifyCallback) => {\n  Report.findById(reportUid, (err, report) => {\n    if (err) {\n      modifyCallback(err);\n      return;\n    }\n\n    // If the report's student UID does not match the user UID, and the user is\n    // not an admin, the report should not be updated.\n    // TODO(jmtaber129): Check report's student UID and user UID, and add error\n    // handling.\n\n    // Update fields by checking if the field in the request is defined and\n    // non-null, then setting the document field to the request field if it is.\n\n    // Generic fields.\n    report.approvalStatus =\n        newIfPresent(reqData.approvalStatus, report.approvalStatus);\n    report.student = newIfPresent(reqData.student, report.student);\n\n    if (report.type == EventReport.modelName) {\n      // Fields specific to event reports.\n      report.event = newIfPresent(reqData.event, report.event);\n\n    } else if (report.type == OtherReport.modelName) {\n      // Fields specific to other reports.\n      report.category = newIfPresent(reqData.category, report.category);\n      report.datetime = newIfPresent(reqData.datetime, report.datetime);\n      report.location = newIfPresent(reqData.location, report.location);\n      report.title = newIfPresent(reqData.title, report.title);\n      report.description =\n          newIfPresent(reqData.description, report.description);\n    }\n\n    report.save(modifyCallback);\n  });\n};\n\n/**\n * Deletes a specific report, and calls a callback once the database deletion\n * finishes.\n * @param {string} reportUid - The UID corresponding to the report to be\n *     deleted.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} deleteCallback - Called once the operation finishes.\n */\nvar deleteReport = (reportUid, locals, deleteCallback) => {\n  Report.findById(reportUid, (err, report) => {\n    if (err) {\n      deleteCallback(err);\n      return;\n    }\n\n    if (!report) {\n      // TODO(jmtaber129): Better error handling when report can't be found.\n      deleteCallback({message: 'Report not found.'});\n      return;\n    }\n\n    // If the report's student UID does not match the user UID, and the user is\n    // not an admin, 'report' should not be deleted.\n    // TODO(jmtaber129): Check report's student UID and user UID, and add error\n    // handling.\n\n    report.remove(deleteCallback);\n  });\n};\n\n/**\n * Finds a specific report, and calls a callback once the report is found.\n * @param {string} reportUid - The UID corresponding to the report to be found.\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {reportCallback} queryCallback - Called once the operation finishes.\n */\nvar getReportById = (reportUid, locals, queryCallback) => {\n  Report.findById(reportUid, (err, report) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n\n    // If the report's student UID does not match the user UID, and the user is\n    // not an admin, 'report' should not be returned.\n    // TODO(jmtaber129): Check report's student UID and user UID, and add error\n    // handling.\n\n    queryCallback(err, report);\n  });\n};\n\n/**\n * Callback used by report CRUD methods that return multiple reports.\n * @callback multipleReportsCallback\n * @param {Error} err - An error that occurred during the operation.  Null if no\n *     errors occurred.\n * @param {Object.<string, Report>} reports - An object of reports with their\n *     UIDs as keys.\n */\n\n/**\n * Finds all reports, and calls a callback once all reports are found.\n * @param {Object} reqData - An object containing additional search parameters\n *     (not yet implemented).\n * @param {Object} locals - An object containing the current request's local\n *     variables.\n * @param {multipleReportsCallback} queryCallback - Called once the operation\n *     finishes.\n */\nvar getAllReports = (reqData, locals, queryCallback) => {\n  conditions = {};\n\n  // If the user is not an admin, limit the results to reports with the user's\n  // UID.  If the user is not an admin, and one of the query parameters is a\n  // student UID other than their own, handle it as an error.\n  // TODO(jmtaber129): Set conditions.student to user UID for non-admins.\n  // TODO(jmtaber129): Add error handling for requesting reports with student\n  // UIDs other than the UID of a non-admin user.\n\n  // TODO(jmtaber129): Set additional conditions once query parameters are\n  // accepted in the request object.\n\n  // Both report types are in the same collection, and querying a model queries\n  // the entire collection, so querying one report model will return results for\n  // both report types.\n  Report.find(conditions, (err, reports) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n\n    returnObject = {};\n\n    reports.forEach((report) => {\n      returnObject[report.id] = report;\n\n      // TODO(jmtaber129): Add point value to report in 'returnObject'.\n    });\n\n    queryCallback(err, returnObject);\n  });\n\n};\n\nmodule.exports = {createReport, modifyReport, deleteReport, getReportById,\n                  getAllReports};\n",
@@ -1361,7 +1865,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 47,
+    "__docId__": 56,
     "kind": "variable",
     "name": "reportModels",
     "memberof": "api/reports/report-manager.js",
@@ -1387,7 +1891,7 @@
     }
   },
   {
-    "__docId__": 48,
+    "__docId__": 57,
     "kind": "variable",
     "name": "newIfPresent",
     "memberof": "api/reports/report-manager.js",
@@ -1413,7 +1917,7 @@
     }
   },
   {
-    "__docId__": 49,
+    "__docId__": 58,
     "kind": "variable",
     "name": "Report",
     "memberof": "api/reports/report-manager.js",
@@ -1439,7 +1943,7 @@
     }
   },
   {
-    "__docId__": 50,
+    "__docId__": 59,
     "kind": "variable",
     "name": "EventReport",
     "memberof": "api/reports/report-manager.js",
@@ -1465,7 +1969,7 @@
     }
   },
   {
-    "__docId__": 51,
+    "__docId__": 60,
     "kind": "variable",
     "name": "OtherReport",
     "memberof": "api/reports/report-manager.js",
@@ -1491,7 +1995,7 @@
     }
   },
   {
-    "__docId__": 52,
+    "__docId__": 61,
     "kind": "function",
     "name": "createReport",
     "memberof": "api/reports/report-manager.js",
@@ -1539,7 +2043,7 @@
     ]
   },
   {
-    "__docId__": 53,
+    "__docId__": 62,
     "kind": "function",
     "name": "modifyReport",
     "memberof": "api/reports/report-manager.js",
@@ -1597,7 +2101,7 @@
     ]
   },
   {
-    "__docId__": 54,
+    "__docId__": 63,
     "kind": "function",
     "name": "deleteReport",
     "memberof": "api/reports/report-manager.js",
@@ -1645,7 +2149,7 @@
     ]
   },
   {
-    "__docId__": 55,
+    "__docId__": 64,
     "kind": "function",
     "name": "getReportById",
     "memberof": "api/reports/report-manager.js",
@@ -1693,7 +2197,7 @@
     ]
   },
   {
-    "__docId__": 56,
+    "__docId__": 65,
     "kind": "function",
     "name": "getAllReports",
     "memberof": "api/reports/report-manager.js",
@@ -1741,7 +2245,7 @@
     ]
   },
   {
-    "__docId__": 57,
+    "__docId__": 66,
     "kind": "file",
     "name": "api/reports/report-models.js",
     "content": "var mongoose = require('mongoose');\nvar Schema = mongoose.Schema;\n\nvar options = {discriminatorKey: 'type'};\n\nvar reportSchema = new Schema({\n      approvalStatus: Boolean,\n      student: String,\n    },\n    options);\n\nvar eventReportSchema = new Schema({event: String}, options);\n\nvar otherReportSchema = new Schema({\n      category: String,\n      datetime: Date,\n      location: String,\n      title: String,\n      description: String,\n    },\n    options);\n\nvar Report = mongoose.model('Report', reportSchema);\n\nvar EventReport = Report.discriminator('EventReport', eventReportSchema);\n\nvar OtherReport = Report.discriminator('OtherReport', otherReportSchema);\n\nmodule.exports = {Report, EventReport, OtherReport};\n",
@@ -1752,7 +2256,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 58,
+    "__docId__": 67,
     "kind": "variable",
     "name": "mongoose",
     "memberof": "api/reports/report-models.js",
@@ -1778,7 +2282,7 @@
     }
   },
   {
-    "__docId__": 59,
+    "__docId__": 68,
     "kind": "variable",
     "name": "Schema",
     "memberof": "api/reports/report-models.js",
@@ -1804,7 +2308,7 @@
     }
   },
   {
-    "__docId__": 60,
+    "__docId__": 69,
     "kind": "variable",
     "name": "options",
     "memberof": "api/reports/report-models.js",
@@ -1830,7 +2334,7 @@
     }
   },
   {
-    "__docId__": 61,
+    "__docId__": 70,
     "kind": "variable",
     "name": "reportSchema",
     "memberof": "api/reports/report-models.js",
@@ -1856,7 +2360,7 @@
     }
   },
   {
-    "__docId__": 62,
+    "__docId__": 71,
     "kind": "variable",
     "name": "eventReportSchema",
     "memberof": "api/reports/report-models.js",
@@ -1882,7 +2386,7 @@
     }
   },
   {
-    "__docId__": 63,
+    "__docId__": 72,
     "kind": "variable",
     "name": "otherReportSchema",
     "memberof": "api/reports/report-models.js",
@@ -1908,7 +2412,7 @@
     }
   },
   {
-    "__docId__": 64,
+    "__docId__": 73,
     "kind": "variable",
     "name": "Report",
     "memberof": "api/reports/report-models.js",
@@ -1934,7 +2438,7 @@
     }
   },
   {
-    "__docId__": 65,
+    "__docId__": 74,
     "kind": "variable",
     "name": "EventReport",
     "memberof": "api/reports/report-models.js",
@@ -1960,7 +2464,7 @@
     }
   },
   {
-    "__docId__": 66,
+    "__docId__": 75,
     "kind": "variable",
     "name": "OtherReport",
     "memberof": "api/reports/report-models.js",
@@ -1986,7 +2490,7 @@
     }
   },
   {
-    "__docId__": 67,
+    "__docId__": 76,
     "kind": "file",
     "name": "api/reports/report-router.js",
     "content": "var express = require('express');\nvar mongoose = require('mongoose');\nvar reportManager = require('./report-manager');\nvar reportRouter = express.Router();\n\nreportRouter.post('/', (req, res) => {\n  reportManager.createReport(req.body, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    console.log({\n      message: 'report created',\n      id: report.id,\n    });\n\n    res.status(201).location(report.id).end();\n  });\n});\n\nreportRouter.put('/:uid', (req, res) => {\n  reportManager.modifyReport(req.params.uid, req.body, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    res.status(200).json(report).end();\n  });\n});\n\nreportRouter.delete('/:uid', (req, res) => {\n  reportManager.deleteReport(req.params.uid, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    res.status(204).end();\n  });\n});\n\nreportRouter.get('/:uid', (req, res) => {\n  reportManager.getReportById(req.params.uid, {}, (err, report) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    if (!report) {\n      // Report was not found.\n      // TODO(jmtaber129): Add error handling for when a user is not authorized\n      // to view the report.\n      res.status(404).end();\n      return;\n    }\n\n    res.status(200).json(report).end();\n  });\n});\n\nreportRouter.get('/', (req, res) => {\n  reportManager.getAllReports(req.params, {}, (err, reports) => {\n    if (err) {\n      // TODO(jmtaber129): Better error handling.\n      res.status(400).send(err).end();\n      return;\n    }\n\n    res.status(200).json(reports).end();\n  });\n});\n\nmodule.exports = {reportRouter};\n",
@@ -1997,7 +2501,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 68,
+    "__docId__": 77,
     "kind": "variable",
     "name": "express",
     "memberof": "api/reports/report-router.js",
@@ -2023,7 +2527,7 @@
     }
   },
   {
-    "__docId__": 69,
+    "__docId__": 78,
     "kind": "variable",
     "name": "mongoose",
     "memberof": "api/reports/report-router.js",
@@ -2049,7 +2553,7 @@
     }
   },
   {
-    "__docId__": 70,
+    "__docId__": 79,
     "kind": "variable",
     "name": "reportManager",
     "memberof": "api/reports/report-router.js",
@@ -2075,7 +2579,7 @@
     }
   },
   {
-    "__docId__": 71,
+    "__docId__": 80,
     "kind": "variable",
     "name": "reportRouter",
     "memberof": "api/reports/report-router.js",
@@ -2101,10 +2605,10 @@
     }
   },
   {
-    "__docId__": 72,
+    "__docId__": 81,
     "kind": "file",
     "name": "api/server.js",
-    "content": "const bodyParser = require('body-parser');\nconst cookieParser = require('cookie-parser');\nconst express = require('express'); //saved\nconst logger = require('morgan');\nconst mongoose = require('mongoose');\n\n\n// Routers.\nconst auth = require('./auth/auth-router.js');\n//const event = require('./events/router.js');\nconst report = require('./reports/report-router.js');\nconst user = require('./users/user-router.js');\n\n\n// App routes.\nconst router = express.Router();\nrouter.use('/users', user.userRouter);\n//router.use('/events', event.eventRouter);\nrouter.use('/reports', report.reportRouter);\nrouter.use('/auth', auth.router);\n\n\nmodule.exports = router;\n",
+    "content": "const bodyParser = require('body-parser');\nconst cookieParser = require('cookie-parser');\nconst express = require('express'); //saved\nconst logger = require('morgan');\nconst mongoose = require('mongoose');\n\n\n// Routers.\nconst auth = require('./auth/auth-router.js');\nconst events = require('./events/event-router.js');\nconst report = require('./reports/report-router.js');\nconst user = require('./users/user-router.js');\n\n\n// App routes.\nconst router = express.Router();\nrouter.use('/users', user.userRouter);\nrouter.use('/events', events.eventRouter);\nrouter.use('/reports', report.reportRouter);\nrouter.use('/auth', auth.router);\n\n\nmodule.exports = router;\n",
     "static": true,
     "longname": "api/server.js",
     "access": null,
@@ -2112,7 +2616,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 73,
+    "__docId__": 82,
     "kind": "variable",
     "name": "bodyParser",
     "memberof": "api/server.js",
@@ -2138,7 +2642,7 @@
     }
   },
   {
-    "__docId__": 74,
+    "__docId__": 83,
     "kind": "variable",
     "name": "cookieParser",
     "memberof": "api/server.js",
@@ -2164,7 +2668,7 @@
     }
   },
   {
-    "__docId__": 75,
+    "__docId__": 84,
     "kind": "variable",
     "name": "express",
     "memberof": "api/server.js",
@@ -2190,7 +2694,7 @@
     }
   },
   {
-    "__docId__": 76,
+    "__docId__": 85,
     "kind": "variable",
     "name": "logger",
     "memberof": "api/server.js",
@@ -2216,7 +2720,7 @@
     }
   },
   {
-    "__docId__": 77,
+    "__docId__": 86,
     "kind": "variable",
     "name": "mongoose",
     "memberof": "api/server.js",
@@ -2242,7 +2746,7 @@
     }
   },
   {
-    "__docId__": 78,
+    "__docId__": 87,
     "kind": "variable",
     "name": "auth",
     "memberof": "api/server.js",
@@ -2268,7 +2772,33 @@
     }
   },
   {
-    "__docId__": 79,
+    "__docId__": 88,
+    "kind": "variable",
+    "name": "events",
+    "memberof": "api/server.js",
+    "static": true,
+    "longname": "api/server.js~events",
+    "access": null,
+    "export": false,
+    "importPath": "cpceed-web-app/api/server.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 89,
     "kind": "variable",
     "name": "report",
     "memberof": "api/server.js",
@@ -2294,7 +2824,7 @@
     }
   },
   {
-    "__docId__": 80,
+    "__docId__": 90,
     "kind": "variable",
     "name": "user",
     "memberof": "api/server.js",
@@ -2320,7 +2850,7 @@
     }
   },
   {
-    "__docId__": 81,
+    "__docId__": 91,
     "kind": "variable",
     "name": "router",
     "memberof": "api/server.js",
@@ -2346,10 +2876,10 @@
     }
   },
   {
-    "__docId__": 82,
+    "__docId__": 92,
     "kind": "file",
     "name": "api/users/user-manager.js",
-    "content": "const userModels = require('./user-models.js');\n\nconst User = userModels.User;\nconst Student = userModels.Student;\nconst Admin = userModels.Admin;\n\n/**\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {Number} id - The user UID.\n */\n\n/**\n * Given User information, create a User.\n * @param {Object} data - The request body data.\n * @param {String} data.role - The user role.\n * @param {String} data.email - The user email address.\n * @param {String} data.password - The user password.\n * @param {CreateUserCallback} next - The callback function to run after this function\n *     finishes.\n */\nconst createUser = (data, next) => {\n  // Ensure the required data is available.\n  if (!data) {\n    next({ err: 'Required parameters not found.' });\n    return;\n  }\n\n  const info = {\n    email: data.email,\n    password: data.password,\n    name: data.name,\n    role: data.role,\n  };\n\n  let user;\n\n  if (data.role === 'student') {\n    // Create a student.\n    info.studentId = data.studentId;\n    user = new Student(info);\n  } else if (data.role === 'admin') {\n    // Create an admin.\n    user = new Admin(info);\n  } else {\n    next({ err: 'Valid role not found.' });\n    return;\n  }\n\n  User.findOne({ email: user.email }, (userErr, existingUser) => {\n    if (userErr) {\n      next(userErr);\n    } else if (existingUser) {\n      next({ err: 'Account with that email address already exists.' });\n    } else {\n      user.save((saveErr, dbUser) => {\n        next(saveErr, (dbUser || {}).id);\n      });\n    }\n  });\n};\n\n/**\n* Callback for {@link modifyUser}\n* @typedef {Object} ModifyUserCallback\n* @param {Object} - The error\n* @param {UserSchema} - The modified user object\n*/\n\n\n /**\n * Updates the user with the passed in values.\n * This method does NOT delete fields\n * @param {string} userUid - The UID of the user to be updated\n * @param {Object} reqData - The request data\n * @param {Object} locals\n * @param {ModifyUserCallback} modifyCallback\n */\nconst modifyUser = (userUid, reqData, locals, modifyCallback) => {\n  const conditions = { _id: userUid };\n  const update = {};\n\n  Object.keys(reqData).forEach((key) => {\n    update[key] = reqData[key];\n  });\n\n  const options = { new: true };\n\n  Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);\n};\n\n/**\n* Callback for {@link deleteUser}\n* @typedef {Object} DeleteUserCallback\n* @param {Object} - error\n*/\n\n\n\n/**\n* Deletes the user from the database.\n* @param {string} userUid - The UID of the user to be updated.\n* @param {Object} locals\n* @param {DeleteUserCallback} deleteCallback\n*/\nconst deleteUser = (userUid, locals, deleteCallback) => {\n  User.findOneAndremove({ _id: userUid }, deleteCallback);\n};\n\n\n/**\n* Callback for {@link getUserById}\n* @typedef {Object} GetUserCallback\n* @param {Object} - error\n* @param {UserSchemas} - Retrieved user\n*/\n\n/**\n* Retrieves the user.\n* @param {string} userUid - The UID of the user to be updated\n* @param {Object} locals\n* @param {GetUserCallback} queryCallback\n*/\nconst getUserById = (userUid, locals, queryCallback) => {\n  User.findById(userUid, (err, results) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n    const user = {\n      uid: results.id,\n      email: results.email,\n      name: results.name,\n      role: results.role,\n    };\n\n    if (user.role === 'student') {\n      user.points = results.points;\n      user.isApproved = results.isApproved;\n    }\n\n    queryCallback(err, user);\n  });\n};\n\n\nmodule.exports = { createUser, modifyUser, deleteUser, getUserById };\n",
+    "content": "const userModels = require('./user-models.js');\n\nconst User = userModels.User;\nconst Student = userModels.Student;\nconst Admin = userModels.Admin;\n\n/**\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {string} id - The user UID.\n */\n\n/**\n * Given User information, create a User.\n * @param {Object} data - The request body data.\n * @param {String} data.role - The user role.\n * @param {String} data.email - The user email address.\n * @param {String} data.password - The user password.\n * @param {CreateUserCallback} next - The callback function to run after this function\n *     finishes.\n */\nconst createUser = (data, next) => {\n  // Ensure the required data is available.\n  if (!data) {\n    next({ err: 'Required parameters not found.' });\n    return;\n  }\n\n  const info = {\n    email: data.email,\n    password: data.password,\n    name: data.name,\n    role: data.role,\n  };\n\n  let user;\n\n  if (data.role === 'student') {\n    // Create a student.\n    info.studentId = data.studentId;\n    user = new Student(info);\n  } else if (data.role === 'admin') {\n    // Create an admin.\n    user = new Admin(info);\n  } else {\n    next({ err: 'Valid role not found.' });\n    return;\n  }\n\n  User.findOne({ email: user.email }, (userErr, existingUser) => {\n    if (userErr) {\n      next(userErr);\n    } else if (existingUser) {\n      next({ err: 'Account with that email address already exists.' });\n    } else {\n      user.save((saveErr, dbUser) => {\n        next(saveErr, (dbUser || {}).id);\n      });\n    }\n  });\n};\n\n/**\n* Callback for {@link modifyUser}\n* @typedef {Object} ModifyUserCallback\n* @param {Object} - The error\n* @param {UserSchema} - The modified user object\n*/\n\n\n /**\n * Updates the user with the passed in values.\n * This method does NOT delete fields\n * @param {string} userUid - The UID of the user to be updated\n * @param {Object} reqData - The request data\n * @param {Object} locals\n * @param {ModifyUserCallback} modifyCallback\n */\nconst modifyUser = (userUid, reqData, locals, modifyCallback) => {\n  const conditions = { _id: userUid };\n  const update = {};\n\n  Object.keys(reqData).forEach((key) => {\n    update[key] = reqData[key];\n  });\n\n  const options = { new: true };\n\n  Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);\n};\n\n/**\n* Callback for {@link deleteUser}\n* @typedef {Object} DeleteUserCallback\n* @param {Object} - error\n*/\n\n/**\n* Deletes the user from the database.\n* @param {string} userUid - The UID of the user to be updated.\n* @param {Object} locals\n* @param {DeleteUserCallback} deleteCallback\n*/\nconst deleteUser = (userUid, locals, deleteCallback) => {\n  User.findOneAndremove({ _id: userUid }, deleteCallback);\n};\n\n\n/**\n* Callback for {@link getUserById}\n* @typedef {Object} GetUserCallback\n* @param {Object} - error\n* @param {UserSchemas} - Retrieved user\n*/\n\n/**\n* Retrieves the user.\n* @param {string} userUid - The UID of the user to be updated\n* @param {Object} locals\n* @param {GetUserCallback} queryCallback\n*/\nconst getUserById = (userUid, locals, queryCallback) => {\n  User.findById(userUid, (err, results) => {\n    if (err) {\n      queryCallback(err);\n      return;\n    }\n    const user = {\n      uid: results.id,\n      email: results.email,\n      name: results.name,\n      role: results.role,\n    };\n\n    if (user.role === 'student') {\n      user.points = results.points;\n      user.isApproved = results.isApproved;\n    }\n\n    queryCallback(err, user);\n  });\n};\n\n\nmodule.exports = { createUser, modifyUser, deleteUser, getUserById };\n",
     "static": true,
     "longname": "api/users/user-manager.js",
     "access": null,
@@ -2357,7 +2887,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 83,
+    "__docId__": 93,
     "kind": "variable",
     "name": "userModels",
     "memberof": "api/users/user-manager.js",
@@ -2383,7 +2913,7 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 94,
     "kind": "variable",
     "name": "User",
     "memberof": "api/users/user-manager.js",
@@ -2409,7 +2939,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 95,
     "kind": "variable",
     "name": "Student",
     "memberof": "api/users/user-manager.js",
@@ -2435,7 +2965,7 @@
     }
   },
   {
-    "__docId__": 86,
+    "__docId__": 96,
     "kind": "variable",
     "name": "Admin",
     "memberof": "api/users/user-manager.js",
@@ -2461,7 +2991,7 @@
     }
   },
   {
-    "__docId__": 87,
+    "__docId__": 97,
     "kind": "typedef",
     "name": "CreateUserCallback",
     "memberof": "api/users/user-manager.js",
@@ -2483,7 +3013,7 @@
       {
         "nullable": null,
         "types": [
-          "Number"
+          "string"
         ],
         "spread": false,
         "optional": false,
@@ -2500,7 +3030,7 @@
     }
   },
   {
-    "__docId__": 88,
+    "__docId__": 98,
     "kind": "function",
     "name": "createUser",
     "memberof": "api/users/user-manager.js",
@@ -2568,7 +3098,7 @@
     ]
   },
   {
-    "__docId__": 89,
+    "__docId__": 99,
     "kind": "typedef",
     "name": "ModifyUserCallback",
     "memberof": "api/users/user-manager.js",
@@ -2607,7 +3137,7 @@
     }
   },
   {
-    "__docId__": 90,
+    "__docId__": 100,
     "kind": "function",
     "name": "modifyUser",
     "memberof": "api/users/user-manager.js",
@@ -2665,7 +3195,7 @@
     ]
   },
   {
-    "__docId__": 91,
+    "__docId__": 101,
     "kind": "typedef",
     "name": "DeleteUserCallback",
     "memberof": "api/users/user-manager.js",
@@ -2694,7 +3224,7 @@
     }
   },
   {
-    "__docId__": 92,
+    "__docId__": 102,
     "kind": "function",
     "name": "deleteUser",
     "memberof": "api/users/user-manager.js",
@@ -2707,7 +3237,7 @@
     "importPath": "cpceed-web-app/api/users/user-manager.js",
     "importStyle": null,
     "description": "Deletes the user from the database.",
-    "lineNumber": 107,
+    "lineNumber": 105,
     "params": [
       {
         "nullable": null,
@@ -2742,7 +3272,7 @@
     ]
   },
   {
-    "__docId__": 93,
+    "__docId__": 103,
     "kind": "typedef",
     "name": "GetUserCallback",
     "memberof": "api/users/user-manager.js",
@@ -2781,7 +3311,7 @@
     }
   },
   {
-    "__docId__": 94,
+    "__docId__": 104,
     "kind": "function",
     "name": "getUserById",
     "memberof": "api/users/user-manager.js",
@@ -2794,7 +3324,7 @@
     "importPath": "cpceed-web-app/api/users/user-manager.js",
     "importStyle": null,
     "description": "Retrieves the user.",
-    "lineNumber": 125,
+    "lineNumber": 123,
     "params": [
       {
         "nullable": null,
@@ -2829,7 +3359,7 @@
     ]
   },
   {
-    "__docId__": 95,
+    "__docId__": 105,
     "kind": "file",
     "name": "api/users/user-models.js",
     "content": "const mongoose = require('mongoose');\nconst bcrypt = require('bcrypt');\n\nconst Schema = mongoose.Schema;\n\nconst options = { discriminatorKey: 'type' };\nconst pointOption = {\n  type: Number,\n  required: true,\n  default: 0,\n};\n\n/**\n* User Object\n* @typedef {Object} UserSchema\n* @param {string} name - Screen name for user\n* @param {string} firstName - DEPRECATED\n* @param {string} lastName - DEPRECATED\n* @param {string} email\n* @param {string} password\n* @param {string} role - ENUM: student, admin\n* @param {boolean} isApproved\n*/\nconst userSchema = new Schema({\n  name: String,\n  firstName: String,\n  lastName: String,\n  email: {\n    type: String,\n    unique: true,\n    required: true,\n  },\n  password: {\n    type: String,\n    required: true,\n  },\n  role: {\n    type: String,\n    enum: ['student', 'admin'],\n    required: true,\n  },\n  isApproved: {\n    type: Boolean,\n    required: true,\n    default: false,\n  },\n}, options);\n\n/**\n*  Updates and saves the user's password\n*/\nuserSchema.pre('save', function pre(next) {\n  const user = this;\n\n  // If the password is not modified, continue saving the user.\n  if (!user.isModified('password')) {\n    next();\n    return;\n  }\n\n  bcrypt.genSalt(Number(process.env.SALT), (saltErr, salt) => {\n    if (saltErr) {\n      next(saltErr);\n      return;\n    }\n\n    bcrypt.hash(user.password, salt, (hashErr, hash) => {\n      user.password = hash;\n      next(hashErr);\n    });\n  });\n});\n\n\n/**\n* Callback for {@link userSchema.methods.comparePassword}\n* @typedef {Object} ComparePasswordNext\n* @param {Object} err - error\n* @param {boolean} isMatch - Whether or not the passwords matched\n*/\n\n/**\n* Helper method to check users password\n* @param {string} password - The password to be compared to the user's password\n* @param {ComparePasswordNext} next\n*/\nuserSchema.methods.comparePassword = function comparePassword(password, next) {\n  bcrypt.compare(password, this.password, (err, isMatch) => {\n    next(err, isMatch);\n  });\n};\n\nconst studentSchema = new Schema({\n  points: {\n    career: pointOption,\n    community: pointOption,\n    firstother: pointOption,\n    firstworkshops: pointOption,\n    mentor: pointOption,\n    other: pointOption,\n    outreach: pointOption,\n    professor: pointOption,\n    staff: pointOption,\n    misc: pointOption,\n  },\n  studentId: {\n    type: String,\n  },\n}, options);\n\nconst adminSchema = new Schema({}, options);\n\nconst User = mongoose.model('User', userSchema);\n\nconst Student = User.discriminator('student', studentSchema);\nconst Admin = User.discriminator('admin', adminSchema);\n\nmodule.exports = { Student, Admin, User };\n",
@@ -2840,7 +3370,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 96,
+    "__docId__": 106,
     "kind": "variable",
     "name": "mongoose",
     "memberof": "api/users/user-models.js",
@@ -2866,7 +3396,7 @@
     }
   },
   {
-    "__docId__": 97,
+    "__docId__": 107,
     "kind": "variable",
     "name": "bcrypt",
     "memberof": "api/users/user-models.js",
@@ -2892,7 +3422,7 @@
     }
   },
   {
-    "__docId__": 98,
+    "__docId__": 108,
     "kind": "variable",
     "name": "Schema",
     "memberof": "api/users/user-models.js",
@@ -2918,7 +3448,7 @@
     }
   },
   {
-    "__docId__": 99,
+    "__docId__": 109,
     "kind": "variable",
     "name": "options",
     "memberof": "api/users/user-models.js",
@@ -2944,7 +3474,7 @@
     }
   },
   {
-    "__docId__": 100,
+    "__docId__": 110,
     "kind": "variable",
     "name": "pointOption",
     "memberof": "api/users/user-models.js",
@@ -2970,7 +3500,7 @@
     }
   },
   {
-    "__docId__": 101,
+    "__docId__": 111,
     "kind": "typedef",
     "name": "UserSchema",
     "memberof": "api/users/user-models.js",
@@ -3060,7 +3590,7 @@
     }
   },
   {
-    "__docId__": 102,
+    "__docId__": 112,
     "kind": "typedef",
     "name": "ComparePasswordNext",
     "memberof": "api/users/user-models.js",
@@ -3099,7 +3629,7 @@
     }
   },
   {
-    "__docId__": 103,
+    "__docId__": 113,
     "kind": "function",
     "name": "comparePassword",
     "memberof": "api/users/user-models.js",
@@ -3137,7 +3667,7 @@
     ]
   },
   {
-    "__docId__": 104,
+    "__docId__": 114,
     "kind": "variable",
     "name": "studentSchema",
     "memberof": "api/users/user-models.js",
@@ -3163,7 +3693,7 @@
     }
   },
   {
-    "__docId__": 105,
+    "__docId__": 115,
     "kind": "variable",
     "name": "adminSchema",
     "memberof": "api/users/user-models.js",
@@ -3189,7 +3719,7 @@
     }
   },
   {
-    "__docId__": 106,
+    "__docId__": 116,
     "kind": "variable",
     "name": "User",
     "memberof": "api/users/user-models.js",
@@ -3215,7 +3745,7 @@
     }
   },
   {
-    "__docId__": 107,
+    "__docId__": 117,
     "kind": "variable",
     "name": "Student",
     "memberof": "api/users/user-models.js",
@@ -3241,7 +3771,7 @@
     }
   },
   {
-    "__docId__": 108,
+    "__docId__": 118,
     "kind": "variable",
     "name": "Admin",
     "memberof": "api/users/user-models.js",
@@ -3267,7 +3797,7 @@
     }
   },
   {
-    "__docId__": 109,
+    "__docId__": 119,
     "kind": "file",
     "name": "api/users/user-router.js",
     "content": "const express = require('express');\nconst userManager = require('./user-manager');\nconst authManager = require('../auth/auth-manager');\n\nconst userRouter = express.Router();\n\n/**\n * Route for creating a new user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: POST\n * - Success Code: 201\n *\n * @typedef {function} Route-CreateUser\n * @param {Object} req - Express request object\n * @param {UserSchema} req.body - User to be created\n * @param {Object} res - Express result object\n * @param {string} res.body - UID of the created user if successful, else the\n *                          error message\n * @param {number} res.status - Indicates success or not\n */\nuserRouter.post('/', (req, res) => {\n  userManager.createUser(req.body, (err, uid) => {\n    if (err) {\n      res.status(400).json(err).end();\n    } else {\n      // A User was created.\n      res.status(201).json({ uid }).end();\n    }\n  });\n});\n\n/**\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user ot be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n */\nuserRouter.put('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      userManager.modifyUser(res.locals.uid, req.body, res.locals,\n        (err, user) => {\n          if (err) {\n            res.status(400).json(err).end();\n            return;\n          }\n          res.status(200).json(user).end();\n        });\n    });\n\n/**\n * Route for deleting an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: DELETE\n * - Success Code: 200\n *\n * @typedef {function} Route-DeleteUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] - UID of user to be deleted\n * @param {string}  token - Admin | User to be deleted\n * @param {Object} res - Express result object\n */\nuserRouter.delete('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      userManager.deleteUser(res.locals.uid, res.locals, (err, result) => {\n        if (err) {\n          res.status(400).json(err).end();\n          return;\n        }\n        res.status(200).json(result).end();\n      });\n    });\n\n/**\n * Route for getting an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: GET\n * - Success Code: 200\n *\n * @typedef {function} Route-GetUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] - UID of user to be retrieved\n * @param {string} token - Admin | User being retrieved\n * @param {Object} res - Express result object\n */\nuserRouter.get('/',\n    authManager.verify,\n    authManager.validateUidPermissions,\n    (req, res) => {\n      const uid = res.locals.uid;\n      userManager.getUserById(uid, {}, (err, user) => {\n        if (err) {\n          res.status(400).send(err).end();\n          return;\n        }\n\n        if (!user) {\n          res.status(404).end();\n          return;\n        }\n\n        res.status(200).json(user).end();\n      });\n    });\n\nmodule.exports = { userRouter };\n",
@@ -3278,7 +3808,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 110,
+    "__docId__": 120,
     "kind": "variable",
     "name": "express",
     "memberof": "api/users/user-router.js",
@@ -3304,7 +3834,7 @@
     }
   },
   {
-    "__docId__": 111,
+    "__docId__": 121,
     "kind": "variable",
     "name": "userManager",
     "memberof": "api/users/user-router.js",
@@ -3330,7 +3860,7 @@
     }
   },
   {
-    "__docId__": 112,
+    "__docId__": 122,
     "kind": "variable",
     "name": "authManager",
     "memberof": "api/users/user-router.js",
@@ -3356,7 +3886,7 @@
     }
   },
   {
-    "__docId__": 113,
+    "__docId__": 123,
     "kind": "variable",
     "name": "userRouter",
     "memberof": "api/users/user-router.js",
@@ -3382,7 +3912,7 @@
     }
   },
   {
-    "__docId__": 114,
+    "__docId__": 124,
     "kind": "typedef",
     "name": "Route-CreateUser",
     "memberof": "api/users/user-router.js",
@@ -3452,7 +3982,7 @@
     }
   },
   {
-    "__docId__": 115,
+    "__docId__": 125,
     "kind": "typedef",
     "name": "Route-ModifyUser",
     "memberof": "api/users/user-router.js",
@@ -3543,7 +4073,7 @@
     }
   },
   {
-    "__docId__": 116,
+    "__docId__": 126,
     "kind": "typedef",
     "name": "Route-DeleteUser",
     "memberof": "api/users/user-router.js",
@@ -3603,7 +4133,7 @@
     }
   },
   {
-    "__docId__": 117,
+    "__docId__": 127,
     "kind": "typedef",
     "name": "Route-GetUser",
     "memberof": "api/users/user-router.js",
@@ -3663,7 +4193,7 @@
     }
   },
   {
-    "__docId__": 119,
+    "__docId__": 129,
     "kind": "external",
     "name": "Infinity",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
@@ -3675,7 +4205,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 120,
+    "__docId__": 130,
     "kind": "external",
     "name": "NaN",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
@@ -3687,7 +4217,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 121,
+    "__docId__": 131,
     "kind": "external",
     "name": "undefined",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
@@ -3699,7 +4229,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 122,
+    "__docId__": 132,
     "kind": "external",
     "name": "null",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
@@ -3711,7 +4241,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 123,
+    "__docId__": 133,
     "kind": "external",
     "name": "Object",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
@@ -3723,7 +4253,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 124,
+    "__docId__": 134,
     "kind": "external",
     "name": "object",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
@@ -3735,7 +4265,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 125,
+    "__docId__": 135,
     "kind": "external",
     "name": "Function",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
@@ -3747,7 +4277,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 126,
+    "__docId__": 136,
     "kind": "external",
     "name": "function",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
@@ -3759,7 +4289,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 127,
+    "__docId__": 137,
     "kind": "external",
     "name": "Boolean",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
@@ -3771,7 +4301,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 128,
+    "__docId__": 138,
     "kind": "external",
     "name": "boolean",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
@@ -3783,7 +4313,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 129,
+    "__docId__": 139,
     "kind": "external",
     "name": "Symbol",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
@@ -3795,7 +4325,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 130,
+    "__docId__": 140,
     "kind": "external",
     "name": "Error",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
@@ -3807,7 +4337,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 131,
+    "__docId__": 141,
     "kind": "external",
     "name": "EvalError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
@@ -3819,7 +4349,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 132,
+    "__docId__": 142,
     "kind": "external",
     "name": "InternalError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
@@ -3831,7 +4361,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 133,
+    "__docId__": 143,
     "kind": "external",
     "name": "RangeError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
@@ -3843,7 +4373,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 134,
+    "__docId__": 144,
     "kind": "external",
     "name": "ReferenceError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
@@ -3855,7 +4385,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 135,
+    "__docId__": 145,
     "kind": "external",
     "name": "SyntaxError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
@@ -3867,7 +4397,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 136,
+    "__docId__": 146,
     "kind": "external",
     "name": "TypeError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
@@ -3879,7 +4409,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 137,
+    "__docId__": 147,
     "kind": "external",
     "name": "URIError",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
@@ -3891,7 +4421,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 138,
+    "__docId__": 148,
     "kind": "external",
     "name": "Number",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
@@ -3903,7 +4433,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 139,
+    "__docId__": 149,
     "kind": "external",
     "name": "number",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
@@ -3915,7 +4445,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 140,
+    "__docId__": 150,
     "kind": "external",
     "name": "Date",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
@@ -3927,7 +4457,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 141,
+    "__docId__": 151,
     "kind": "external",
     "name": "String",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -3939,7 +4469,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 142,
+    "__docId__": 152,
     "kind": "external",
     "name": "string",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
@@ -3951,7 +4481,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 143,
+    "__docId__": 153,
     "kind": "external",
     "name": "RegExp",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
@@ -3963,7 +4493,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 144,
+    "__docId__": 154,
     "kind": "external",
     "name": "Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
@@ -3975,7 +4505,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 145,
+    "__docId__": 155,
     "kind": "external",
     "name": "Int8Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
@@ -3987,7 +4517,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 146,
+    "__docId__": 156,
     "kind": "external",
     "name": "Uint8Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
@@ -3999,7 +4529,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 147,
+    "__docId__": 157,
     "kind": "external",
     "name": "Uint8ClampedArray",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
@@ -4011,7 +4541,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 148,
+    "__docId__": 158,
     "kind": "external",
     "name": "Int16Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
@@ -4023,7 +4553,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 149,
+    "__docId__": 159,
     "kind": "external",
     "name": "Uint16Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
@@ -4035,7 +4565,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 150,
+    "__docId__": 160,
     "kind": "external",
     "name": "Int32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
@@ -4047,7 +4577,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 151,
+    "__docId__": 161,
     "kind": "external",
     "name": "Uint32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
@@ -4059,7 +4589,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 152,
+    "__docId__": 162,
     "kind": "external",
     "name": "Float32Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
@@ -4071,7 +4601,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 153,
+    "__docId__": 163,
     "kind": "external",
     "name": "Float64Array",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
@@ -4083,7 +4613,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 154,
+    "__docId__": 164,
     "kind": "external",
     "name": "Map",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
@@ -4095,7 +4625,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 155,
+    "__docId__": 165,
     "kind": "external",
     "name": "Set",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
@@ -4107,7 +4637,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 156,
+    "__docId__": 166,
     "kind": "external",
     "name": "WeakMap",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
@@ -4119,7 +4649,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 157,
+    "__docId__": 167,
     "kind": "external",
     "name": "WeakSet",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
@@ -4131,7 +4661,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 158,
+    "__docId__": 168,
     "kind": "external",
     "name": "ArrayBuffer",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
@@ -4143,7 +4673,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 159,
+    "__docId__": 169,
     "kind": "external",
     "name": "DataView",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
@@ -4155,7 +4685,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 160,
+    "__docId__": 170,
     "kind": "external",
     "name": "JSON",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
@@ -4167,7 +4697,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 161,
+    "__docId__": 171,
     "kind": "external",
     "name": "Promise",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
@@ -4179,7 +4709,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 162,
+    "__docId__": 172,
     "kind": "external",
     "name": "Generator",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
@@ -4191,7 +4721,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 163,
+    "__docId__": 173,
     "kind": "external",
     "name": "GeneratorFunction",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
@@ -4203,7 +4733,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 164,
+    "__docId__": 174,
     "kind": "external",
     "name": "Reflect",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
@@ -4215,7 +4745,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 165,
+    "__docId__": 175,
     "kind": "external",
     "name": "Proxy",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
@@ -4228,7 +4758,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 167,
+    "__docId__": 177,
     "kind": "external",
     "name": "CanvasRenderingContext2D",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
@@ -4240,7 +4770,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 168,
+    "__docId__": 178,
     "kind": "external",
     "name": "DocumentFragment",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
@@ -4252,7 +4782,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 169,
+    "__docId__": 179,
     "kind": "external",
     "name": "Element",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
@@ -4264,7 +4794,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 170,
+    "__docId__": 180,
     "kind": "external",
     "name": "Event",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
@@ -4276,7 +4806,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 171,
+    "__docId__": 181,
     "kind": "external",
     "name": "Node",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
@@ -4288,7 +4818,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 172,
+    "__docId__": 182,
     "kind": "external",
     "name": "NodeList",
     "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
@@ -4300,7 +4830,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 173,
+    "__docId__": 183,
     "kind": "external",
     "name": "XMLHttpRequest",
     "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
@@ -4312,7 +4842,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 174,
+    "__docId__": 184,
     "kind": "external",
     "name": "AudioContext",
     "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",

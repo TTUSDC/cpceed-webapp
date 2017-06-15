@@ -41,6 +41,12 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-EventSchema">EventSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteEvent">Route-DeleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetAllEvents">Route-GetAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetEventById">Route-GetEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyEvent">Route-ModifyEvent</a></span></span></li>
 <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">reports</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteReport">deleteReport</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
@@ -72,7 +78,7 @@ const Event = eventModels.Event;
 
 /**
  * Callback used by event CRUD methods that returns a single event.
- * @callback eventCallback
+ * @typdef {function} EventCallback
  * @param {Error} err - An error that occurred during the operation. Null if no
  *    errors occurred.
  * @param {Event} event - The event operated on.
@@ -85,7 +91,7 @@ const Event = eventModels.Event;
  *   be created.
  * @param {Object} locals - An object containg the current request&apos;s local
  *   variables.
- * @param {eventCallback} createCallback - Called once the operation finishes.
+ * @param {EventCallback} createCallback - Called once the operation finishes.
  */
 const createEvent = (reqData, locals, createCallback) =&gt; {
   // TODO(asclines): Add checks for required data and expection handling
@@ -112,7 +118,7 @@ const createEvent = (reqData, locals, createCallback) =&gt; {
  * @param {Object} reqData - The request object containing the new event fields.
  * @param {Object} locals - An object containg the current request&apos;s local
  *   variables.
- * @param {eventCallback} modifyCallback - Called once the operation finishes.
+ * @param {EventCallback} modifyCallback - Called once the operation finishes.
  */
 const modifyEvent = (eventUid, reqData, locals, modifyCallback) =&gt; {
   // TODO(asclines): Add checks for required data and expection handling
@@ -120,21 +126,14 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) =&gt; {
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // are either the creator of the event or an admin.
   const conditions = { _id: eventUid };
-  const update = {
-    $set: {
-      creator: reqData.creator,
-      category: reqData.category,
-      datetime: reqData.datetime,
-      location: reqData.location,
-      title: reqData.title,
-      description: reqData.description,
-    },
-  };
+  const update = {};
 
-  const options = {
-    new: true,
-  };
-  Event.findOneAndUpdate(conditions, update, options, modifyCallback);
+  Object.keys(reqData).forEach((key) =&gt; {
+    update[key] = reqData[key];
+  });
+
+  const options = { new: true };
+  Event.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
 };
 
 
@@ -143,7 +142,7 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) =&gt; {
  * @param {string} eventUid - The UID of the event to be deleted.
  * @param {Object} locals - An object containg the current request&apos;s local
  *   variables.
- * @param {eventCallback} deleteCallback - Called once the operation is done.
+ * @param {EventCallback} deleteCallback - Called once the operation is done.
  */
 const deleteEvent = (eventUid, locals, deleteCallback) =&gt; {
   // TODO(asclines): Check the UID of the logged in user and make sure they
@@ -159,7 +158,7 @@ const deleteEvent = (eventUid, locals, deleteCallback) =&gt; {
  * @param {string} eventUid - The UID of the event to be found.
  * @param {Object} locals - An object containing the current request&apos;s
  *   local variables.
- * @param {eventCallback} getCallback - Called once the operation is done.
+ * @param {EventCallback} getCallback - Called once the operation is done.
  */
 const getEventById = (eventUid, locals, getCallback) =&gt; {
   // TODO(asclines): Add checks for required data and expection handling
@@ -167,7 +166,17 @@ const getEventById = (eventUid, locals, getCallback) =&gt; {
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // have permisssion to get this event.
 
-  Event.findById(eventUid, getCallback);
+  Event.findById(eventUid, (err, results) =&gt; {
+    const eventData = {
+      creator: results.creator,
+      category: results.category,
+      datetime: results.datetime,
+      location: results.location,
+      title: results.title,
+      description: results.description,
+    };
+    getCallback(err, eventData);
+  });
 };
 
 const getAllEvents = (reqData, locals, getAllCallback) =&gt; {

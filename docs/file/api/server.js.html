@@ -41,6 +41,12 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-EventSchema">EventSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteEvent">Route-DeleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetAllEvents">Route-GetAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetEventById">Route-GetEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyEvent">Route-ModifyEvent</a></span></span></li>
 <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">reports</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteReport">deleteReport</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
@@ -75,7 +81,7 @@ const mongoose = require(&apos;mongoose&apos;);
 
 // Routers.
 const auth = require(&apos;./auth/auth-router.js&apos;);
-//const event = require(&apos;./events/router.js&apos;);
+const events = require(&apos;./events/event-router.js&apos;);
 const report = require(&apos;./reports/report-router.js&apos;);
 const user = require(&apos;./users/user-router.js&apos;);
 
@@ -83,7 +89,7 @@ const user = require(&apos;./users/user-router.js&apos;);
 // App routes.
 const router = express.Router();
 router.use(&apos;/users&apos;, user.userRouter);
-//router.use(&apos;/events&apos;, event.eventRouter);
+router.use(&apos;/events&apos;, events.eventRouter);
 router.use(&apos;/reports&apos;, report.reportRouter);
 router.use(&apos;/auth&apos;, auth.router);
 
