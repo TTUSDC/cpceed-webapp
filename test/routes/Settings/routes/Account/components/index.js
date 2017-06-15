@@ -1,1 +1,1 @@
-import testAccount from './test-account';
+import testAccount from './test-account.jsx';

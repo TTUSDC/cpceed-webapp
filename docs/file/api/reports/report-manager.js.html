@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">api/reports/report-manager.js | CPCEED API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/TTUSDC/CPCEEDWebApp" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">auth</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-changePassword">changePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-login">login</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-logout">logout</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-verify">verify</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">core</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-newIfPresent">newIfPresent</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">events</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">reports</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteReport">deleteReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getReportById">getReportById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyReport">modifyReport</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">users</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createUser">createUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteUser">deleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUserById">getUserById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyUser">modifyUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-comparePassword">comparePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CreateUserCallback">CreateUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-DeleteUserCallback">DeleteUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetUserCallback">GetUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ModifyUserCallback">ModifyUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ComparePasswordNext">ComparePasswordNext</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-UserSchema">UserSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateUser">Route-CreateUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteUser">Route-DeleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetUser">Route-GetUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyUser">Route-ModifyUser</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">api/reports/report-manager.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">var reportModels = require(&apos;./report-models&apos;);
+var newIfPresent = require(&apos;../core/utils&apos;).newIfPresent;
+var Report = reportModels.Report;
+var EventReport = reportModels.EventReport;
+var OtherReport = reportModels.OtherReport;
+
+/**
+ * Callback used by report CRUD methods that return only one report.
+ * @callback reportCallback
+ * @param {Error} err - An error that occurred during the operation.  Null if no
+ *     errors occurred.
+ * @param {Report} report - The report operated on.
+ */
+
+/**
+ * Creates a report with the fields in the request object, and calls a callback
+ * when the database save finishes.
+ * @param {Object} reqData - The request object representing the report to be
+ *     created.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} createCallback - Called once the operation finishes.
+ */
+var createReport = (reqData, locals, createCallback) =&gt; {
+  // TODO(jmtaber129): Check that the student UID matches the requesting user,
+  // or the requesting user is an admin.
+  var report;
+  if (reqData.type == &apos;event&apos;) {
+    report = new EventReport({
+      approvalStatus: false,
+      student: reqData.student,
+      event: reqData.event,
+    });
+  } else if (reqData.type == &apos;other&apos;) {
+    report = new OtherReport({
+      approvalStatus: false,
+      student: reqData.student,
+      category: reqData.category,
+      datetime: reqData.datetime,
+      location: reqData.location,
+      title: reqData.title,
+      description: reqData.description,
+    });
+  } else {
+    // TODO(jmtaber129): Better error handling for invalid report types.
+    createCallback({message: &quot;Invalid report type.&quot;});
+    return;
+  }
+
+  report.save(createCallback);
+};
+
+/**
+ * Modifies a specific report according to the fields in the request object, and
+ * calls a callback when the database save finishes.
+ * @param {string} reportUid - The UID corresponding to the report to be
+ *     modified.
+ * @param {Object} reqData - The request object containing the fields to be
+ *     modified.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} modifyCallback - Called once the operation finishes.
+ */
+var modifyReport = (reportUid, reqData, locals, modifyCallback) =&gt; {
+  Report.findById(reportUid, (err, report) =&gt; {
+    if (err) {
+      modifyCallback(err);
+      return;
+    }
+
+    // If the report&apos;s student UID does not match the user UID, and the user is
+    // not an admin, the report should not be updated.
+    // TODO(jmtaber129): Check report&apos;s student UID and user UID, and add error
+    // handling.
+
+    // Update fields by checking if the field in the request is defined and
+    // non-null, then setting the document field to the request field if it is.
+
+    // Generic fields.
+    report.approvalStatus =
+        newIfPresent(reqData.approvalStatus, report.approvalStatus);
+    report.student = newIfPresent(reqData.student, report.student);
+
+    if (report.type == EventReport.modelName) {
+      // Fields specific to event reports.
+      report.event = newIfPresent(reqData.event, report.event);
+
+    } else if (report.type == OtherReport.modelName) {
+      // Fields specific to other reports.
+      report.category = newIfPresent(reqData.category, report.category);
+      report.datetime = newIfPresent(reqData.datetime, report.datetime);
+      report.location = newIfPresent(reqData.location, report.location);
+      report.title = newIfPresent(reqData.title, report.title);
+      report.description =
+          newIfPresent(reqData.description, report.description);
+    }
+
+    report.save(modifyCallback);
+  });
+};
+
+/**
+ * Deletes a specific report, and calls a callback once the database deletion
+ * finishes.
+ * @param {string} reportUid - The UID corresponding to the report to be
+ *     deleted.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} deleteCallback - Called once the operation finishes.
+ */
+var deleteReport = (reportUid, locals, deleteCallback) =&gt; {
+  Report.findById(reportUid, (err, report) =&gt; {
+    if (err) {
+      deleteCallback(err);
+      return;
+    }
+
+    if (!report) {
+      // TODO(jmtaber129): Better error handling when report can&apos;t be found.
+      deleteCallback({message: &apos;Report not found.&apos;});
+      return;
+    }
+
+    // If the report&apos;s student UID does not match the user UID, and the user is
+    // not an admin, &apos;report&apos; should not be deleted.
+    // TODO(jmtaber129): Check report&apos;s student UID and user UID, and add error
+    // handling.
+
+    report.remove(deleteCallback);
+  });
+};
+
+/**
+ * Finds a specific report, and calls a callback once the report is found.
+ * @param {string} reportUid - The UID corresponding to the report to be found.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} queryCallback - Called once the operation finishes.
+ */
+var getReportById = (reportUid, locals, queryCallback) =&gt; {
+  Report.findById(reportUid, (err, report) =&gt; {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+
+    // If the report&apos;s student UID does not match the user UID, and the user is
+    // not an admin, &apos;report&apos; should not be returned.
+    // TODO(jmtaber129): Check report&apos;s student UID and user UID, and add error
+    // handling.
+
+    queryCallback(err, report);
+  });
+};
+
+/**
+ * Callback used by report CRUD methods that return multiple reports.
+ * @callback multipleReportsCallback
+ * @param {Error} err - An error that occurred during the operation.  Null if no
+ *     errors occurred.
+ * @param {Object.&lt;string, Report&gt;} reports - An object of reports with their
+ *     UIDs as keys.
+ */
+
+/**
+ * Finds all reports, and calls a callback once all reports are found.
+ * @param {Object} reqData - An object containing additional search parameters
+ *     (not yet implemented).
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {multipleReportsCallback} queryCallback - Called once the operation
+ *     finishes.
+ */
+var getAllReports = (reqData, locals, queryCallback) =&gt; {
+  conditions = {};
+
+  // If the user is not an admin, limit the results to reports with the user&apos;s
+  // UID.  If the user is not an admin, and one of the query parameters is a
+  // student UID other than their own, handle it as an error.
+  // TODO(jmtaber129): Set conditions.student to user UID for non-admins.
+  // TODO(jmtaber129): Add error handling for requesting reports with student
+  // UIDs other than the UID of a non-admin user.
+
+  // TODO(jmtaber129): Set additional conditions once query parameters are
+  // accepted in the request object.
+
+  // Both report types are in the same collection, and querying a model queries
+  // the entire collection, so querying one report model will return results for
+  // both report types.
+  Report.find(conditions, (err, reports) =&gt; {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+
+    returnObject = {};
+
+    reports.forEach((report) =&gt; {
+      returnObject[report.id] = report;
+
+      // TODO(jmtaber129): Add point value to report in &apos;returnObject&apos;.
+    });
+
+    queryCallback(err, returnObject);
+  });
+
+};
+
+module.exports = {createReport, modifyReport, deleteReport, getReportById,
+                  getAllReports};
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

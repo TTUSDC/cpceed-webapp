@@ -13,7 +13,7 @@ const dev = webpackMerge(base, {
     filename: "bundle.js"
   },
 
-  entry: './src/index.js',
+  entry: './src/index.jsx',
 
   // Enables source maps that can be accessed in browser dev tools
   devtool: 'source-map',
