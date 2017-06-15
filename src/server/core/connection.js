@@ -53,10 +53,8 @@ const errorHandler = (err, onError) => {
  * @param {OnApiCallFinished} onError - Called with response error
  */
 export const post = (endpoint, data, params, onSuccess, onError) => {
-  logger.info('post');
-  instance.post(endpoint, params, data)
+  instance.post(endpoint, data, params)
     .then((res) => {
-      logger.info(res, 'POST results');
       onSuccess(res.data);
     })
     .catch((err) => { errorHandler(err, onError); });

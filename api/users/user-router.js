@@ -20,8 +20,10 @@ const userRouter = express.Router();
  * @param {number} res.status - Indicates success or not
  */
 userRouter.post('/', (req, res) => {
+  console.log(req.body);
   userManager.createUser(req.body, (err, uid) => {
     if (err) {
+      console.error(err);
       res.status(400).json(err).end();
     } else {
       // A User was created.
