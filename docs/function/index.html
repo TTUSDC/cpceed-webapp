@@ -41,6 +41,12 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-EventSchema">EventSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteEvent">Route-DeleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetAllEvents">Route-GetAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetEventById">Route-GetEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyEvent">Route-ModifyEvent</a></span></span></li>
 <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">reports</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteReport">deleteReport</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
@@ -139,7 +145,7 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span><span data-ice="signature">(reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, createCallback: <span>eventCallback</span>)</span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span><span data-ice="signature">(reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, createCallback: <span>EventCallback</span>)</span>
         </p>
       </div>
       <div>
@@ -225,7 +231,7 @@ when the database save finishes.</p>
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, deleteCallback: <span>eventCallback</span>)</span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, deleteCallback: <span>EventCallback</span>)</span>
         </p>
       </div>
       <div>
@@ -338,7 +344,7 @@ finishes.</p>
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, getCallback: <span>eventCallback</span>)</span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, getCallback: <span>EventCallback</span>)</span>
         </p>
       </div>
       <div>
@@ -478,7 +484,7 @@ finishes.</p>
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span><span data-ice="signature">(event: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, modifyCallback: <span>eventCallback</span>)</span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span><span data-ice="signature">(event: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, modifyCallback: <span>EventCallback</span>)</span>
         </p>
       </div>
       <div>
@@ -763,7 +769,7 @@ calls a callback when the database save finishes.</p>
     
     
     
-    <span data-ice="name">createEvent</span><span data-ice="signature">(reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, createCallback: <span>eventCallback</span>)</span>
+    <span data-ice="name">createEvent</span><span data-ice="signature">(reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, createCallback: <span>EventCallback</span>)</span>
     <span class="right-info">
       
       
@@ -806,7 +812,7 @@ the database save finishes.</p>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" data-depth="0">createCallback</td>
-      <td data-ice="type"><span>eventCallback</span></td>
+      <td data-ice="type"><span>EventCallback</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>Called once the operation finishes.</p>
 </td>
@@ -1009,11 +1015,11 @@ when the database save finishes.</p>
     
     
     
-    <span data-ice="name">deleteEvent</span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, deleteCallback: <span>eventCallback</span>)</span>
+    <span data-ice="name">deleteEvent</span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, deleteCallback: <span>EventCallback</span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/api/events/event-manager.js.html#lineNumber80">source</a></span></span>
+      <span data-ice="source"><span><a href="file/api/events/event-manager.js.html#lineNumber73">source</a></span></span>
     </span>
   </h3>
 
@@ -1050,7 +1056,7 @@ when the database save finishes.</p>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" data-depth="0">deleteCallback</td>
-      <td data-ice="type"><span>eventCallback</span></td>
+      <td data-ice="type"><span>EventCallback</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>Called once the operation is done.</p>
 </td>
@@ -1314,11 +1320,11 @@ finishes.</p>
     
     
     
-    <span data-ice="name">getEventById</span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, getCallback: <span>eventCallback</span>)</span>
+    <span data-ice="name">getEventById</span><span data-ice="signature">(eventUid: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, getCallback: <span>EventCallback</span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/api/events/event-manager.js.html#lineNumber96">source</a></span></span>
+      <span data-ice="source"><span><a href="file/api/events/event-manager.js.html#lineNumber89">source</a></span></span>
     </span>
   </h3>
 
@@ -1355,7 +1361,7 @@ finishes.</p>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" data-depth="0">getCallback</td>
-      <td data-ice="type"><span>eventCallback</span></td>
+      <td data-ice="type"><span>EventCallback</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>Called once the operation is done.</p>
 </td>
@@ -1684,7 +1690,7 @@ finishes.</p>
     
     
     
-    <span data-ice="name">modifyEvent</span><span data-ice="signature">(event: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, modifyCallback: <span>eventCallback</span>)</span>
+    <span data-ice="name">modifyEvent</span><span data-ice="signature">(event: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, reqData: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, locals: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, modifyCallback: <span>EventCallback</span>)</span>
     <span class="right-info">
       
       
@@ -1734,7 +1740,7 @@ back when the database update finishes.</p>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" data-depth="0">modifyCallback</td>
-      <td data-ice="type"><span>eventCallback</span></td>
+      <td data-ice="type"><span>EventCallback</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>Called once the operation finishes.</p>
 </td>

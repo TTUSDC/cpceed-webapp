@@ -434,7 +434,7 @@
         "trailingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {Number} id - The user UID.\n ",
+            "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {string} id - The user UID.\n ",
             "start": 148,
             "end": 304,
             "loc": {
@@ -2928,7 +2928,7 @@
         "leadingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {Number} id - The user UID.\n ",
+            "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {string} id - The user UID.\n ",
             "start": 148,
             "end": 304,
             "loc": {
@@ -6168,7 +6168,7 @@
   "comments": [
     {
       "type": "CommentBlock",
-      "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {Number} id - The user UID.\n ",
+      "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {string} id - The user UID.\n ",
       "start": 148,
       "end": 304,
       "loc": {
@@ -7111,7 +7111,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {Number} id - The user UID.\n ",
+      "value": "*\n * Callback for {@link createUser}\n * @typedef {Object} CreateUserCallback\n * @param {Object} err - The error.\n * @param {string} id - The user UID.\n ",
       "start": 148,
       "end": 304,
       "loc": {

@@ -8,7 +8,7 @@ const Admin = userModels.Admin;
  * Callback for {@link createUser}
  * @typedef {Object} CreateUserCallback
  * @param {Object} err - The error.
- * @param {Number} id - The user UID.
+ * @param {string} id - The user UID.
  */
 
 /**

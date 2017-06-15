@@ -6,6 +6,16 @@ const options = {
   timestamps: true,
 };
 
+/**
+ * Event Object
+ * @typedef {Object} EventSchema
+ * @param {string} creator - UID of event creator
+ * @param {string} category - Category of the event
+ * @param {Date} datetime - Date & time of the event
+ * @param {string} location - Location of event
+ * @param {string} title - Title of the event
+ * @param {string} description - Description of the event
+ */
 const eventSchema = new Schema({
   creator: String,
   category: String,

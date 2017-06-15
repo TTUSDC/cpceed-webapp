@@ -4,6 +4,8 @@ const request = require('supertest');
 const chai = require('chai');
 const sinon = require('sinon');
 const async = require('async');
+const importFresh = require('import-fresh');
+const utilsUser = require('../core/utils-user');
 const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
@@ -18,48 +20,12 @@ let api;
 
 mockgoose(mongoose);
 
-/*
- * Using the API, creates and logins a student.
- *
- * cb(uid, token)
- */
-const createAndLoginStudent = (student, cb) => {
-  const loginUserTest = (uid) => {
-    request(api)
-      .post('/api/auth')
-      .send({
-        email: student.email,
-        password: student.password,
-      })
-      .type('form')
-      .expect(201)
-      .end((loginErr, loginRes) => {
-        expect(loginErr).to.be.null;
-        const token = loginRes.body.token;
-        expect(token).to.exist;
-        cb(uid, token);
-      });
-  };
-
-  request(api)
-    .post('/api/users')
-    .send(student)
-    .type('form')
-    .expect(201)
-    .end((createErr, createRes) => {
-      expect(createErr).to.be.null;
-      const uid = createRes.body.uid;
-      expect(uid).to.not.be.null;
-      loginUserTest(uid);
-    });
-};
-
-describe('user router & integration', () => {
+describe('User Router & Integration', () => {
   // before((done) => { mongoose.connect('', done); });
 
   before(() => {
     // The following line is temp until API does not auto start during testing
-    api = require('../../../server'); // eslint-disable-line global-require
+    api = importFresh('../../../server'); // eslint-disable-line global-require
   });
 
   beforeEach((done) => {
@@ -148,14 +114,14 @@ describe('user router & integration', () => {
 
     it('should get the logged in student by passing the UID', (done) => {
       const student = testUsers.student000;
-      createAndLoginStudent(student, (uid, token) => {
+      utilsUser.createAndLoginUser(api, student, (uid, token) => {
         getUserTest(student, { uid, token }, done);
       });
     });
 
     it('should get the logged in student WITHOUT passing the UID', (done) => {
       const student = testUsers.student000;
-      createAndLoginStudent(student, (uid, token) => {
+      utilsUser.createAndLoginUser(api, student, (uid, token) => {
         getUserTest(student, { token }, done);
       });
     });
@@ -164,7 +130,7 @@ describe('user router & integration', () => {
   describe('PUT /api/users', () => {
     it('should update the logged in student', (done) => {
       const student = testUsers.student000;
-      createAndLoginStudent(student, (uid, token) => {
+      utilsUser.createAndLoginUser(api, student, (uid, token) => {
         const fieldsToUpdate = {
           name: `${student.name}_edit`,
         };
