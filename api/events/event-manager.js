@@ -4,7 +4,7 @@ const Event = eventModels.Event;
 
 /**
  * Callback used by event CRUD methods that returns a single event.
- * @callback eventCallback
+ * @typdef {function} EventCallback
  * @param {Error} err - An error that occurred during the operation. Null if no
  *    errors occurred.
  * @param {Event} event - The event operated on.
@@ -17,7 +17,7 @@ const Event = eventModels.Event;
  *   be created.
  * @param {Object} locals - An object containg the current request's local
  *   variables.
- * @param {eventCallback} createCallback - Called once the operation finishes.
+ * @param {EventCallback} createCallback - Called once the operation finishes.
  */
 const createEvent = (reqData, locals, createCallback) => {
   // TODO(asclines): Add checks for required data and expection handling
@@ -44,7 +44,7 @@ const createEvent = (reqData, locals, createCallback) => {
  * @param {Object} reqData - The request object containing the new event fields.
  * @param {Object} locals - An object containg the current request's local
  *   variables.
- * @param {eventCallback} modifyCallback - Called once the operation finishes.
+ * @param {EventCallback} modifyCallback - Called once the operation finishes.
  */
 const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
   // TODO(asclines): Add checks for required data and expection handling
@@ -52,21 +52,14 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // are either the creator of the event or an admin.
   const conditions = { _id: eventUid };
-  const update = {
-    $set: {
-      creator: reqData.creator,
-      category: reqData.category,
-      datetime: reqData.datetime,
-      location: reqData.location,
-      title: reqData.title,
-      description: reqData.description,
-    },
-  };
+  const update = {};
 
-  const options = {
-    new: true,
-  };
-  Event.findOneAndUpdate(conditions, update, options, modifyCallback);
+  Object.keys(reqData).forEach((key) => {
+    update[key] = reqData[key];
+  });
+
+  const options = { new: true };
+  Event.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
 };
 
 
@@ -75,7 +68,7 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
  * @param {string} eventUid - The UID of the event to be deleted.
  * @param {Object} locals - An object containg the current request's local
  *   variables.
- * @param {eventCallback} deleteCallback - Called once the operation is done.
+ * @param {EventCallback} deleteCallback - Called once the operation is done.
  */
 const deleteEvent = (eventUid, locals, deleteCallback) => {
   // TODO(asclines): Check the UID of the logged in user and make sure they
@@ -91,7 +84,7 @@ const deleteEvent = (eventUid, locals, deleteCallback) => {
  * @param {string} eventUid - The UID of the event to be found.
  * @param {Object} locals - An object containing the current request's
  *   local variables.
- * @param {eventCallback} getCallback - Called once the operation is done.
+ * @param {EventCallback} getCallback - Called once the operation is done.
  */
 const getEventById = (eventUid, locals, getCallback) => {
   // TODO(asclines): Add checks for required data and expection handling
@@ -99,7 +92,17 @@ const getEventById = (eventUid, locals, getCallback) => {
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // have permisssion to get this event.
 
-  Event.findById(eventUid, getCallback);
+  Event.findById(eventUid, (err, results) => {
+    const eventData = {
+      creator: results.creator,
+      category: results.category,
+      datetime: results.datetime,
+      location: results.location,
+      title: results.title,
+      description: results.description,
+    };
+    getCallback(err, eventData);
+  });
 };
 
 const getAllEvents = (reqData, locals, getAllCallback) => {

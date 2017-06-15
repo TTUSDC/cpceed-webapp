@@ -486,6 +486,48 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "api/events/event-models.js~eventschema",
+    "typedef/index.html#static-typedef-EventSchema",
+    "api/events/event-models.js~EventSchema",
+    "typedef"
+  ],
+  [
+    "api/events/event-router.js",
+    "file/api/events/event-router.js.html",
+    "api/events/event-router.js",
+    "file"
+  ],
+  [
+    "api/events/event-router.js~route-createevent",
+    "typedef/index.html#static-typedef-Route-CreateEvent",
+    "api/events/event-router.js~Route-CreateEvent",
+    "typedef"
+  ],
+  [
+    "api/events/event-router.js~route-deleteevent",
+    "typedef/index.html#static-typedef-Route-DeleteEvent",
+    "api/events/event-router.js~Route-DeleteEvent",
+    "typedef"
+  ],
+  [
+    "api/events/event-router.js~route-getallevents",
+    "typedef/index.html#static-typedef-Route-GetAllEvents",
+    "api/events/event-router.js~Route-GetAllEvents",
+    "typedef"
+  ],
+  [
+    "api/events/event-router.js~route-geteventbyid",
+    "typedef/index.html#static-typedef-Route-GetEventById",
+    "api/events/event-router.js~Route-GetEventById",
+    "typedef"
+  ],
+  [
+    "api/events/event-router.js~route-modifyevent",
+    "typedef/index.html#static-typedef-Route-ModifyEvent",
+    "api/events/event-router.js~Route-ModifyEvent",
+    "typedef"
+  ],
+  [
     "api/objects/response.js",
     "file/api/objects/response.js.html",
     "api/objects/response.js",

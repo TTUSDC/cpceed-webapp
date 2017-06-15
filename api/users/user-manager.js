@@ -8,7 +8,7 @@ const Admin = userModels.Admin;
  * Callback for {@link createUser}
  * @typedef {Object} CreateUserCallback
  * @param {Object} err - The error.
- * @param {Number} id - The user UID.
+ * @param {string} id - The user UID.
  */
 
 /**
@@ -95,8 +95,6 @@ const modifyUser = (userUid, reqData, locals, modifyCallback) => {
 * @typedef {Object} DeleteUserCallback
 * @param {Object} - error
 */
-
-
 
 /**
 * Deletes the user from the database.
