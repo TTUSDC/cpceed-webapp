@@ -22,6 +22,27 @@ instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlenco
  * @param {number} - Response status code
  */
 
+
+/**
+ * Handles errors from API and logs them
+ *
+ * @param {Object} err - The error object recieved from Axios
+ * @param {OnApiCallFinished} onError - Called with the correct error object
+ */
+const errorHandler = (err, onError) => {
+  if (err.response) {
+        // Server responded with a status code outside 2xx range.
+    logger.error(err.response, 'Response error');
+  } else if (err.request) {
+        // No response recieved
+    logger.error(err.request, 'No response recieved');
+  } else {
+        // Who knows
+    logger.error(err.message, 'Request error');
+  }
+  onError(err);
+};
+
 /**
  * Generic method to POST to API
  *
@@ -32,14 +53,13 @@ instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlenco
  * @param {OnApiCallFinished} onError - Called with response error
  */
 export const post = (endpoint, data, params, onSuccess, onError) => {
+  logger.info('post');
   instance.post(endpoint, params, data)
     .then((res) => {
+      logger.info(res, 'POST results');
       onSuccess(res.data);
     })
-    .catch((err) => {
-      logger.error(err);
-      onError(err);
-    });
+    .catch((err) => { errorHandler(err, onError); });
 };
 
 /**
