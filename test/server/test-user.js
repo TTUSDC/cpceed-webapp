@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 // import logger from 'logger/logger';
-import { createUser, deleteUser } from 'server/user';
+import { createUser, deleteUser, modifyUser } from 'server/user';
 import * as connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 import { user38257001 as testUser } from './core/users';
@@ -17,8 +17,9 @@ export default describe('Server API: User', () => {
   beforeEach(() => {
     sandbox.stub(connection, 'post');
     sandbox.stub(connection, 'del');
+    sandbox.stub(connection, 'put');
     sandbox.stub(tokenManager, 'getToken').callsFake(() => testToken.token);
-    sandbox.stub(tokenManager, 'decode');
+    sandbox.spy(tokenManager, 'decode');
   });
 
   afterEach(() => {
@@ -39,14 +40,12 @@ export default describe('Server API: User', () => {
         expect(connection.post).to.have.been.calledOnce;
         expect(data).to.equal(expectedResult);
         done();
-      }).catch((err) => {
-        done(err);
-      });
+      }).catch(done);
     });
   });
 
   describe('#deleteUser', () => {
-    it('should delete the user', (done) => {
+    it('should delete the user with passed in UID', (done) => {
       connection.del.callsFake(
         (endpoint, data, params, onSuccess) => {
           expect(endpoint).to.equal('/users');
@@ -60,9 +59,28 @@ export default describe('Server API: User', () => {
       deleteUser(testUser.uid).then(() => {
         expect(connection.del).to.have.been.calledOnce;
         done();
-      }).catch((err) => {
-        done(err);
-      });
+      }).catch(done);
+    });
+  });
+
+  describe('#modifyUser', () => {
+    it('should modify the user with passed in UID', (done) => {
+      const fieldsToUpdate = {
+        name: 'newName',
+      };
+      connection.put.callsFake(
+        (endpoint, data, params, onSuccess) => {
+          expect(endpoint).to.equal('/users');
+          expect(params).to.not.be.null;
+          expect(params.uid).to.equal(testUser.uid);
+          expect(tokenManager.getToken).to.have.been.calledOnce;
+          expect(tokenManager.decode).to.not.have.been.called;
+          onSuccess(fieldsToUpdate);
+        });
+      modifyUser(fieldsToUpdate, testUser.uid).then(() => {
+        expect(connection.put).to.have.been.calledOnce;
+        done();
+      }).catch(done);
     });
   });
 });

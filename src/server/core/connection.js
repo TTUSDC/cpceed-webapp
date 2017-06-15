@@ -91,4 +91,28 @@ export const del = (endpoint, data, params, onSuccess, onError) => {
     });
 };
 
+/**
+ * Generic method to PUT to API
+ * This method is `del` instead of `delete` to make Node.JS happy
+ *
+ * @param {string} endpoint - URL after /api
+ * @param {Object} data - Data that goes into the body
+ * @param {Object} params - Data that goes into the query
+ * @param {OnApiCallFinished} onSuccess - Called with response body
+ * @param {OnApiCallFinisihed} onError - Called with response err
+ */
+export const put = (endpoint, data, params, onSuccess, onError) => {
+  const config = {
+    data,
+    params,
+  };
+
+  instance.put(endpoint, config)
+    .then((res) => {
+      onSuccess(res);
+    })
+  .catch((err) => { errorHandler(err, onError); });
+};
+
+
 export default instance;
