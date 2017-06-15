@@ -96,8 +96,6 @@ const modifyUser = (userUid, reqData, locals, modifyCallback) => {
 * @param {Object} - error
 */
 
-
-
 /**
 * Deletes the user from the database.
 * @param {string} userUid - The UID of the user to be updated.
@@ -105,7 +103,7 @@ const modifyUser = (userUid, reqData, locals, modifyCallback) => {
 * @param {DeleteUserCallback} deleteCallback
 */
 const deleteUser = (userUid, locals, deleteCallback) => {
-  User.findOneAndremove({ _id: userUid }, deleteCallback);
+  User.findOneAndRemove({ _id: userUid }, deleteCallback);
 };
 
 

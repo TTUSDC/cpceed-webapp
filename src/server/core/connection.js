@@ -53,7 +53,12 @@ const errorHandler = (err, onError) => {
  * @param {OnApiCallFinished} onError - Called with response error
  */
 export const post = (endpoint, data, params, onSuccess, onError) => {
-  instance.post(endpoint, data, params)
+  const config = {
+    data,
+    params,
+  };
+
+  instance.post(endpoint, config)
     .then((res) => {
       onSuccess(res.data);
     })
@@ -71,7 +76,12 @@ export const post = (endpoint, data, params, onSuccess, onError) => {
  * @param {OnApiCallFinisihed} onError - Called with response err
  */
 export const del = (endpoint, data, params, onSuccess, onError) => {
-  instance.delete(endpoint, params, data)
+  const config = {
+    data,
+    params,
+  };
+
+  instance.delete(endpoint, config)
     .then((res) => {
       onSuccess(res);
     })
