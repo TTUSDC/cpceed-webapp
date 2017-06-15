@@ -43,13 +43,12 @@ eventRouter.post('/', (req, res) => {
  */
 eventRouter.put('/', (req, res) => {
   eventManager.modifyEvent(req.query.uid, req.body, res.locals,
-    (err, event) => {
+    (err, eventData) => {
       if (err) {
         res.status(400).json(err).end();
         return;
       }
-
-      res.status(200).json(event).end();
+      res.status(200).json(eventData).end();
     });
 });
 
@@ -91,13 +90,12 @@ eventRouter.delete('/', (req, res) => {
  * @param {number} res.status - 200 on success
  */
 eventRouter.get('/', (req, res) => {
-  eventManager.getEventById(res.query.uid, req.body, res.locals,
+  eventManager.getEventById(req.query.uid, {},
     (err, event) => {
       if (err) {
         res.status(400).json(err).end();
         return;
       }
-
       res.status(200).json(event).end();
     });
 });

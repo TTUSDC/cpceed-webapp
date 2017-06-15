@@ -52,21 +52,14 @@ const modifyEvent = (eventUid, reqData, locals, modifyCallback) => {
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // are either the creator of the event or an admin.
   const conditions = { _id: eventUid };
-  const update = {
-    $set: {
-      creator: reqData.creator,
-      category: reqData.category,
-      datetime: reqData.datetime,
-      location: reqData.location,
-      title: reqData.title,
-      description: reqData.description,
-    },
-  };
+  const update = {};
 
-  const options = {
-    new: true,
-  };
-  Event.findOneAndUpdate(conditions, update, options, modifyCallback);
+  Object.keys(reqData).forEach((key) => {
+    update[key] = reqData[key];
+  });
+
+  const options = { new: true };
+  Event.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
 };
 
 
@@ -99,7 +92,17 @@ const getEventById = (eventUid, locals, getCallback) => {
   // TODO(asclines): Check the UID of the logged in user and make sure they
   // have permisssion to get this event.
 
-  Event.findById(eventUid, getCallback);
+  Event.findById(eventUid, (err, results) => {
+    const eventData = {
+      creator: results.creator,
+      category: results.category,
+      datetime: results.datetime,
+      location: results.location,
+      title: results.title,
+      description: results.description,
+    };
+    getCallback(err, eventData);
+  });
 };
 
 const getAllEvents = (reqData, locals, getAllCallback) => {
