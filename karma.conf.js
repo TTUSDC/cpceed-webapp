@@ -1,6 +1,6 @@
-var webpackConfig = require('./webpack/test.js');
+const webpackConfig = require('./webpack/test-app.js');
 
-module.exports = function(config) {
+module.exports = (config) => {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -11,12 +11,12 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/index.js'
+      'test/index.js',
     ],
 
     // preprocess matching files before serving them to the browser
     preprocessors: {
-      'test/index.js': ['webpack']
+      'test/index.js': ['webpack'],
     },
 
     webpack: webpackConfig,
@@ -38,8 +38,8 @@ module.exports = function(config) {
     client: {
       captureConsole: true,
       mocha: {
-        bail: true
-      }
+        bail: true,
+      },
     },
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -54,6 +54,6 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity
-  })
-}
+    concurrency: Infinity,
+  });
+};

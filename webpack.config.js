@@ -1,16 +1,29 @@
-const prodApp = require('./webpack/prod.js');
-const devApp = require('./webpack/dev.js');
+const prodApp = require('./webpack/prod-app.js');
+const devApp = require('./webpack/dev-app.js');
+const prodApi = require('./webpack/prod-api.js');
 const devApi = require('./webpack/base-api.js');
 
 function config(env) {
-  switch(env) {
+  let output = null;
+
+  switch (env) {
     case 'prod-app':
-      return prodApp;
+      output = prodApp;
+      break;
     case 'dev-app':
-      return devApp;
+      output = devApp;
+      break;
+    case 'prod-api':
+      output = prodApi;
+      break;
     case 'dev-api':
-      return devApi;
+      output = devApi;
+      break;
+    default:
+      console.log('Error: unknown Webpack environment');
   }
+
+  return output;
 }
 
 module.exports = config;

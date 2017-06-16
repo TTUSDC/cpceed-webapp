@@ -10,8 +10,8 @@ const base = {
     modules: [
       nodePath,
       appPath,
-      commonPath
-    ]
+      commonPath,
+    ],
   },
 
   module: {
@@ -24,7 +24,7 @@ const base = {
       {
         test: /\.(js|jsx)$/,
         exclude: nodePath,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
       },
       {
         // 'test' indicates the file type
@@ -37,17 +37,17 @@ const base = {
         */
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
               modules: true,
               importLoaders: 1,
-              localIdentName: '[path]__[name]__[local]__[hash:base64:5]'
-            }
-          }
-        ]
+              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
+            },
+          },
+        ],
       },
       {
         /*
@@ -62,26 +62,26 @@ const base = {
         test: /\.scss$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
-            loader: 'css-loader'
+            loader: 'css-loader',
           },
           {
             loader: 'sass-loader',
             options: {
               outputStyle: 'compressed',
-              includePaths: nodePath
-            }
-          }
-        ]
+              includePaths: nodePath,
+            },
+          },
+        ],
       },
       {
         test: /\.(svg|png|jpg)$/,
-        loader: 'file-loader'
-      }
-    ]
-  }
+        loader: 'file-loader',
+      },
+    ],
+  },
 };
 
 module.exports = base;
