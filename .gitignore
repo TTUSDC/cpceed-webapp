@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Jetbrains
+.idea/
+
 # Runtime data
 pids
 *.pid
@@ -61,3 +64,4 @@ typings/
 devutils/dbdatagen/cpceed-firebase-admin-key.json
 devutils/dbdatagen/gen-uids.json
 devutils/dbdatagen/gen-script.json
+
