@@ -3,14 +3,13 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const chai = require('chai');
 const sinon = require('sinon');
-const importFresh = require('import-fresh');
-const importClear = require('clear-module');
 const utilsUser = require('../core/utils-user');
 const utilsEvents = require('../core/utils-events');
 const testUsers = require('../../core/users');
 const testEvents = require('../../core/events');
 const eventManager = require('../../../api/events/event-manager');
 const eventModels = require('../../../api/events/event-models');
+const server = require('../../../server');
 
 chai.use(require('sinon-chai'));
 
@@ -21,10 +20,7 @@ let api;
 mockgoose(mongoose);
 
 describe('Event Router & Integration', () => {
-  before(() => {
-    // The following line is temp until API does not auto start during testing
-    api = importFresh('../../../server'); // eslint-disable-line global-require
-  });
+  before((done) => { api = server.start(done); });
 
   beforeEach((done) => {
     mockgoose.reset();
@@ -32,10 +28,9 @@ describe('Event Router & Integration', () => {
   });
 
   after((done) => {
-    api.close();
-    // mongoose.disconnect();
-    mongoose.unmock(done);
-    importClear('../../../server');
+    server.stop(() => {
+      mongoose.unmock(done);
+    });
   });
 
   describe('POST /api/events', () => {
