@@ -47,14 +47,16 @@ app.use((err, req, res, next) => {
   res.json(err.message);
 });
 
+let service;
 const start = (cb) => {
   mongoose.connect(mongoURL);
-  app.listen(port, cb);
+  service = app.listen(port, cb);
+  return service;
 };
 
 const stop = (cb) => {
   mongoose.disconnect();
-  app.close(cb);
+  service.close(cb);
 }
 
 const server = { start, stop };
