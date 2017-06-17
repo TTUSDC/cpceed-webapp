@@ -42,6 +42,20 @@ const errorHandler = (err, onError) => {
   onError(err);
 };
 
+/**
+ * This class allows for easy building of a request to the API.
+ *
+ * @example
+ * new Connection()
+ *  .post()
+ *  .users()
+ *  .data(newUser)
+ *  .call(() => {
+ *    console.log('Connection succeeded!');
+ *   }, () => {
+ *    console.log('Connection failed!');
+ *   });
+ */
 export class Connection {
 
   constructor() {
@@ -79,24 +93,34 @@ export class Connection {
     return this;
   }
 
-
-
+  /**
+   * Sets the body of the request object
+   *
+   * @param {Object} body
+   * @returns {Connection}
+   */
   data(body) {
     this.config.data = body;
     return this;
   }
 
+  /**
+   * Sets the query parameters of the request object
+   *
+   * @param query
+   * @returns {Connection}
+   */
   params(query) {
     this.config.params = query;
     return this;
   }
 
   call(onSuccess, onError) {
+    logger.info('Call is called.');
     instance.get(this.url, this.config).then(onSuccess).catch((err) => {
       errorHandler(err, onError);
     });
   }
-
 }
 /**
  * Generic method to POST to API
