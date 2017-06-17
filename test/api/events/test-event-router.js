@@ -1,8 +1,4 @@
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
 const request = require('supertest');
-const chai = require('chai');
-const sinon = require('sinon');
 const importFresh = require('import-fresh');
 const importClear = require('clear-module');
 const utilsUser = require('../core/utils-user');
@@ -12,9 +8,6 @@ const testEvents = require('../../core/events');
 const eventManager = require('../../../api/events/event-manager');
 const eventModels = require('../../../api/events/event-models');
 
-chai.use(require('sinon-chai'));
-
-const expect = chai.expect;
 const Event = eventModels.Event;
 
 let api;

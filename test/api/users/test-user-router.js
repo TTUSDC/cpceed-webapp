@@ -1,8 +1,4 @@
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
 const request = require('supertest');
-const chai = require('chai');
-const sinon = require('sinon');
 const async = require('async');
 const importFresh = require('import-fresh');
 const utilsUser = require('../core/utils-user');
@@ -10,9 +6,6 @@ const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
 
-chai.use(require('sinon-chai'));
-
-const expect = chai.expect;
 const Student = userModels.Student;
 
 let api;

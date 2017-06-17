@@ -1,8 +1,4 @@
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
 const bluebird = require('bluebird');
-const chai = require('chai');
-const chaiMoment = require('chai-moment');
 const jwt = require('jsonwebtoken');
 const authManager = require('../../../api/auth/auth-manager');
 const authModels = require('../../../api/auth/auth-models');
@@ -12,12 +8,11 @@ const testUsers = require('../../core/users');
 const testTokens = require('../../core/tokens');
 const authErrors = require('../../../api/errors/auth-errors');
 
-const expect = chai.expect;
 const Session = authModels.Session;
 const Admin = userModels.Admin;
 const Student = userModels.Student;
 
-chai.use(chaiMoment);
+// chai.use(chaiMoment);
 mockgoose(mongoose);
 
 describe('authManager', () => {

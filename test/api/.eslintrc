@@ -6,6 +6,7 @@
     "mockgoose": true,
     "mongoose": true,
     "expect": true,
-    "should":true
+    "should":true,
+    "sinon": true
   }
 }
