@@ -22,7 +22,6 @@ instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlenco
  * @param {number} - Response status code
  */
 
-
 /**
  * Handles errors from API and logs them
  *
@@ -43,6 +42,62 @@ const errorHandler = (err, onError) => {
   onError(err);
 };
 
+export class Connection {
+
+  constructor() {
+    this.config = {
+      data: {},
+      params: {},
+    };
+
+    this.url = '/';
+    this.method = 'get';
+  }
+
+  post() {
+    this.method = 'post';
+    return this;
+  }
+
+  del() {
+    this.method = 'delete';
+    return this;
+  }
+
+  put() {
+    this.method = 'put';
+    return this;
+  }
+
+  get() {
+    this.method = 'get';
+    return this;
+  }
+
+  users() {
+    this.url = '/users';
+    return this;
+  }
+
+
+
+  data(body) {
+    this.config.data = body;
+    return this;
+  }
+
+  params(query) {
+    this.config.params = query;
+    return this;
+  }
+
+  call(onSuccess, onError) {
+    instance.get(this.url, this.config).then(onSuccess).catch((err) => {
+      errorHandler(err, onError);
+    });
+  }
+
+}
 /**
  * Generic method to POST to API
  *
@@ -133,4 +188,4 @@ export const get = (endpoint, data, params, onSuccess, onError) => {
   });
 };
 
-export default instance;
+export default Connection;

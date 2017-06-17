@@ -1,5 +1,6 @@
 // import logger from 'logger/logger';
-import * as connection from 'server/core/connection';
+// import * as connection from 'server/core/connection';
+import Connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 
 /**
@@ -11,7 +12,12 @@ import * as tokenManager from 'server/core/tokenmanager';
  */
 export function createUser(newUser) {
   return new Promise((resolve, reject) => {
-    connection.post('/users', newUser, {}, resolve, reject);
+    new Connection()
+        .post()
+        .users()
+        .data(newUser)
+        .call(resolve, reject);
+    // connection.post('/users', newUser, {}, resolve, reject);
   });
 }
 
