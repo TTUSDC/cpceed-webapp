@@ -1,17 +1,9 @@
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
-const chai = require('chai');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
 const testUsers = require('../../core/users');
 
-const expect = chai.expect;
-const should = chai.should();
 const Admin = userModels.Admin;
 const Student = userModels.Student;
-
-chai.use(require('chai-shallow-deep-equal'));
-chai.use(require('chai-moment'));
 
 mockgoose(mongoose);
 
