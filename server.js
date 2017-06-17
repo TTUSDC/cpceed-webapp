@@ -25,14 +25,13 @@ app.use(cookieParser());
 // Connect to mongodb.
 const mongoURL = process.env.MONGODB_URI || process.env.MONGOLAB_URI;
 mongoose.Promise = global.Promise;
-mongoose.connect(mongoURL);
 mongoose.connection.on('error', (err) => {
   console.error(err);
   console.log('MongoDB connection error. Please make sure MongoDB is running.');
   process.exit(1);
 });
 
-app.use('/', express.static(__dirname +'/build'));
+app.use('/', express.static(`${__dirname}/build`));
 app.use('/api', apiRouter);
 
 // 404.
@@ -48,10 +47,22 @@ app.use((err, req, res, next) => {
   res.json(err.message);
 });
 
-// Start express server.
-const server = app.listen(port, () => {
-  console.log('App is running at %d in %s mode', port, app.get('env'));
-  console.log('  Press ctrl-c to stop\n');
-});
+const start = (cb) => {
+  mongoose.connect(mongoURL);
+  app.listen(port, cb);
+};
 
+const stop = (cb) => {
+  mongoose.disconnect();
+  app.close(cb);
+}
+
+const server = { start, stop };
+
+if (require.main === module) {
+  start(() => {
+    console.log('App is running at %d in %s mode', port, app.get('env'));
+    console.log('  Press ctrl-c to stop\n');
+  });
+}
 module.exports = server;
