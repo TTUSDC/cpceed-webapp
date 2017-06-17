@@ -4301,9 +4301,9 @@
                               "line": 106,
                               "column": 23
                             },
-                            "identifierName": "findOneAndremove"
+                            "identifierName": "findOneAndRemove"
                           },
-                          "name": "findOneAndremove"
+                          "name": "findOneAndRemove"
                         },
                         "computed": false
                       },
@@ -15038,7 +15038,7 @@
         "postfix": false,
         "binop": null
       },
-      "value": "findOneAndremove",
+      "value": "findOneAndRemove",
       "start": 2694,
       "end": 2710,
       "loc": {
