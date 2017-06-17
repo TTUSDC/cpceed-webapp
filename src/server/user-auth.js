@@ -1,6 +1,6 @@
 import { store } from 'App.jsx';
 import { updateUser, logoutUser } from 'redux/actions';
-import logger from 'logger/logger';
+import logger from 'logger.js';
 import * as connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 

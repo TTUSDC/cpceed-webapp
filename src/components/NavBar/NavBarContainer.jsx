@@ -5,7 +5,7 @@ import * as firebase from 'firebase';
 import { connect } from 'react-redux';
 
 import { logoutUser } from 'redux/actions.js';
-import logger from 'logger/logger.js';
+import logger from 'logger.js';
 import NavBar from './NavBar.jsx';
 
 class NavBarContainer extends React.Component {

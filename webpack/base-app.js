@@ -1,24 +1,17 @@
 const path = require('path');
 
 const nodePath = path.resolve(__dirname, '../node_modules');
+const commonPath = path.resolve(__dirname, '../common');
 const appPath = path.resolve(__dirname, '../src');
-const shimPath = path.resolve(__dirname, '../src/logger/empty-shim.js');
 
 const base = {
-  // Allows for absolute paths from locations indicated in 'root'
+  // Allows for absolute paths from locations indicated in 'modules'
   resolve: {
     modules: [
       nodePath,
-      appPath
+      appPath,
+      commonPath,
     ],
-    alias: {
-      // Ignore optional bunyan dependencies
-      'dtrace-provider': shimPath,
-      fs: shimPath,
-      'safe-json-stringify': shimPath,
-      mv: shimPath,
-      'source-map-support': shimPath
-    }
   },
 
   module: {
@@ -31,7 +24,7 @@ const base = {
       {
         test: /\.(js|jsx)$/,
         exclude: nodePath,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
       },
       {
         // 'test' indicates the file type
@@ -44,17 +37,17 @@ const base = {
         */
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
               modules: true,
               importLoaders: 1,
-              localIdentName: '[path]__[name]__[local]__[hash:base64:5]'
-            }
-          }
-        ]
+              localIdentName: '[path]__[name]__[local]__[hash:base64:5]',
+            },
+          },
+        ],
       },
       {
         /*
@@ -69,26 +62,26 @@ const base = {
         test: /\.scss$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
-            loader: 'css-loader'
+            loader: 'css-loader',
           },
           {
             loader: 'sass-loader',
             options: {
               outputStyle: 'compressed',
-              includePaths: nodePath
-            }
-          }
-        ]
+              includePaths: nodePath,
+            },
+          },
+        ],
       },
       {
         test: /\.(svg|png|jpg)$/,
-        loader: 'file-loader'
-      }
-    ]
-  }
+        loader: 'file-loader',
+      },
+    ],
+  },
 };
 
 module.exports = base;
