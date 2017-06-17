@@ -1,7 +1,7 @@
 const prodApp = require('./webpack/prod-app.js');
 const devApp = require('./webpack/dev-app.js');
 const prodApi = require('./webpack/prod-api.js');
-const devApi = require('./webpack/base-api.js');
+const devApi = require('./webpack/dev-api.js');
 
 function config(env) {
   let output = null;
