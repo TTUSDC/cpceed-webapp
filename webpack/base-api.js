@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const nodePath = path.resolve(__dirname, '../node_modules');
 const commonPath = path.resolve(__dirname, '../common');
+const apiPath = path.resolve(__dirname, '../api');
 
 const externals = {};
 fs.readdirSync(nodePath).filter(file => file !== '.bin')
@@ -18,6 +19,7 @@ const baseApi = {
   resolve: {
     modules: [
       commonPath,
+      apiPath,
     ],
   },
 

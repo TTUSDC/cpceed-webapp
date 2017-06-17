@@ -9,7 +9,7 @@
     "start-api": "webpack --env=dev-api",
     "test": "npm-run-all --parallel --continue-on-error test-app test-api",
     "test-app": "karma start karma.conf.js",
-    "test-api": "./node_modules/.bin/mocha --recursive test/api",
+    "test-api": "webpack --env=test-api && mocha build/test.api.bundle.js",
     "lint": "node_modules/.bin/eslint src test api",
     "docs": "node_modules/.bin/esdoc"
   },
