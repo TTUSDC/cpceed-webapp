@@ -2,7 +2,6 @@ import { store } from 'App.jsx';
 import { updateUser, logoutUser } from 'redux/actions';
 import Connection from 'server/core/connection';
 // import logger from 'logger/logger';
-import * as connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 
 export function login(email, password) {
