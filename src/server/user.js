@@ -1,5 +1,4 @@
 // import logger from 'logger/logger';
-// import * as connection from 'server/core/connection';
 import Connection from 'server/core/connection';
 import * as tokenManager from 'server/core/tokenmanager';
 
@@ -17,7 +16,6 @@ export function createUser(newUser) {
         .users()
         .data(newUser)
         .call(resolve, reject);
-    // connection.post('/users', newUser, {}, resolve, reject);
   });
 }
 
@@ -32,7 +30,11 @@ export function deleteUser(userUid) {
   return new Promise((resolve, reject) => {
     const token = tokenManager.getToken();
     const uid = userUid || tokenManager.decode(token).id;
-    connection.del('/users', {}, { uid, token }, resolve, reject);
+    new Connection()
+      .del()
+      .users()
+      .params({ uid, token })
+      .call(resolve, reject);
   });
 }
 
@@ -49,7 +51,12 @@ export function modifyUser(data, userUid) {
   return new Promise((resolve, reject) => {
     const token = tokenManager.getToken();
     const uid = userUid || tokenManager.decode(token).id;
-    connection.put('/users', { data }, { uid, token }, resolve, reject);
+    new Connection()
+      .put()
+      .users()
+      .data(data)
+      .params({ uid, token })
+      .call(resolve, reject);
   });
 }
 
@@ -65,6 +72,10 @@ export function getUser(userUid) {
   return new Promise((resolve, reject) => {
     const token = tokenManager.getToken();
     const uid = userUid || tokenManager.decode(token).id;
-    connection.get('/users', {}, { uid, token }, resolve, reject);
+    new Connection()
+      .get()
+      .users()
+      .params({ uid, token })
+      .call(resolve, reject);
   });
 }
