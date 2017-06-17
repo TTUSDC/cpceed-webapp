@@ -40,12 +40,14 @@ export default describe('Server API: Auth', () => {
     tokenManager.saveToken.resetHistory();
     tokenManager.removeToken.resetHistory();
     connection.post.resetHistory();
+    connection.del.resetHistory();
   });
 
   after(() => {
     tokenManager.saveToken.restore();
     tokenManager.removeToken.restore();
     connection.post.restore();
+    connection.del.restore();
   });
 
   describe('initial state', () => {
