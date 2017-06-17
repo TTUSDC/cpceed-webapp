@@ -48,12 +48,25 @@ app.use((err, req, res, next) => {
 });
 
 let service;
+
+/**
+ * Performs all start up operations such as connectiong to the database
+ * and listening at the port.
+ *
+ * @param {function} cb - Called when started.
+ * @returns {http.Server|*} - The HTTP Server listening
+ */
 const start = (cb) => {
   mongoose.connect(mongoURL);
   service = app.listen(port, cb);
   return service;
 };
 
+/**
+ * The reverse of {@link start}
+ *
+ * @param {function} cb - Called when stopped
+ */
 const stop = (cb) => {
   mongoose.disconnect();
   service.close(cb);
