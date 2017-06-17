@@ -68,30 +68,27 @@ export class Connection {
     this.method = 'get';
   }
 
-  post() {
-    this.method = 'post';
+  setMethod(method){
+    this.method = method;
     return this;
   }
 
-  del() {
-    this.method = 'delete';
+  setUrl(url) {
+    this.url = url;
     return this;
   }
 
-  put() {
-    this.method = 'put';
-    return this;
-  }
+  post() { return this.setMethod('post'); }
 
-  get() {
-    this.method = 'get';
-    return this;
-  }
+  del() { return this.setMethod('delete'); }
 
-  users() {
-    this.url = '/users';
-    return this;
-  }
+  put() { return this.setMethod('put'); }
+
+  get() { return this.setMethod('get'); }
+
+  users() { return this.setUrl('/users'); }
+
+  auth() { return this.setUrl('/auth'); }
 
   /**
    * Sets the body of the request object
@@ -116,7 +113,6 @@ export class Connection {
   }
 
   call(onSuccess, onError) {
-    logger.info('Call is called.');
     instance.get(this.url, this.config).then(onSuccess).catch((err) => {
       errorHandler(err, onError);
     });
