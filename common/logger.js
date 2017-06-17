@@ -3,10 +3,16 @@ const logger = require('loglevel');
 // Checks current build environment
 let envLevel = null;
 switch (ENV) {
-  case 'prod':
+  case 'prodApp':
     envLevel = 'error';
     break;
-  case 'dev':
+  case 'devApp':
+    envLevel = 'trace';
+    break;
+  case 'prodApi':
+    envLevel = 'trace';
+    break;
+  case 'devApi':
     envLevel = 'trace';
     break;
   default:

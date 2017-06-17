@@ -12,7 +12,7 @@ const test = webpackMerge(base, {
 
   plugins: [
     new webpack.DefinePlugin({
-      ENV: JSON.stringify('test'),
+      ENV: JSON.stringify('testApp'),
     }),
   ],
 });

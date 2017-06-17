@@ -18,7 +18,7 @@ const prod = webpackMerge(base, {
   plugins: [
     // Resolve global constant ENV to 'prod' during build
     new webpack.DefinePlugin({
-      ENV: JSON.stringify('prod'),
+      ENV: JSON.stringify('prodApp'),
     }),
   ],
 });

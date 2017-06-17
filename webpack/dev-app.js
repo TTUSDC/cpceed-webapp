@@ -27,7 +27,7 @@ const dev = webpackMerge(base, {
 
   plugins: [
     new webpack.DefinePlugin({
-      ENV: JSON.stringify('dev'),
+      ENV: JSON.stringify('devApp'),
     }),
   ],
 });
