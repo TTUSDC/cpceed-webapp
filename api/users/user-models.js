@@ -10,7 +10,19 @@ const pointOption = {
   default: 0,
 };
 
+/**
+* User Object
+* @typedef {Object} UserSchema
+* @param {string} name - Screen name for user
+* @param {string} firstName - DEPRECATED
+* @param {string} lastName - DEPRECATED
+* @param {string} email
+* @param {string} password
+* @param {string} role - ENUM: student, admin
+* @param {boolean} isApproved
+*/
 const userSchema = new Schema({
+  name: String,
   firstName: String,
   lastName: String,
   email: {
@@ -24,7 +36,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['Student', 'Admin'],
+    enum: ['student', 'admin'],
     required: true,
   },
   isApproved: {
@@ -34,6 +46,9 @@ const userSchema = new Schema({
   },
 }, options);
 
+/**
+*  Updates and saves the user's password
+*/
 userSchema.pre('save', function pre(next) {
   const user = this;
 
@@ -56,6 +71,19 @@ userSchema.pre('save', function pre(next) {
   });
 });
 
+
+/**
+* Callback for {@link userSchema.methods.comparePassword}
+* @typedef {Object} ComparePasswordNext
+* @param {Object} err - error
+* @param {boolean} isMatch - Whether or not the passwords matched
+*/
+
+/**
+* Helper method to check users password
+* @param {string} password - The password to be compared to the user's password
+* @param {ComparePasswordNext} next
+*/
 userSchema.methods.comparePassword = function comparePassword(password, next) {
   bcrypt.compare(password, this.password, (err, isMatch) => {
     next(err, isMatch);
@@ -84,7 +112,7 @@ const adminSchema = new Schema({}, options);
 
 const User = mongoose.model('User', userSchema);
 
-const Student = User.discriminator('Student', studentSchema);
-const Admin = User.discriminator('Admin', adminSchema);
+const Student = User.discriminator('student', studentSchema);
+const Admin = User.discriminator('admin', adminSchema);
 
 module.exports = { Student, Admin, User };

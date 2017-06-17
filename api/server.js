@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 // Routers.
 const auth = require('./auth/auth-router.js');
-//const event = require('./events/router.js');
+const events = require('./events/event-router.js');
 const report = require('./reports/report-router.js');
 const user = require('./users/user-router.js');
 
@@ -15,7 +15,7 @@ const user = require('./users/user-router.js');
 // App routes.
 const router = express.Router();
 router.use('/users', user.userRouter);
-//router.use('/events', event.eventRouter);
+router.use('/events', events.eventRouter);
 router.use('/reports', report.reportRouter);
 router.use('/auth', auth.router);
 

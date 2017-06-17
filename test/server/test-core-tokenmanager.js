@@ -45,6 +45,7 @@ export default describe('Server API: Core/tokenmanager', () => {
       expect(result.email).to.equal(testToken.email);
       expect(result.role).to.equal(testToken.role);
       expect(result.isApproved).to.equal(testToken.isApproved);
+      expect(result.id).to.equal(testToken.id);
     });
   });
 });
