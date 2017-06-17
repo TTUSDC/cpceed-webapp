@@ -1461,7 +1461,7 @@
         "trailingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user ot be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
+            "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user to be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
             "start": 904,
             "end": 1463,
             "loc": {
@@ -2598,7 +2598,7 @@
         "leadingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user ot be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
+            "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user to be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
             "start": 904,
             "end": 1463,
             "loc": {
@@ -5286,7 +5286,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user ot be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
+      "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user to be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
       "start": 904,
       "end": 1463,
       "loc": {
@@ -8210,7 +8210,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user ot be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
+      "value": "*\n * Route for modiying an existing user\n * # API\n * - Endpoint: `/api/users`\n * - Verb: PUT\n * - Success Code: 200\n *\n * @typedef {function} Route-ModifyUser\n * @param {Object} req - Express request object\n * @param {string} [req.query.uid] UID of user to be modified\n * @param {UserSchema} req.body - Updated fields of the user\n * @param {Object} res - Express result object\n * @param {number} status - 200 on success, 400 if error\n * @param {UserSchema|string} res.body - Modified user | error message\n * @param {string} token - Admin | Modified User\n ",
       "start": 904,
       "end": 1463,
       "loc": {

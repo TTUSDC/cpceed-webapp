@@ -19,7 +19,7 @@ const port = process.env.PORT || 3000;
 app.set('port', port);
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Connect to mongodb.

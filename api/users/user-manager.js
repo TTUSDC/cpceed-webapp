@@ -103,7 +103,7 @@ const modifyUser = (userUid, reqData, locals, modifyCallback) => {
 * @param {DeleteUserCallback} deleteCallback
 */
 const deleteUser = (userUid, locals, deleteCallback) => {
-  User.findOneAndremove({ _id: userUid }, deleteCallback);
+  User.findOneAndRemove({ _id: userUid }, deleteCallback);
 };
 
 
