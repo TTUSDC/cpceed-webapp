@@ -1,15 +1,21 @@
 // import logger from 'logger/logger';
 import * as firebase from 'firebase';
+import Connection from 'server/core/connection';
+import * as tokenManager from 'server/core/tokenmanager';
 
 const eventsRef = firebase.database().ref().child('events');
 
-export function create(newEvent) {
+export function createEvent(newEvent) {
   return new Promise((resolve, reject) => {
-    const newEventRef = eventsRef.push();
-    newEventRef.set(newEvent).then((err) => {
-      if (err) reject(err);
-      resolve(newEventRef.key);
-    });
+    const onSuccess = (uid) => {
+      resolve(uid);
+    };
+    new Connection()
+      .post()
+      .events()
+      .data(newEvent)
+      .params({ token: tokenManager.getToken() })
+      .call(onSuccess, reject);
   });
 }
 
