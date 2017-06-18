@@ -58,7 +58,7 @@ const randomItem = items => items[Math.floor(Math.random() * items.length)];
  * @property {string} [data.title]
  * @property {string} [data.description]
  */
-export const generateEventData = (creator, data) => {
+const generateEventData = (creator, data) => {
   const template = data || {};
   console.log('Generating event data');
   return {
