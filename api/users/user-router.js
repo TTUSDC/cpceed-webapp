@@ -13,11 +13,11 @@ const userRouter = express.Router();
  *
  * @typedef {function} Route-CreateUser
  * @param {Object} req - Express request object
- * @param {UserSchema} req.body - User to be created
+ * @property {UserSchema} req.body - User to be created
  * @param {Object} res - Express result object
- * @param {string} res.body - UID of the created user if successful, else the
+ * @property {string} res.body - UID of the created user if successful, else the
  *                          error message
- * @param {number} res.status - Indicates success or not
+ * @property {number} res.status - Indicates success or not
  */
 userRouter.post('/', (req, res) => {
   userManager.createUser(req.body, (err, uid) => {
@@ -39,12 +39,12 @@ userRouter.post('/', (req, res) => {
  *
  * @typedef {function} Route-ModifyUser
  * @param {Object} req - Express request object
- * @param {string} [req.query.uid] UID of user to be modified
- * @param {UserSchema} req.body - Updated fields of the user
+ * @property {string} [req.query.uid] UID of user to be modified
+ * @property {string} req.query.token - Admin | Modified User
+ * @property {UserSchema} req.body - Updated fields of the user
  * @param {Object} res - Express result object
- * @param {number} status - 200 on success, 400 if error
- * @param {UserSchema|string} res.body - Modified user | error message
- * @param {string} token - Admin | Modified User
+ * @property {UserSchema|string} res.body - Modified user | error message
+ * @property {number} res.status - 200 on success
  */
 userRouter.put('/',
     authManager.verify,
@@ -69,9 +69,10 @@ userRouter.put('/',
  *
  * @typedef {function} Route-DeleteUser
  * @param {Object} req - Express request object
- * @param {string} [req.query.uid] - UID of user to be deleted
- * @param {string}  token - Admin | User to be deleted
+ * @property {string} [req.query.uid] - UID of user to be deleted
+ * @property {string} req.query.token - Admin | User to be deleted
  * @param {Object} res - Express result object
+ * @property {number} res.status - 200 on success
  */
 userRouter.delete('/',
     authManager.verify,
@@ -95,9 +96,10 @@ userRouter.delete('/',
  *
  * @typedef {function} Route-GetUser
  * @param {Object} req - Express request object
- * @param {string} [req.query.uid] - UID of user to be retrieved
- * @param {string} token - Admin | User being retrieved
+ * @property {string} [req.query.uid] - UID of user to be retrieved
+ * @property {string} req.query.token - Admin | User being retrieved
  * @param {Object} res - Express result object
+ * @property {number} res.status - 200 on success
  */
 userRouter.get('/',
     authManager.verify,
