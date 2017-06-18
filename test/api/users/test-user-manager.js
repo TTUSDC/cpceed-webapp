@@ -1,6 +1,8 @@
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
 const testUsers = require('../../core/users');
+const compareHelper = require('../core/helper-compare');
+
 
 const Admin = userModels.Admin;
 const Student = userModels.Student;
@@ -32,10 +34,9 @@ describe('userManager', () => {
             expect(studentErr).to.be.null;
             foundStudent.comparePassword(student.password, (passwordErr, isMatch) => {
               expect(isMatch).to.be.true;
+              compareHelper.compareStudentInfo(student, foundStudent);
+              done();
             });
-            student.password = foundStudent.password; // foundStudent has a hashed password
-            expect(foundStudent).to.shallowDeepEqual(student);
-            done();
           });
         });
       });
@@ -68,10 +69,9 @@ describe('userManager', () => {
             expect(adminErr).to.be.null;
             foundAdmin.comparePassword(admin.password, (passwordErr, isMatch) => {
               expect(isMatch).to.be.true;
+              compareHelper.compareUserInfo(admin, foundAdmin);
+              done();
             });
-            admin.password = foundAdmin.password; // foundAdmin has a hashed password
-            expect(foundAdmin).to.shallowDeepEqual(admin);
-            done();
           });
         });
       });
@@ -94,22 +94,6 @@ describe('userManager', () => {
   });
 
   describe('#getUserById', () => {
-    const compareUsers = (expected, actual) => {
-      expect(expected).to.not.be.null;
-      expect(actual).to.not.be.null;
-      expect(actual.email).to.equal(expected.email);
-      expect(actual.name).to.equal(expected.name);
-      expect(actual.uid).to.equal(expected.uid);
-      expect(actual.role).to.equal(expected.role);
-
-      if (expected.role === 'student') {
-        expect(actual.points).to.shallowDeepEqual(expected.points);
-        expect(actual.isApproved).to.equal(expected.isApproved);
-      } else {
-        expect(actual.points).to.be.undefined;
-        expect(actual.isApproved).to.be.undefined;
-      }
-    };
     it('should return the created student', (done) => {
       const student = testUsers.student000;
       userManager.createUser(student, (createErr, uid) => {
@@ -118,8 +102,7 @@ describe('userManager', () => {
         student.uid = uid;
         userManager.getUserById(uid, {}, (getErr, foundStudent) => {
           expect(getErr).to.be.null;
-          compareUsers(student, foundStudent);
-          expect(foundStudent).to.not.be.null;
+          compareHelper.compareStudentInfo(student, foundStudent);
           done();
         });
       });
@@ -141,15 +124,14 @@ describe('userManager', () => {
           (modifyErr, realUpdatedUser) => {
             expect(modifyErr).to.be.null;
             expect(realUpdatedUser).to.not.be.null;
-            expect(realUpdatedUser.name).to.equal(modifiedStudent.name);
-            expect(realUpdatedUser.email).to.equal(modifiedStudent.email);
+            compareHelper.compareStudentInfo(modifiedStudent, realUpdatedUser);
+
 
             // Make sure it saved the updated student
             Student.findById(uid, (findErr, foundStudent) => {
               expect(findErr).to.be.null;
               expect(foundStudent).to.not.be.null;
-              expect(foundStudent.name).to.equal(modifiedStudent.name);
-              expect(foundStudent.email).to.equal(modifiedStudent.email);
+              compareHelper.compareStudentInfo(modifiedStudent, foundStudent);
               done();
             });
           });
