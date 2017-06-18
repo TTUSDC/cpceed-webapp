@@ -64,8 +64,15 @@ export default class Connection {
       params: {},
     };
 
+    this.status = 0;
+
     this.url = '/';
     this.method = 'get';
+  }
+
+  responseHandler(response, onSuccess) {
+    onSuccess(response.data);
+    this.response = response;
   }
 
   setMethod(method) {
@@ -90,6 +97,8 @@ export default class Connection {
 
   auth() { return this.setUrl('/auth'); }
 
+  events() { return this.setUrl('/events'); }
+
   /**
    * Sets the body of the request object
    *
@@ -113,7 +122,11 @@ export default class Connection {
   }
 
   call(onSuccess, onError) {
-    instance.get(this.url, this.config).then(onSuccess).catch((err) => {
+    this.config.url = this.url;
+    this.config.method = this.method;
+    instance(this.config).then((res) => {
+      this.responseHandler(res, onSuccess);
+    }).catch((err) => {
       errorHandler(err, onError);
     });
   }
