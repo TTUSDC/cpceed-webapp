@@ -1,5 +1,7 @@
 import axios from 'axios';
 import logger from 'logger/logger';
+import * as tokenManager from 'server/core/tokenmanager';
+
 
 /**
  * The connection information for the server hosting the API.
@@ -100,13 +102,24 @@ export default class Connection {
   events() { return this.setUrl('/events'); }
 
   /**
+   * Helper method to add `/all` to endpoint.
+   * @returns {*}
+   */
+  all() {
+    this.endpoint = 'all';
+    return this;
+  }
+
+  /**
    * Sets the body of the request object
    *
    * @param {Object} body
    * @returns {Connection}
    */
   data(body) {
-    this.config.data = body;
+    Object.keys(body).forEach((key) => {
+      this.config.data[key] = body[key];
+    });
     return this;
   }
 
@@ -117,13 +130,30 @@ export default class Connection {
    * @returns {Connection}
    */
   params(query) {
-    this.config.params = query;
+    Object.keys(query).forEach((key) => {
+      this.config.params[key] = query[key];
+    });
     return this;
   }
 
+  /**
+   * Adds the `token` to `params`
+   * @returns {Connection}
+   */
+  token() {
+    this.config.params.token = tokenManager.getToken();
+    return this;
+  }
+
+
   call(onSuccess, onError) {
-    this.config.url = this.url;
     this.config.method = this.method;
+    if (this.endpoint) {
+      this.config.url = `${this.url}/${this.endpoint}`;
+    } else {
+      this.config.url = this.url;
+    }
+
     instance(this.config).then((res) => {
       this.responseHandler(res, onSuccess);
     }).catch((err) => {

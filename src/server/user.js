@@ -33,7 +33,8 @@ export function deleteUser(userUid) {
     new Connection()
       .del()
       .users()
-      .params({ uid, token })
+      .params({ uid })
+      .token()
       .call(resolve, reject);
   });
 }
@@ -55,7 +56,8 @@ export function modifyUser(data, userUid) {
       .put()
       .users()
       .data(data)
-      .params({ uid, token })
+      .params({ uid })
+      .token()
       .call(resolve, reject);
   });
 }
@@ -75,7 +77,8 @@ export function getUser(userUid) {
     new Connection()
       .get()
       .users()
-      .params({ uid, token })
+      .params({ uid })
+      .token()
       .call(resolve, reject);
   });
 }
