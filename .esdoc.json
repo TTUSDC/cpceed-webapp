@@ -1,6 +1,7 @@
 {
-  "source": "./api",
+  "source": ".",
   "destination": "./docs",
+  "includes": ["^api", "^src"],
   "unexportIdentifier": true,
   "undocumentIdentifier": false,
   "title": "CPCEED",
