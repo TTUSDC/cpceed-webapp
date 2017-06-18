@@ -78,7 +78,7 @@ export function getEvent(uid) {
  * Retrieves all events from the server.
  * In future, this will accept search and filter parameters.
  *
- * @returns {Promise<{string, EventSchema, [...]}, Error} - Resolves with an
+ * @returns {Promise<Object, Error} - Resolves with an
  *           object of key value pairs where the key is the Event UID and the
  *           is the Event Data.
  */
