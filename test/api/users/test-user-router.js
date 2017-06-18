@@ -1,25 +1,20 @@
 const request = require('supertest');
 const async = require('async');
-const importFresh = require('import-fresh');
 const utilsUser = require('../core/utils-user');
 const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
+const server = require('../../../server');
 
 const Student = userModels.Student;
 
 let api;
-// const api = require('../../../server');
 
 mockgoose(mongoose);
 
 describe('User Router & Integration', () => {
-  // before((done) => { mongoose.connect('', done); });
 
-  before(() => {
-    // The following line is temp until API does not auto start during testing
-    api = importFresh('../../../server'); // eslint-disable-line global-require
-  });
+  before((done) => { api = server.start(done); });
 
   beforeEach((done) => {
     mockgoose.reset();
@@ -27,9 +22,9 @@ describe('User Router & Integration', () => {
   });
 
   after((done) => {
-    api.close();
-    mongoose.disconnect();
-    mongoose.unmock(done);
+    server.stop(() => {
+      mongoose.unmock(done);
+    });
   });
 
   describe('POST /api/users', () => {

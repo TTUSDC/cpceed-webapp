@@ -1,33 +1,121 @@
 import axios from 'axios';
 import logger from 'logger/logger';
 
+/**
+ * The connection information for the server hosting the API.
+ *
+ * @param {string} baseURL - Base URL including the /api endpoint
+ * @param {number} timeout - Time in ms that each call should take
+ */
 const instance = axios.create({
   baseURL: 'http://localhost:3000/api', // TODO(asclines): Move this to env
   timeout: 5000,
 });
+
 instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-export const post = (endpoint, data, onSuccess, onError) => {
-  instance.post(endpoint, data)
-    .then((res) => {
-      onSuccess(res.data);
-    })
-    .catch((err) => {
-      logger.error(err);
-      onError(err);
-    });
+/**
+ * Promise callback for when API call finishes
+ *
+ * @typedef {function} OnApiCallFinished
+ * @param {Object} - Response from API
+ * @param {number} - Response status code
+ */
+
+/**
+ * Handles errors from API and logs them
+ *
+ * @param {Object} err - The error object recieved from Axios
+ * @param {OnApiCallFinished} onError - Called with the correct error object
+ */
+const errorHandler = (err, onError) => {
+  if (err.response) {
+        // Server responded with a status code outside 2xx range.
+    logger.error(err.response, 'Response error');
+  } else if (err.request) {
+        // No response recieved
+    logger.error(err.request, 'No response recieved');
+  } else {
+        // Who knows
+    logger.error(err.message, 'Request error');
+  }
+  onError(err);
 };
 
-// Because delete is a non fun word to use
-export const del = (endpoint, data, onSuccess, onError) => {
-  instance.delete(endpoint, data)
-    .then((res) => {
-      onSuccess(res);
-    })
-    .catch((err) => {
-      logger.error(err);
-      onError(err);
-    });
-};
+/**
+ * This class allows for easy building of a request to the API.
+ *
+ * @example
+ * new Connection()
+ *  .post()
+ *  .users()
+ *  .data(newUser)
+ *  .call(() => {
+ *    console.log('Connection succeeded!');
+ *   }, () => {
+ *    console.log('Connection failed!');
+ *   });
+ */
+export default class Connection {
 
-export default instance;
+  constructor() {
+    this.config = {
+      data: {},
+      params: {},
+    };
+
+    this.url = '/';
+    this.method = 'get';
+  }
+
+  setMethod(method) {
+    this.method = method;
+    return this;
+  }
+
+  setUrl(url) {
+    this.url = url;
+    return this;
+  }
+
+  post() { return this.setMethod('post'); }
+
+  del() { return this.setMethod('delete'); }
+
+  put() { return this.setMethod('put'); }
+
+  get() { return this.setMethod('get'); }
+
+  users() { return this.setUrl('/users'); }
+
+  auth() { return this.setUrl('/auth'); }
+
+  /**
+   * Sets the body of the request object
+   *
+   * @param {Object} body
+   * @returns {Connection}
+   */
+  data(body) {
+    this.config.data = body;
+    return this;
+  }
+
+  /**
+   * Sets the query parameters of the request object
+   *
+   * @param query
+   * @returns {Connection}
+   */
+  params(query) {
+    this.config.params = query;
+    return this;
+  }
+
+  call(onSuccess, onError) {
+    instance.get(this.url, this.config).then(onSuccess).catch((err) => {
+      errorHandler(err, onError);
+    });
+  }
+}
+
