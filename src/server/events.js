@@ -1,58 +1,57 @@
 // import logger from 'logger/logger';
-import * as firebase from 'firebase';
 import Connection from 'server/core/connection';
-import * as tokenManager from 'server/core/tokenmanager';
-
-const eventsRef = firebase.database().ref().child('events');
 
 export function createEvent(newEvent) {
   return new Promise((resolve, reject) => {
-    const onSuccess = (uid) => {
-      resolve(uid);
-    };
     new Connection()
       .post()
       .events()
       .data(newEvent)
-      .params({ token: tokenManager.getToken() })
-      .call(onSuccess, reject);
+      .token()
+      .call(resolve, reject);
   });
 }
 
 export function modify(uid, updatedEvent) {
   return new Promise((resolve, reject) => {
-    const updatedEventRef = eventsRef.child(uid);
-    updatedEventRef.set(updatedEvent).then((err) => {
-      if (err) reject(err);
-      resolve(updatedEventRef.key);
-    });
+    new Connection()
+      .put()
+      .events()
+      .data(updatedEvent)
+      .token()
+      .call(resolve, reject);
   });
 }
 
 export function remove(uid) {
   return new Promise((resolve, reject) => {
-    const removeEventRef = eventsRef.child(uid);
-    removeEventRef.remove().then(() => {
-      resolve();
-    }).catch((err) => {
-      reject(err);
-    });
+    new Connection()
+      .del()
+      .events()
+      .data({ uid })
+      .token()
+      .call(resolve, reject);
   });
 }
 
 export function getByUid(uid) {
   return new Promise((resolve, reject) => {
-    const getEventRef = eventsRef.child(uid);
-    getEventRef.once('value').then((snapshot) => {
-      resolve(snapshot.val());
-    }).catch((err) => { reject(err); });
+    new Connection()
+      .get()
+      .events()
+      .data({ uid })
+      .token()
+      .call(resolve, reject);
   });
 }
 
 export function getAll() {
   return new Promise((resolve, reject) => {
-    eventsRef.once('value').then((snapshot) => {
-      resolve(snapshot.val());
-    }).catch((err) => { reject(err); });
+    new Connection()
+      .get()
+      .all()
+      .events()
+      .token()
+      .call(resolve, reject);
   });
 }
