@@ -1,0 +1,12 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "mockgoose": true,
+    "mongoose": true,
+    "expect": true,
+    "should":true,
+    "sinon": true
+  }
+}

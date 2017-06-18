@@ -1,18 +1,12 @@
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
 const request = require('supertest');
-const chai = require('chai');
-const sinon = require('sinon');
 const async = require('async');
 const utilsUser = require('../core/utils-user');
 const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
+const compareHelper = require('../core/helper-compare');
 const server = require('../../../server');
 
-chai.use(require('sinon-chai'));
-
-const expect = chai.expect;
 const Student = userModels.Student;
 
 let api;
@@ -20,7 +14,6 @@ let api;
 mockgoose(mongoose);
 
 describe('User Router & Integration', () => {
-
   before((done) => { api = server.start(done); });
 
   beforeEach((done) => {
@@ -66,7 +59,7 @@ describe('User Router & Integration', () => {
         expect(userManager.createUser.args[0][0].email).to.equal(body.email);
         Student.findById(uid, (findErr, foundStudent) => {
           expect(findErr).to.be.null;
-          expect(foundStudent.email).to.equal(body.email);
+          compareHelper.compareStudentInfo(body, foundStudent);
           done();
         });
       });
@@ -103,6 +96,8 @@ describe('User Router & Integration', () => {
           expect(getErr).to.be.null;
           const returnedStudent = getRes.body;
           expect(returnedStudent.email).to.equal(student.email);
+          compareHelper.compareStudentInfo(student, returnedStudent);
+
           done(getErr);
         });
     };
@@ -129,6 +124,10 @@ describe('User Router & Integration', () => {
         const fieldsToUpdate = {
           name: `${student.name}_edit`,
         };
+
+        const expectedStudent = JSON.parse(JSON.stringify(student));
+        expectedStudent.name = fieldsToUpdate.name;
+
         request(api)
         .put('/api/users')
         .expect(200)
@@ -138,17 +137,17 @@ describe('User Router & Integration', () => {
           expect(putErr).to.be.null;
           expect(putRes).to.not.be.null;
           const returnedStudent = putRes.body;
+
           // Make sure the modified user was returned
-          expect(returnedStudent.name).to.equal(fieldsToUpdate.name);
-          expect(returnedStudent.email).to.equal(student.email);
+          compareHelper.compareStudentInfo(expectedStudent, returnedStudent);
 
           Student.findById(uid, (findErr, foundStudent) => {
             expect(findErr).to.be.null;
             expect(foundStudent).to.not.be.null;
 
             // Make sure the modified user was actually saved
-            expect(foundStudent.name).to.equal(fieldsToUpdate.name);
-            expect(foundStudent.email).to.equal(student.email);
+            compareHelper.compareStudentInfo(expectedStudent, foundStudent);
+
             done();
           });
         });

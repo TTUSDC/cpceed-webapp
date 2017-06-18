@@ -11,9 +11,6 @@ const eventManager = require('../../../api/events/event-manager');
 const eventModels = require('../../../api/events/event-models');
 const server = require('../../../server');
 
-chai.use(require('sinon-chai'));
-
-const expect = chai.expect;
 const Event = eventModels.Event;
 
 let api;

@@ -1,9 +1,4 @@
 const request = require('supertest');
-const chai = require('chai');
-
-chai.use(require('sinon-chai'));
-
-const expect = chai.expect;
 
 /**
  * Callback for CreateAndLogin* methods
