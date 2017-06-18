@@ -1,9 +1,3 @@
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
-const assert = require('assert');
-const chai = require('chai');
-const expect = chai.expect;
-chai.use(require('chai-moment'));
 mockgoose(mongoose);
 
 const reportManager = require('../../../api/reports/report-manager');

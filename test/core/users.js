@@ -24,6 +24,7 @@ const admin000 = {
   password: 'T0t@llyS3cure',
   name: 'TestAdmin000',
   role: 'admin',
+  isApproved: false,
 };
 
 module.exports = {
