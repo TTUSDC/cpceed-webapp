@@ -1,4 +1,4 @@
-// import logger from 'logger/logger';
+import logger from 'logger/logger';
 import Connection from 'server/core/connection';
 
 export function createEvent(newEvent) {
@@ -12,40 +12,41 @@ export function createEvent(newEvent) {
   });
 }
 
-export function modify(uid, updatedEvent) {
+export function modifyEvent(uid, updatedEvent) {
   return new Promise((resolve, reject) => {
     new Connection()
       .put()
       .events()
       .data(updatedEvent)
+      .params({ uid })
       .token()
       .call(resolve, reject);
   });
 }
 
-export function remove(uid) {
+export function removeEvent(uid) {
   return new Promise((resolve, reject) => {
     new Connection()
       .del()
       .events()
-      .data({ uid })
+      .params({ uid })
       .token()
       .call(resolve, reject);
   });
 }
 
-export function getByUid(uid) {
+export function getEvent(uid) {
   return new Promise((resolve, reject) => {
     new Connection()
       .get()
       .events()
-      .data({ uid })
+      .params({ uid })
       .token()
       .call(resolve, reject);
   });
 }
 
-export function getAll() {
+export function getAllEvents() {
   return new Promise((resolve, reject) => {
     new Connection()
       .get()
