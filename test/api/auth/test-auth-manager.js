@@ -12,14 +12,12 @@ const Session = authModels.Session;
 const Admin = userModels.Admin;
 const Student = userModels.Student;
 
-// chai.use(chaiMoment);
 mockgoose(mongoose);
 
 describe('authManager', () => {
   // Connect to the database.
   before((done) => {
     process.env.SECRET = 'testsecret';
-
     mongoose.Promise = bluebird;
     mongoose.connect('', done);
   });
