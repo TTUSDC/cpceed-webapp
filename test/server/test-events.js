@@ -1,5 +1,4 @@
 import sinon from 'sinon';
-import logger from 'logger/logger';
 import * as tokenManager from 'server/core/tokenmanager';
 import Connection from 'server/core/connection';
 import {
@@ -10,7 +9,6 @@ import {
   getAllEvents,
 } from 'server/events';
 // import logger from 'logger.js';
-import connectWithAuth from './core/utils';
 import { user38257001 as testUser } from './core/users';
 import { testToken1 as testToken } from './core/tokens';
 import { generateEventData } from '../core/events';
@@ -52,7 +50,7 @@ export default describe('Server API: Events', () => {
         expect(data).to.equal(expectedResult);
         expect(connectionCallData.config.params.token).to.equal(testToken.token);
         done();
-      });
+      }).catch(done);
     });
   });
   describe('#modifyEvent', () => {
@@ -74,7 +72,7 @@ export default describe('Server API: Events', () => {
         expect(connectionCallData.config.params.uid).to.equal(testEventUid);
         expect(data).to.equal(testEvent);
         done();
-      });
+      }).catch(done);
     });
   });
   describe('#removeEvent', () => {
@@ -93,7 +91,7 @@ export default describe('Server API: Events', () => {
         expect(connectionCallData.config.params.uid).to.equal(testEventUid);
         expect(connectionCallData.config.params.token).to.equal(testToken.token);
         done();
-      });
+      }).catch(done);
     });
   });
   describe('#getEvent', () => {
@@ -114,7 +112,7 @@ export default describe('Server API: Events', () => {
         expect(connectionCallData.config.params.token).to.equal(testToken.token);
         expect(data).to.equal(testEvent);
         done();
-      });
+      }).catch(done);
     });
   });
   describe('#getAllEvents', () => {
@@ -138,7 +136,7 @@ export default describe('Server API: Events', () => {
         expect(connectionCallData.config.params.token).to.equal(testToken.token);
         expect(list).to.deep.equal(testEvents);
         done();
-      });
+      }).catch(done);
     });
   });
 });

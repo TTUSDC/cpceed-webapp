@@ -1,5 +1,6 @@
 // import logger from 'logger.js';
-import * as firebase from 'firebase';
+import Connection from 'server/core/connection';
+
 
 /**
  * Creates a new event on the server
