@@ -1,6 +1,6 @@
 const express = require('express');
-const userManager = require('./user-manager');
-const authManager = require('../auth/auth-manager');
+const userManager = require('api/users/user-manager');
+const authManager = require('api/auth/auth-manager');
 
 const userRouter = express.Router();
 
