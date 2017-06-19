@@ -1,11 +1,12 @@
+require('app-module-path').addPath(__dirname);
 const express = require('express');
 const dotenv = require('dotenv');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const apiRouter = require('./api/server.js');
 const cors = require('cors');
+const apiRouter = require('api/server.js');
 
 // load environment variables from .env file.
 dotenv.load({ path: process.env.ENV_PATH || '.env.default' });
@@ -42,7 +43,7 @@ app.use((req, res, next) => {
   next(err);
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   res.status(err.status || 500);
   res.json(err.message);
 });
@@ -70,7 +71,7 @@ const start = (cb) => {
 const stop = (cb) => {
   mongoose.disconnect();
   service.close(cb);
-}
+};
 
 const server = { start, stop };
 
