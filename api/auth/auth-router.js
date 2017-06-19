@@ -1,7 +1,6 @@
 const express = require('express');
-const authManager = require('./auth-manager');
+const authManager = require('api/auth/auth-manager');
 
-const authErrors = require('../errors/auth-errors');
 const authRouter = express.Router();
 
 // Get the current User's role.

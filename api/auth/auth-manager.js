@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const authErrors = require('../errors/auth-errors');
-const User = require('../users/user-models').User;
-const Session = require('./auth-models').Session;
+const authErrors = require('api/errors/auth-errors');
+const User = require('api/users/user-models').User;
+const Session = require('api/auth/auth-models').Session;
 
 /**
  * Callback for sending the response to the client.
