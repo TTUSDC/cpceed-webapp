@@ -1,5 +1,5 @@
-var reportModels = require('./report-models');
-var newIfPresent = require('../core/utils').newIfPresent;
+var reportModels = require('api/reports/report-models');
+var newIfPresent = require('api/core/utils').newIfPresent;
 var Report = reportModels.Report;
 var EventReport = reportModels.EventReport;
 var OtherReport = reportModels.OtherReport;

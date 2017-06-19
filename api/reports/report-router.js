@@ -1,6 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
-var reportManager = require('./report-manager');
+var reportManager = require('api/reports/report-manager');
 var reportRouter = express.Router();
 
 reportRouter.post('/', (req, res) => {
