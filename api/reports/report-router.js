@@ -1,7 +1,7 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var reportManager = require('api/reports/report-manager');
-var reportRouter = express.Router();
+const express = require('express');
+const reportManager = require('api/reports/report-manager');
+
+const reportRouter = express.Router();
 
 reportRouter.post('/', (req, res) => {
   reportManager.createReport(req.body, {}, (err, report) => {
@@ -33,7 +33,7 @@ reportRouter.put('/:uid', (req, res) => {
 });
 
 reportRouter.delete('/:uid', (req, res) => {
-  reportManager.deleteReport(req.params.uid, {}, (err, report) => {
+  reportManager.deleteReport(req.params.uid, {}, (err) => {
     if (err) {
       // TODO(jmtaber129): Better error handling.
       res.status(400).send(err).end();
@@ -76,4 +76,4 @@ reportRouter.get('/', (req, res) => {
   });
 });
 
-module.exports = {reportRouter};
+module.exports = { reportRouter };
