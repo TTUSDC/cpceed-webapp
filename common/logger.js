@@ -1,16 +1,19 @@
 const logger = require('loglevel');
 
-// Checks current build environment
-let envLevel = null;
-switch (ENV) {
-  case 'prod':
-    envLevel = 'error';
-    break;
-  case 'dev':
-    envLevel = 'trace';
-    break;
-  default:
-    envLevel = 'trace';
+let envLevel = 'trace';
+
+if (typeof ENV !== 'undefined') {
+  // Checks current build environment
+  switch (ENV) {
+    case 'prod':
+      envLevel = 'error';
+      break;
+    case 'dev':
+      envLevel = 'trace';
+      break;
+    default:
+      envLevel = 'trace';
+  }
 }
 
 // Adding date prefix
