@@ -5,7 +5,7 @@ import update from 'immutability-helper';
 
 import Account from './Account.jsx';
 import {updateUser} from 'redux/actions.js';
-import logger from 'logger/logger.js';
+import logger from 'logger.js';
 
 class AccountContainer extends React.Component {
   constructor(props) {

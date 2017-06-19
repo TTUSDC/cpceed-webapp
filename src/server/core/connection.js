@@ -1,7 +1,5 @@
 import axios from 'axios';
-import logger from 'logger/logger';
-import * as tokenManager from 'server/core/tokenmanager';
-
+import logger from 'logger.js';
 
 /**
  * The connection information for the server hosting the API.

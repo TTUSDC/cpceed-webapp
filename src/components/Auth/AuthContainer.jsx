@@ -9,7 +9,7 @@ import {
   student,
   AuthStates,
 } from 'redux/actions.js';
-import logger from 'logger/logger.js';
+import logger from 'logger.js';
 import Auth from './Auth.jsx';
 
 class AuthContainer extends React.Component {

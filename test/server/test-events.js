@@ -9,6 +9,8 @@ import {
   getEvent,
   getAllEvents,
 } from 'server/events';
+// import logger from 'logger.js';
+import connectWithAuth from './core/utils';
 import { user38257001 as testUser } from './core/users';
 import { testToken1 as testToken } from './core/tokens';
 import { generateEventData } from '../core/events';
