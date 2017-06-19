@@ -1,5 +1,6 @@
 const express = require('express');
 const eventManager = require('api/events/event-manager');
+const logger = require('common/logger.js');
 
 const eventRouter = express.Router();
 
@@ -19,6 +20,7 @@ const eventRouter = express.Router();
 eventRouter.post('/', (req, res) => {
   eventManager.createEvent(req.body, {}, (err, event) => {
     if (err) {
+      logger.error(err);
       res.status(400).json(err).end();
       return;
     }
@@ -45,6 +47,7 @@ eventRouter.put('/', (req, res) => {
   eventManager.modifyEvent(req.query.uid, req.body, res.locals,
     (err, eventData) => {
       if (err) {
+        logger.error(err);
         res.status(400).json(err).end();
         return;
       }
@@ -68,6 +71,7 @@ eventRouter.put('/', (req, res) => {
 eventRouter.delete('/', (req, res) => {
   eventManager.deleteEvent(req.query.uid, res.locals, (err, result) => {
     if (err) {
+      logger.error(err);
       res.status(400).json(err).end();
       return;
     }
@@ -93,6 +97,7 @@ eventRouter.get('/', (req, res) => {
   eventManager.getEventById(req.query.uid, {},
     (err, event) => {
       if (err) {
+        logger.error(err);
         res.status(400).json(err).end();
         return;
       }
@@ -115,6 +120,7 @@ eventRouter.get('/', (req, res) => {
 eventRouter.get('/all', (req, res) => {
   eventManager.getAllEvents(req.body, {}, (err, results) => {
     if (err) {
+      logger.error(err);
       res.status(400).json(err).end();
       return;
     }

@@ -1,17 +1,18 @@
 const express = require('express');
 const reportManager = require('api/reports/report-manager');
+const logger = require('common/logger.js');
 
 const reportRouter = express.Router();
 
 reportRouter.post('/', (req, res) => {
   reportManager.createReport(req.body, {}, (err, report) => {
     if (err) {
-      // TODO(jmtaber129): Better error handling.
+      logger.error(err);
       res.status(400).send(err).end();
       return;
     }
 
-    console.log({
+    logger.info({
       message: 'report created',
       id: report.id,
     });
@@ -23,7 +24,7 @@ reportRouter.post('/', (req, res) => {
 reportRouter.put('/:uid', (req, res) => {
   reportManager.modifyReport(req.params.uid, req.body, {}, (err, report) => {
     if (err) {
-      // TODO(jmtaber129): Better error handling.
+      logger.error(err);
       res.status(400).send(err).end();
       return;
     }
@@ -35,7 +36,7 @@ reportRouter.put('/:uid', (req, res) => {
 reportRouter.delete('/:uid', (req, res) => {
   reportManager.deleteReport(req.params.uid, {}, (err) => {
     if (err) {
-      // TODO(jmtaber129): Better error handling.
+      logger.error(err);
       res.status(400).send(err).end();
       return;
     }
@@ -47,7 +48,7 @@ reportRouter.delete('/:uid', (req, res) => {
 reportRouter.get('/:uid', (req, res) => {
   reportManager.getReportById(req.params.uid, {}, (err, report) => {
     if (err) {
-      // TODO(jmtaber129): Better error handling.
+      logger.error(err);
       res.status(400).send(err).end();
       return;
     }
@@ -56,6 +57,7 @@ reportRouter.get('/:uid', (req, res) => {
       // Report was not found.
       // TODO(jmtaber129): Add error handling for when a user is not authorized
       // to view the report.
+      logger.error('Report not found.');
       res.status(404).end();
       return;
     }
@@ -67,7 +69,7 @@ reportRouter.get('/:uid', (req, res) => {
 reportRouter.get('/', (req, res) => {
   reportManager.getAllReports(req.params, {}, (err, reports) => {
     if (err) {
-      // TODO(jmtaber129): Better error handling.
+      logger.error(err);
       res.status(400).send(err).end();
       return;
     }
