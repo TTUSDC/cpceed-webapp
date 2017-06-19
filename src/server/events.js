@@ -1,4 +1,4 @@
-// import logger from 'logger/logger';
+// import logger from 'logger.js';
 import * as firebase from 'firebase';
 
 const eventsRef = firebase.database().ref().child('events');

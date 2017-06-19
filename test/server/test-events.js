@@ -6,7 +6,7 @@ import {
   getByUid as getEventByUid,
   getAll as getAllEvents,
 } from 'server/events';
-// import logger from 'logger/logger';
+// import logger from 'logger.js';
 import connectWithAuth from './core/utils';
 
 const expect = require('chai').expect;

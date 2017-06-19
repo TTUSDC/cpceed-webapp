@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 
-import logger from 'logger/logger.js';
+import logger from 'logger.js';
 import {
   AuthStates,
   PermissionStates,
@@ -36,7 +36,7 @@ const user = (state = guest, action) => {
       return update(state, {$set: user});
     default:
       state.permissions = PermissionStates.GUEST
-      
+
       return state;
   };
 }

@@ -16,7 +16,7 @@ const dev = webpackMerge(base, {
   entry: './src/index.jsx',
 
   // Enables source maps that can be accessed in browser dev tools
-  devtool: 'source-map',
+  devtool: 'cheap-module-eval-source-map',
 
   devServer: {
     port: 8080,

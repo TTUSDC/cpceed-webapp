@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { store } from 'App.jsx';
 import { AuthStates } from 'redux/actions';
-// import logger from 'logger/logger.js';
+// import logger from 'logger.js';
 import { login, logout } from 'server/user-auth';
 import * as tokenManager from 'server/core/tokenmanager';
 import Connection from 'server/core/connection';
