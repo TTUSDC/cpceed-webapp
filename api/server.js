@@ -1,8 +1,4 @@
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const express = require('express'); //saved
-const logger = require('morgan');
-const mongoose = require('mongoose');
+const express = require('express');
 
 
 // Routers.

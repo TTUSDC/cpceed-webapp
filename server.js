@@ -1,12 +1,13 @@
 require('app-module-path').addPath(__dirname);
 const express = require('express');
 const dotenv = require('dotenv');
-const logger = require('morgan');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const apiRouter = require('api/server.js');
+const logger = require('common/logger.js');
 
 // load environment variables from .env file.
 dotenv.load({ path: process.env.ENV_PATH || '.env.default' });
@@ -18,7 +19,7 @@ app.use(cors());
 // Express configuration.
 const port = process.env.PORT || 3000;
 app.set('port', port);
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -27,8 +28,8 @@ app.use(cookieParser());
 const mongoURL = process.env.MONGODB_URI || process.env.MONGOLAB_URI;
 mongoose.Promise = global.Promise;
 mongoose.connection.on('error', (err) => {
-  console.error(err);
-  console.log('MongoDB connection error. Please make sure MongoDB is running.');
+  logger.error(err);
+  logger.info('MongoDB connection error. Please make sure MongoDB is running.');
   process.exit(1);
 });
 
@@ -77,8 +78,7 @@ const server = { start, stop };
 
 if (require.main === module) {
   start(() => {
-    console.log('App is running at %d in %s mode', port, app.get('env'));
-    console.log('  Press ctrl-c to stop\n');
+    logger.info(`App is running at ${port} in ${app.get('env')} mode\n  Press ctrl-c to stop\n`);
   });
 }
 module.exports = server;
