@@ -6,6 +6,9 @@
   "undocumentIdentifier": false,
   "title": "CPCEED",
   "lint": false,
+  "plugins": [
+    {"name": "esdoc-node"}
+  ],
   "experimentalProposal": {
     "classProperties": true,
     "objectRestSpread": true,
