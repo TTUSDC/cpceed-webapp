@@ -1,5 +1,5 @@
 const express = require('express');
-const eventManager = require('./event-manager');
+const eventManager = require('api/events/event-manager');
 
 const eventRouter = express.Router();
 
