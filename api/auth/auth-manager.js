@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const authErrors = require('../errors/auth-errors');
 const User = require('../users/user-models').User;
 const Session = require('./auth-models').Session;
 
@@ -26,7 +27,7 @@ const login = (email, password, next) => {
 
     // No user found for the given email address.
     if (!user) {
-      next('User not found.');
+      next(authErrors.userNotFoundError);
       return;
     }
 
@@ -38,7 +39,7 @@ const login = (email, password, next) => {
 
       // The wrong password was provided.
       if (!isMatch) {
-        next('Wrong password provided.');
+        next(authErrors.invalidLoginInfoError);
         return;
       }
 
@@ -54,6 +55,7 @@ const login = (email, password, next) => {
           email,
           role: user.role,
           isApproved: user.isApproved,
+          id: user.id,
         };
 
         // Sign and save the session.
@@ -117,10 +119,9 @@ const changePassword = (email, password, next) => {
  */
 const verify = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
-
   // If no token is provided, inform the client.
   if (!token) {
-    res.locals.err = new Error('No token provided.');
+    res.locals.err = new Error(authErrors.missingTokenError);
     next();
     return;
   }
@@ -143,7 +144,7 @@ const verify = (req, res, next) => {
 
       // If no session is found, then the user was logged out of their account.
       if (!session) {
-        res.locals.err = new Error('No session found.');
+        res.locals.err = new Error(authErrors.sessionNotFoundError);
         next();
         return;
       }
@@ -152,7 +153,7 @@ const verify = (req, res, next) => {
       session.compareToken(token, (isMatch) => {
         // The token is expired.
         if (!isMatch) {
-          res.locals.err = new Error('Expired session provided.');
+          res.locals.err = new Error(authErrors.invalidSessionError);
           next();
           return;
         }
@@ -165,4 +166,39 @@ const verify = (req, res, next) => {
   });
 };
 
-module.exports = { changePassword, login, logout, verify };
+/*
+ * Middleware to verify the user has access permissions of some document.
+ * For valid tokens, an `uid` object is added to the response.locals object.
+ * The `uid` object is the uid of the owner of the document being accessed.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {function} next - Invoke the next middleware or route.
+ */
+const validateUidPermissions = (req, res, next) => {
+  let uid = res.locals.auth.id;
+  if (!uid) {
+    res.locals.err = authErrors.missingTokenError;
+    next();
+    return;
+  }
+  if (req.query.uid) {
+    if (res.locals.auth.role === 'admin') {
+      uid = req.query.uid;
+    } else if (req.query.uid !== uid) {
+      res.locals.err = authErrors.unauthorizedError;
+      console.log('Unauthorized');
+      next(authErrors.unauthorizedError);
+      return;
+    }
+  }
+  res.locals.uid = uid;
+  next();
+};
+
+module.exports = {
+  changePassword,
+  login,
+  logout,
+  verify,
+  validateUidPermissions,
+};
