@@ -4,7 +4,7 @@
   "description": "Time logging app for the CPCEED program at Texas Tech University",
   "main": "src/index.jsx",
   "scripts": {
-    "start": "npm-run-all start-api start-app",
+    "start": "npm-run-all build start-api",
     "start-app": "webpack-dev-server --env=dev",
     "start-api": "node server.js",
     "build": "webpack --env=prod",
