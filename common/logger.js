@@ -19,6 +19,10 @@ logger.methodFactory = (methodName, logLevel, loggerName) => {
   const rawMethod = originalFactory(methodName, logLevel, loggerName);
 
   return (message) => {
+    if (message === Object(message)) {
+      message = JSON.stringify(message);
+    }
+
     rawMethod(`${new Date()}: ${message}`);
   };
 };
