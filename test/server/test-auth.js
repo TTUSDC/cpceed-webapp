@@ -64,7 +64,7 @@ export default describe('Server API: Auth', () => {
         expect(tokenManager.saveToken).to.have.been.calledOnce;
         expect(tokenManager.saveToken.getCall(0).args[0]).to.equal(testToken.token);
         done();
-      });
+      }).catch(done);
     });
   });
 
