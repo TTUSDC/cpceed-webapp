@@ -15,7 +15,7 @@ const Event = eventModels.Event;
  * the database save finishes.
  * @param {Object} reqData - The request object containing the event data to
  *   be created.
- * @param {Object} locals - An object containg the current request's local
+ * @param {Object} locals - An object containing the current request's local
  *   variables.
  * @param {EventCallback} createCallback - Called once the operation finishes.
  */

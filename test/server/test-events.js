@@ -1,110 +1,142 @@
-import * as firebase from 'firebase';
+import sinon from 'sinon';
+import * as tokenManager from 'server/core/tokenmanager';
+import Connection from 'server/core/connection';
 import {
-  create as createEvent,
-  modify as modifyEvent,
-  remove as removeEvent,
-  getByUid as getEventByUid,
-  getAll as getAllEvents,
+  createEvent,
+  modifyEvent,
+  removeEvent,
+  getEvent,
+  getAllEvents,
 } from 'server/events';
 // import logger from 'logger.js';
-import connectWithAuth from './core/utils';
+import { user38257001 as testUser } from './core/users';
+import { testToken1 as testToken } from './core/tokens';
+import { generateEventData } from '../core/events';
 
-const expect = require('chai').expect;
+const sinonChai = require('sinon-chai');
+const chai = require('chai');
 
-export default describe('events', () => {
-  const createdEvents = [];
-  const testEvent = {
-    datetime: '2017:05:20:09:00',
-    location: 'United Supermarkets Arena',
-    title: 'Graduation',
-    description: 'TTU Commencement for the College of Engineering',
-  };
-  let eventsRef;
-  before((done) => {
-    connectWithAuth().then(() => {
-      eventsRef = firebase.database().ref().child('events');
-      done();
-    }).catch((err) => {
-      done(err);
-    });
+chai.use(sinonChai);
+const expect = chai.expect;
+const sandbox = sinon.sandbox.create();
+
+export default describe('Server API: Events', () => {
+  beforeEach(() => {
+    sandbox.stub(Connection.prototype, 'call');
+    sandbox.stub(tokenManager, 'getToken').callsFake(() => testToken.token);
+    sandbox.spy(tokenManager, 'decode');
   });
 
-  after((done) => {
-    const removeEventPromises = [];
-    createdEvents.forEach((eventUid) => {
-      removeEventPromises.push(eventsRef.child(eventUid).remove());
-    });
-
-    Promise.all(removeEventPromises).then(() => {
-      done();
-    }).catch((err) => { done(err); });
+  afterEach(() => {
+    sandbox.restore();
   });
-  describe('#create(newEvent)', () => {
-    it('should create a new event.', (done) => {
-      createEvent(testEvent).then((uid) => {
-        createdEvents.push(uid);
-        const eventRef = eventsRef.child(uid);
-        eventRef.once('value').then((snapshot) => {
-          const eventData = snapshot.val();
-          expect(eventData).to.deep.equal(testEvent);
-          done();
-        }).catch((err) => { done(err); });
+
+  describe('#createEvent', () => {
+    it('should create a new event', (done) => {
+      const testEvent = generateEventData(testUser.uid);
+
+      const expectedResult = { uid: '12345678' };
+
+      Connection.prototype.call.callsFake((onSuccess) => {
+        onSuccess(expectedResult);
       });
-    }).timeout(10000);
+
+      createEvent(testEvent).then((data) => {
+        expect(Connection.prototype.call).to.have.been.calledOnce;
+        const connectionCallData = Connection.prototype.call.thisValues[0];
+        expect(connectionCallData.method).to.equal('post');
+        expect(connectionCallData.url).to.equal('/events');
+        expect(connectionCallData.config.data).to.deep.equal(testEvent);
+        expect(data).to.equal(expectedResult);
+        expect(connectionCallData.config.params.token).to.equal(testToken.token);
+        done();
+      }).catch(done);
+    });
   });
-  describe('#modify(uid, updatedEvent)', () => {
+  describe('#modifyEvent', () => {
     it('should modify an existing event.', (done) => {
-      createEvent(testEvent).then((uid) => {
-        createdEvents.push(uid);
-        const updatedEvent = testEvent;
-        updatedEvent.title = 'UPDATED EVENT';
-        modifyEvent(uid, updatedEvent).then((updatedUid) => {
-          expect(updatedUid).to.equal(uid);
-          const eventRef = eventsRef.child(uid);
-          eventRef.once('value').then((snapshot) => {
-            const eventData = snapshot.val();
-            expect(eventData).to.deep.equal(updatedEvent);
-            done();
-          });
-        });
-      }).catch((err) => { done(err); });
-    }).timeout(10000);
+      const testEvent = generateEventData(testUser.uid);
+      const testEventUid = '123kl4j123srfa3';
+
+      Connection.prototype.call.callsFake((onSuccess) => {
+        onSuccess(testEvent);
+      });
+
+      modifyEvent(testEventUid, testEvent).then((data) => {
+        expect(Connection.prototype.call).to.have.been.calledOnce;
+        const connectionCallData = Connection.prototype.call.thisValues[0];
+        expect(connectionCallData.method).to.equal('put');
+        expect(connectionCallData.url).to.equal('/events');
+        expect(connectionCallData.config.data).to.deep.equal(testEvent);
+        expect(connectionCallData.config.params.token).to.equal(testToken.token);
+        expect(connectionCallData.config.params.uid).to.equal(testEventUid);
+        expect(data).to.equal(testEvent);
+        done();
+      }).catch(done);
+    });
   });
-  describe('#remove(uid)', () => {
+  describe('#removeEvent', () => {
     it('should remove an existing event.', (done) => {
-      createEvent(testEvent).then((uid) => {
-        createdEvents.push(uid);
-        removeEvent(uid).then(() => {
-          const eventRef = eventsRef.child(uid);
-          eventRef.once('value').then((snapshot) => {
-            expect(snapshot.val()).to.be.null;
-            done();
-          });
-        });
-      }).catch((err) => { done(err); });
+      const testEventUid = '123kl4j123srfa3';
+
+      Connection.prototype.call.callsFake((onSuccess) => {
+        onSuccess();
+      });
+
+      removeEvent(testEventUid).then(() => {
+        expect(Connection.prototype.call).to.have.been.calledOnce;
+        const connectionCallData = Connection.prototype.call.thisValues[0];
+        expect(connectionCallData.method).to.equal('delete');
+        expect(connectionCallData.url).to.equal('/events');
+        expect(connectionCallData.config.params.uid).to.equal(testEventUid);
+        expect(connectionCallData.config.params.token).to.equal(testToken.token);
+        done();
+      }).catch(done);
     });
   });
-  describe('#getByUid(uid)', () => {
+  describe('#getEvent', () => {
     it('should return an existing event by UID.', (done) => {
-      createEvent(testEvent).then((uid) => {
-        createdEvents.push(uid);
-        getEventByUid(uid).then((receivedEvent) => {
-          expect(receivedEvent).to.deep.equal(testEvent);
-          done();
-        });
-      }).catch((err) => { done(err); });
+      const testEvent = generateEventData(testUser.uid);
+      const testEventUid = '123kl4j123srfa3';
+
+      Connection.prototype.call.callsFake((onSuccess) => {
+        onSuccess(testEvent);
+      });
+
+      getEvent(testEventUid).then((data) => {
+        expect(Connection.prototype.call).to.have.been.calledOnce;
+        const connectionCallData = Connection.prototype.call.thisValues[0];
+        expect(connectionCallData.method).to.equal('get');
+        expect(connectionCallData.url).to.equal('/events');
+        expect(connectionCallData.config.params.uid).to.equal(testEventUid);
+        expect(connectionCallData.config.params.token).to.equal(testToken.token);
+        expect(data).to.equal(testEvent);
+        done();
+      }).catch(done);
     });
   });
-  describe('#getAll()', () => {
+  describe('#getAllEvents', () => {
     it('should return all existing events.', (done) => {
-      createEvent(testEvent).then((uid) => {
-        createEvent(testEvent).then((uid2) => {
-          getAllEvents().then((events) => {
-            expect(events).to.contain.all.keys([uid, uid2]);
-            done();
-          });
-        });
-      }).catch((err) => { done(err); });
-    }).timeout(10000);
+      const testEvents = {
+        id1: generateEventData(testUser.uid),
+        id2: generateEventData(testUser.uid),
+        id3: generateEventData(testUser.uid),
+      };
+
+      Connection.prototype.call.callsFake((onSuccess) => {
+        onSuccess(testEvents);
+      });
+
+      getAllEvents().then((list) => {
+        expect(Connection.prototype.call).to.have.been.calledOnce;
+        const connectionCallData = Connection.prototype.call.thisValues[0];
+        expect(connectionCallData.method).to.equal('get');
+        expect(connectionCallData.url).to.equal('/events');
+        expect(connectionCallData.endpoint).to.equal('all');
+        expect(connectionCallData.config.params.token).to.equal(testToken.token);
+        expect(list).to.deep.equal(testEvents);
+        done();
+      }).catch(done);
+    });
   });
 });
