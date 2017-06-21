@@ -100,25 +100,11 @@ const modifyReport = (reportUid, reqData, locals, modifyCallback) => {
  * @param {reportCallback} deleteCallback - Called once the operation finishes.
  */
 const deleteReport = (reportUid, locals, deleteCallback) => {
-  Report.findById(reportUid, (err, report) => {
-    if (err) {
-      deleteCallback(err);
-      return;
-    }
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the report or an admin.
 
-    if (!report) {
-      // TODO(jmtaber129): Better error handling when report can't be found.
-      deleteCallback({ message: 'Report not found.' });
-      return;
-    }
-
-    // If the report's student UID does not match the user UID, and the user is
-    // not an admin, 'report' should not be deleted.
-    // TODO(jmtaber129): Check report's student UID and user UID, and add error
-    // handling.
-
-    report.remove(deleteCallback);
-  });
+  // TODO(asclines): Look into better error handling.
+  Report.findByIdAndRemove(reportUid, deleteCallback);
 };
 
 /**

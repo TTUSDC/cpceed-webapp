@@ -62,17 +62,31 @@ reportRouter.put('/',
     });
   });
 
-reportRouter.delete('/:uid', (req, res) => {
-  reportManager.deleteReport(req.params.uid, {}, (err) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).send(err).end();
-      return;
-    }
+/**
+ * Route for deleting an existing event
+ * - Endpoint: `/api/reports`
+ * - Verb: DELETE
+ *
+ * @typedef {function} Route-DeleteReport
+ * @param {Object} req - Express request object
+ * @property {string} req.query.uid - UID of report to be deleted
+ * @property {string} req.query.token - Admin or creator of report
+ * @param {Object} res - Express result object
+ * @property {number} res.status - 200 on success
+ */
+reportRouter.delete('/',
+  authManager.verify,
+  (req, res) => {
+    reportManager.deleteReport(req.query.uid, {}, (err) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).send(err).end();
+        return;
+      }
 
-    res.status(204).end();
+      res.status(204).end();
+    });
   });
-});
 
 reportRouter.get('/:uid', (req, res) => {
   reportManager.getReportById(req.params.uid, {}, (err, report) => {
