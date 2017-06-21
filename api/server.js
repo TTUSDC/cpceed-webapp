@@ -15,6 +15,6 @@ router.use('/events', events.eventRouter);
 router.use('/reports', report.reportRouter);
 router.use('/auth', auth.router);
 
-logger.info('');
-// logger.disableAll();
+if (process.env.LOGSUPRESS) logger.disableAll();
+
 module.exports = router;
