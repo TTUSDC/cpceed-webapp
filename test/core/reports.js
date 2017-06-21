@@ -64,6 +64,7 @@ const generateOtherReportData = (creator, data) => {
   const template = data || {};
   return {
     student: creator,
+    type: 'other',
     approvalStatus: template.approvalStatus || false,
     category: template.category || randomItem(categories),
     datetime: template.datetime || new Date(),
@@ -86,6 +87,7 @@ const generateEventReportData = (creator, data) => {
   const template = data || {};
   return {
     student: creator,
+    type: 'event',
     approvalStatus: template.approvalStatus || false,
     event: template.event || 'random-event-123',
   };

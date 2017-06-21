@@ -52,15 +52,14 @@ const randomItem = items => items[Math.floor(Math.random() * items.length)];
  *
  * @param {string} creator - User UID
  * @param {Object} [data] - Override filler data with this.
- * @property {string} [data.category]
- * @property {Date} [data.datetime]
- * @property {string} [data.location]
- * @property {string} [data.title]
- * @property {string} [data.description]
+ * @param {string} [data.category]
+ * @param {Date} [data.datetime]
+ * @param {string} [data.location]
+ * @param {string} [data.title]
+ * @param {string} [data.description]
  */
 const generateEventData = (creator, data) => {
   const template = data || {};
-  console.log('Generating event data');
   return {
     creator,
     category: template.category || randomItem(categories),

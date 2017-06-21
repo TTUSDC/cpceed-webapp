@@ -4,6 +4,19 @@ const logger = require('common/logger.js');
 
 const reportRouter = express.Router();
 
+
+/**
+ * Route for creating a new report
+ * - Endpoint: `/api/reports`
+ * - Verb: POST
+ *
+ * @typedef {function} Route-CreateReport
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - The report to be created
+ * @param {Object} res - Express result object
+ * @param {string} res.body - UID of created report or error message
+ * @param {number} res.status - 201 on success
+ */
 reportRouter.post('/', (req, res) => {
   reportManager.createReport(req.body, {}, (err, report) => {
     if (err) {
@@ -12,12 +25,7 @@ reportRouter.post('/', (req, res) => {
       return;
     }
 
-    logger.info({
-      message: 'report created',
-      id: report.id,
-    });
-
-    res.status(201).location(report.id).end();
+    res.status(201).json({ uid: report.id }).end();
   });
 });
 

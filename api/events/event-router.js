@@ -7,29 +7,28 @@ const eventRouter = express.Router();
 
 /**
  * Route for creating a new event
- * # API
  * - Endpoint: `/api/events`
  * - Verb: POST
  *
  * @typedef {function} Route-CreateEvent
  * @param {Object} req - Express request object
- * @property {EventSchema} req.body - The event to be created
+ * @param {EventSchema} req.body - The event to be created
  * @param {Object} res - Express result object
- * @property {string} res.body - UID of created event or error message
- * @property {number} res.status - 201 on success
+ * @param {string} res.body - UID of created event or error message
+ * @param {number} res.status - 201 on success
  */
 eventRouter.post('/',
   authManager.verify,
   (req, res) => {
-  eventManager.createEvent(req.body, {}, (err, event) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).json(err).end();
-      return;
-    }
-    res.status(201).json({ uid: event.id }).end();
+    eventManager.createEvent(req.body, {}, (err, event) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).json(err).end();
+        return;
+      }
+      res.status(201).json({ uid: event.id }).end();
+    });
   });
-});
 
 /**
  * Route for modifying an existing event
