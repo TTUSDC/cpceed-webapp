@@ -45,8 +45,10 @@ eventRouter.post('/',
  * @property {EventSchema|string} res.body - Modified event | error message
  * @property {number} res.status - 200 on success
  */
-eventRouter.put('/', (req, res) => {
-  eventManager.modifyEvent(req.query.uid, req.body, res.locals,
+eventRouter.put('/',
+  authManager.verify,
+  (req, res) => {
+    eventManager.modifyEvent(req.query.uid, req.body, res.locals,
     (err, eventData) => {
       if (err) {
         logger.error(err);
@@ -55,7 +57,7 @@ eventRouter.put('/', (req, res) => {
       }
       res.status(200).json(eventData).end();
     });
-});
+  });
 
 /**
  * Route for deleting an existing event
@@ -70,17 +72,19 @@ eventRouter.put('/', (req, res) => {
  * @param {Object} res - Express result object
  * @property {number} res.status - 200 on success
  */
-eventRouter.delete('/', (req, res) => {
-  eventManager.deleteEvent(req.query.uid, res.locals, (err, result) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).json(err).end();
-      return;
-    }
+eventRouter.delete('/',
+  authManager.verify,
+  (req, res) => {
+    eventManager.deleteEvent(req.query.uid, res.locals, (err, result) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).json(err).end();
+        return;
+      }
 
-    res.status(200).json(result).end();
+      res.status(200).json(result).end();
+    });
   });
-});
 
 /**
  * Route for retrieving a single, existing event by its UID
@@ -95,8 +99,10 @@ eventRouter.delete('/', (req, res) => {
  * @param {Object} res - Express result object
  * @property {number} res.status - 200 on success
  */
-eventRouter.get('/', (req, res) => {
-  eventManager.getEventById(req.query.uid, {},
+eventRouter.get('/',
+  authManager.verify,
+  (req, res) => {
+    eventManager.getEventById(req.query.uid, {},
     (err, event) => {
       if (err) {
         logger.error(err);
@@ -105,7 +111,7 @@ eventRouter.get('/', (req, res) => {
       }
       res.status(200).json(event).end();
     });
-});
+  });
 
 /**
  * Route for retrieving all events
@@ -119,16 +125,18 @@ eventRouter.get('/', (req, res) => {
  * @param {Object} res - Express result object
  * @property {number} res.status - 200 on success
  */
-eventRouter.get('/all', (req, res) => {
-  eventManager.getAllEvents(req.body, {}, (err, results) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).json(err).end();
-      return;
-    }
+eventRouter.get('/all',
+  authManager.verify,
+  (req, res) => {
+    eventManager.getAllEvents(req.body, {}, (err, results) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).json(err).end();
+        return;
+      }
 
-    res.status(200).json(results).end();
+      res.status(200).json(results).end();
+    });
   });
-});
 
 module.exports = { eventRouter };
