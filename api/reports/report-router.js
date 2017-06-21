@@ -88,27 +88,30 @@ reportRouter.delete('/',
     });
   });
 
-reportRouter.get('/:uid', (req, res) => {
-  reportManager.getReportById(req.params.uid, {}, (err, report) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).send(err).end();
-      return;
-    }
-
-    if (!report) {
-      // Report was not found.
-      // TODO(jmtaber129): Add error handling for when a user is not authorized
-      // to view the report.
-      logger.error('Report not found.');
-      res.status(404).end();
-      return;
-    }
-
-    res.status(200).json(report).end();
-  });
+reportRouter.get('/', (req, res) => {
+  reportManager.getReportById(req.query.uid, {},
+    (err, report) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).send(err).end();
+        return;
+      }
+      res.status(200).json(report).end();
+    });
 });
 
+/**
+ * Route for retrieving a single, existing event by its UID
+ * - Endpoint: `/api/reports`
+ * - Verb: GET
+ *
+ * @typedef {function} Route-GetReportById
+ * @param {Object} req - Express request object
+ * @param {string} req.query.uid - UID of report to be retrieved
+ * @param {string} req.query.token - Admin or creator of report
+ * @param {Object} res - Express result object
+ * @param {number} res.status - 200 on success
+ */
 reportRouter.get('/', (req, res) => {
   reportManager.getAllReports(req.params, {}, (err, reports) => {
     if (err) {

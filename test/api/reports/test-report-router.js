@@ -8,8 +8,6 @@ const reportModels = require('../../../api/reports/report-models');
 const server = require('../../../server');
 
 const Report = reportModels.Report;
-const ReportReport = reportModels.ReportReport;
-const OtherReport = reportModels.OtherReport;
 
 let api;
 mockgoose(mongoose);
@@ -88,6 +86,29 @@ describe('Report Router & Integration', () => {
               expect(foundReport.student).to.equal(testReport.student);
               done();
             });
+          });
+      });
+    });
+  });
+
+  describe('GET /api/reports', () => {
+    it('should return the correct report', (done) => {
+      const admin = testUsers.admin000;
+      utilsUser.createAndLoginUser(api, admin, (userUid, token) => {
+        const testReport = testReports.generateOtherReportData(userUid);
+        utilsReports.createReport(api, { token, uid: userUid }, testReport,
+          (reportUid) => {
+            request(api)
+              .get('/api/reports')
+              .query({ uid: reportUid })
+              .expect(200)
+              .end((getErr, getRes) => {
+                expect(getErr).to.be.null;
+                const returnedReport = getRes.body;
+                expect(returnedReport).to.not.be.null;
+                expect(returnedReport.location).to.equal(testReport.location);
+                done();
+              });
           });
       });
     });

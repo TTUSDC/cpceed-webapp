@@ -66,10 +66,10 @@ eventRouter.put('/',
  *
  * @typedef {function} Route-DeleteEvent
  * @param {Object} req - Express request object
- * @property {string} req.query.uid - UID of event to be deleted
- * @property {string} req.query.token - Admin or creator of event
+ * @param {string} req.query.uid - UID of event to be deleted
+ * @param {string} req.query.token - Admin or creator of event
  * @param {Object} res - Express result object
- * @property {number} res.status - 200 on success
+ * @param {number} res.status - 200 on success
  */
 eventRouter.delete('/',
   authManager.verify,
@@ -87,16 +87,15 @@ eventRouter.delete('/',
 
 /**
  * Route for retrieving a single, existing event by its UID
- * # API
  * - Endpoint: `/api/events`
  * - Verb: GET
  *
  * @typedef {function} Route-GetEventById
  * @param {Object} req - Express request object
- * @property {string} req.query.uid - UID of event to be retrieved
- * @property {string} req.query.token - Admin or creator of event
+ * @param {string} req.query.uid - UID of event to be retrieved
+ * @param {string} req.query.token - Admin or creator of event
  * @param {Object} res - Express result object
- * @property {number} res.status - 200 on success
+ * @param {number} res.status - 200 on success
  */
 eventRouter.get('/',
   authManager.verify,
