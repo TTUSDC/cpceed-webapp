@@ -8,6 +8,7 @@ chai.use(require('chai-moment'));
 chai.use(require('sinon-chai'));
 
 
+process.env.ENV_PATH = '.env.test';
 global.mockgoose = mockgoose;
 global.mongoose = mongoose;
 global.sinon = sinon;

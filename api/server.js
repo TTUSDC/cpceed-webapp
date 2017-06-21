@@ -1,5 +1,5 @@
 const express = require('express');
-
+const logger = require('common/logger.js');
 
 // Routers.
 const auth = require('./auth/auth-router.js');
@@ -15,5 +15,6 @@ router.use('/events', events.eventRouter);
 router.use('/reports', report.reportRouter);
 router.use('/auth', auth.router);
 
-
+logger.info('');
+// logger.disableAll();
 module.exports = router;
