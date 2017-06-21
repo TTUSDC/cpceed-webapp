@@ -1,6 +1,8 @@
 const express = require('express');
 const reportManager = require('api/reports/report-manager');
 const logger = require('common/logger.js');
+const authManager = require('api/auth/auth-manager');
+
 
 const reportRouter = express.Router();
 
@@ -17,29 +19,48 @@ const reportRouter = express.Router();
  * @param {string} res.body - UID of created report or error message
  * @param {number} res.status - 201 on success
  */
-reportRouter.post('/', (req, res) => {
-  reportManager.createReport(req.body, {}, (err, report) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).send(err).end();
-      return;
-    }
+reportRouter.post('/',
+  authManager.verify,
+  (req, res) => {
+    reportManager.createReport(req.body, {}, (err, report) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).send(err).end();
+        return;
+      }
 
-    res.status(201).json({ uid: report.id }).end();
+      res.status(201).json({ uid: report.id }).end();
+    });
   });
-});
 
-reportRouter.put('/:uid', (req, res) => {
-  reportManager.modifyReport(req.params.uid, req.body, {}, (err, report) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).send(err).end();
-      return;
-    }
+/**
+ * Route for modifying an existing report
+ * - Endpoint: `/api/reports`
+ * - Verb: POST
+ *
+ * @typedef {function} Route-ModifyReport
+ * @param {Object} req - Express request object
+ * @param {string} req.query.uid - UID of report to be updated
+ * @param {string} req.query.token - Admin or creator of report
+ * @param {Object} req.body - Updated fields of the report
+ * @param {Object} res - Express result object
+ * @param {EventSchema|string} res.body - Modified report | error message
+ * @param {number} res.status - 200 on success
+ */
+reportRouter.put('/',
+  authManager.verify,
+  (req, res) => {
+    reportManager.modifyReport(req.query.uid, req.body, res.locals,
+    (err, report) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).send(err).end();
+        return;
+      }
 
-    res.status(200).json(report).end();
+      res.status(200).json(report).end();
+    });
   });
-});
 
 reportRouter.delete('/:uid', (req, res) => {
   reportManager.deleteReport(req.params.uid, {}, (err) => {

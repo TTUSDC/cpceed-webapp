@@ -92,4 +92,43 @@ describe('Report Router & Integration', () => {
       });
     });
   });
+
+  describe('PUT /api/reports', () => {
+    it('should update the created other report', (done) => {
+      const admin = testUsers.admin000;
+      utilsUser.createAndLoginUser(api, admin, (userUid, token) => {
+        const testReport = testReports.generateOtherReportData(userUid);
+        utilsReports.createReport(api, { token, uid: userUid }, testReport,
+          (reportUid) => {
+            const fieldsToUpdate = {
+              location: `${testReport.location}_edit`,
+              type: testReport.type,
+            };
+            request(api)
+              .put('/api/reports')
+              .expect(200)
+              .query({ token, uid: reportUid })
+              .send(fieldsToUpdate)
+              .end((putErr, putRes) => {
+                expect(putErr).to.be.null;
+                expect(putRes).to.not.be.null;
+                const returnedReport = putRes.body;
+                expect(returnedReport).to.not.be.null;
+                expect(returnedReport.location).to.equal(fieldsToUpdate.location);
+                expect(returnedReport.title).to.equal(testReport.title);
+
+                Report.findById(reportUid, (findErr, foundReport) => {
+                  expect(findErr).to.be.null;
+                  expect(foundReport).to.not.be.null;
+
+                  // Make sure the modified report was actually saved
+                  expect(foundReport.location).to.equal(fieldsToUpdate.location);
+                  expect(foundReport.title).to.equal(testReport.title);
+                  done();
+                });
+              });
+          });
+      });
+    });
+  });
 });

@@ -32,18 +32,17 @@ eventRouter.post('/',
 
 /**
  * Route for modifying an existing event
- * # API
  * - Endpoint: `/api/events`
  * - Verb: PUT
  *
  * @typedef {function} Route-ModifyEvent
  * @param {Object} req - Express request object
- * @property {string} req.query.uid - UID of event to be updated
- * @property {string} req.query.token - Admin or creator of event
- * @property {EventSchema} req.body - Updated fields of the event
+ * @param {string} req.query.uid - UID of event to be updated
+ * @param {string} req.query.token - Admin or creator of event
+ * @param {EventSchema} req.body - Updated fields of the event
  * @param {Object} res - Express result object
- * @property {EventSchema|string} res.body - Modified event | error message
- * @property {number} res.status - 200 on success
+ * @param {EventSchema|string} res.body - Modified event | error message
+ * @param {number} res.status - 200 on success
  */
 eventRouter.put('/',
   authManager.verify,

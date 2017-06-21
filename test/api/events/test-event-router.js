@@ -90,7 +90,7 @@ describe('Event Router & Integration', () => {
     });
   });
 
-  describe('PUT /api/users', () => {
+  describe('PUT /api/events', () => {
     it('should update the created event', (done) => {
       const admin = testUsers.admin000;
       utilsUser.createAndLoginUser(api, admin, (userUid, token) => {
