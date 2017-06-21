@@ -1,8 +1,9 @@
-var reportModels = require('./report-models');
-var newIfPresent = require('../core/utils').newIfPresent;
-var Report = reportModels.Report;
-var EventReport = reportModels.EventReport;
-var OtherReport = reportModels.OtherReport;
+const reportModels = require('api/reports/report-models');
+const newIfPresent = require('api/core/utils').newIfPresent;
+
+const Report = reportModels.Report;
+const EventReport = reportModels.EventReport;
+const OtherReport = reportModels.OtherReport;
 
 /**
  * Callback used by report CRUD methods that return only one report.
@@ -21,17 +22,17 @@ var OtherReport = reportModels.OtherReport;
  *     variables.
  * @param {reportCallback} createCallback - Called once the operation finishes.
  */
-var createReport = (reqData, locals, createCallback) => {
+const createReport = (reqData, locals, createCallback) => {
   // TODO(jmtaber129): Check that the student UID matches the requesting user,
   // or the requesting user is an admin.
-  var report;
-  if (reqData.type == 'event') {
+  let report;
+  if (reqData.type === 'event') {
     report = new EventReport({
       approvalStatus: false,
       student: reqData.student,
       event: reqData.event,
     });
-  } else if (reqData.type == 'other') {
+  } else if (reqData.type === 'other') {
     report = new OtherReport({
       approvalStatus: false,
       student: reqData.student,
@@ -43,7 +44,7 @@ var createReport = (reqData, locals, createCallback) => {
     });
   } else {
     // TODO(jmtaber129): Better error handling for invalid report types.
-    createCallback({message: "Invalid report type."});
+    createCallback({ message: 'Invalid report type.' });
     return;
   }
 
@@ -61,7 +62,7 @@ var createReport = (reqData, locals, createCallback) => {
  *     variables.
  * @param {reportCallback} modifyCallback - Called once the operation finishes.
  */
-var modifyReport = (reportUid, reqData, locals, modifyCallback) => {
+const modifyReport = (reportUid, reqData, locals, modifyCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
       modifyCallback(err);
@@ -81,11 +82,10 @@ var modifyReport = (reportUid, reqData, locals, modifyCallback) => {
         newIfPresent(reqData.approvalStatus, report.approvalStatus);
     report.student = newIfPresent(reqData.student, report.student);
 
-    if (report.type == EventReport.modelName) {
+    if (report.type === EventReport.modelName) {
       // Fields specific to event reports.
       report.event = newIfPresent(reqData.event, report.event);
-
-    } else if (report.type == OtherReport.modelName) {
+    } else if (report.type === OtherReport.modelName) {
       // Fields specific to other reports.
       report.category = newIfPresent(reqData.category, report.category);
       report.datetime = newIfPresent(reqData.datetime, report.datetime);
@@ -108,7 +108,7 @@ var modifyReport = (reportUid, reqData, locals, modifyCallback) => {
  *     variables.
  * @param {reportCallback} deleteCallback - Called once the operation finishes.
  */
-var deleteReport = (reportUid, locals, deleteCallback) => {
+const deleteReport = (reportUid, locals, deleteCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
       deleteCallback(err);
@@ -117,7 +117,7 @@ var deleteReport = (reportUid, locals, deleteCallback) => {
 
     if (!report) {
       // TODO(jmtaber129): Better error handling when report can't be found.
-      deleteCallback({message: 'Report not found.'});
+      deleteCallback({ message: 'Report not found.' });
       return;
     }
 
@@ -137,7 +137,7 @@ var deleteReport = (reportUid, locals, deleteCallback) => {
  *     variables.
  * @param {reportCallback} queryCallback - Called once the operation finishes.
  */
-var getReportById = (reportUid, locals, queryCallback) => {
+const getReportById = (reportUid, locals, queryCallback) => {
   Report.findById(reportUid, (err, report) => {
     if (err) {
       queryCallback(err);
@@ -171,8 +171,8 @@ var getReportById = (reportUid, locals, queryCallback) => {
  * @param {multipleReportsCallback} queryCallback - Called once the operation
  *     finishes.
  */
-var getAllReports = (reqData, locals, queryCallback) => {
-  conditions = {};
+const getAllReports = (reqData, locals, queryCallback) => {
+  const conditions = {};
 
   // If the user is not an admin, limit the results to reports with the user's
   // UID.  If the user is not an admin, and one of the query parameters is a
@@ -193,7 +193,7 @@ var getAllReports = (reqData, locals, queryCallback) => {
       return;
     }
 
-    returnObject = {};
+    const returnObject = {};
 
     reports.forEach((report) => {
       returnObject[report.id] = report;
@@ -203,8 +203,10 @@ var getAllReports = (reqData, locals, queryCallback) => {
 
     queryCallback(err, returnObject);
   });
-
 };
 
-module.exports = {createReport, modifyReport, deleteReport, getReportById,
-                  getAllReports};
+module.exports = { createReport,
+  modifyReport,
+  deleteReport,
+  getReportById,
+  getAllReports };

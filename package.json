@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/TTUSDC/CPCEEDWebApp#readme",
   "dependencies": {
+    "app-module-path": "2.2.0",
     "axios": "0.16.1",
     "bcrypt": "1.0.2",
     "body-parser": "1.17.1",

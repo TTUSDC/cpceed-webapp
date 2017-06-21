@@ -1,6 +1,7 @@
 const express = require('express');
-const userManager = require('./user-manager');
-const authManager = require('../auth/auth-manager');
+const userManager = require('api/users/user-manager');
+const authManager = require('api/auth/auth-manager');
+const logger = require('common/logger.js');
 
 const userRouter = express.Router();
 
@@ -22,6 +23,7 @@ const userRouter = express.Router();
 userRouter.post('/', (req, res) => {
   userManager.createUser(req.body, (err, uid) => {
     if (err) {
+      logger.error(err);
       res.status(400).json(err).end();
     } else {
       // A User was created.
@@ -53,6 +55,7 @@ userRouter.put('/',
       userManager.modifyUser(res.locals.uid, req.body, res.locals,
         (err, user) => {
           if (err) {
+            logger.error(err);
             res.status(400).json(err).end();
             return;
           }
@@ -80,6 +83,7 @@ userRouter.delete('/',
     (req, res) => {
       userManager.deleteUser(res.locals.uid, res.locals, (err, result) => {
         if (err) {
+          logger.error(err);
           res.status(400).json(err).end();
           return;
         }
@@ -108,11 +112,13 @@ userRouter.get('/',
       const uid = res.locals.uid;
       userManager.getUserById(uid, {}, (err, user) => {
         if (err) {
+          logger.error(err);
           res.status(400).send(err).end();
           return;
         }
 
         if (!user) {
+          logger.error('No user found.');
           res.status(404).end();
           return;
         }
