@@ -53,13 +53,13 @@ winston.addColors(customColors);
 // Extend logger object to properly log 'Error' types
 const origLog = logger.log;
 
-logger.log = function (level, msg) {
-  if (msg instanceof Error) {
-    const args = Array.prototype.slice.call(arguments);
-    args[1] = msg.stack;
-    origLog.apply(logger, args);
+logger.log = (...args) => {
+  if (args[1] instanceof Error) {
+    const newArgs = args;
+    newArgs[1] = args[1].stack;
+    origLog.apply(logger, newArgs);
   } else {
-    origLog.apply(logger, arguments);
+    origLog.apply(logger, args);
   }
 };
 

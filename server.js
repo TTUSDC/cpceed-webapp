@@ -28,7 +28,7 @@ app.use(cookieParser());
 const mongoURL = process.env.MONGODB_URI || process.env.MONGOLAB_URI;
 mongoose.Promise = global.Promise;
 mongoose.connection.on('error', (err) => {
-  logger.error(err);
+  logger.fatal(err);
   logger.info('MongoDB connection error. Please make sure MongoDB is running.');
   process.exit(1);
 });
