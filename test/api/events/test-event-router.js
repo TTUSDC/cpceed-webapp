@@ -1,8 +1,4 @@
-const mockgoose = require('mockgoose');
-const mongoose = require('mongoose');
 const request = require('supertest');
-const chai = require('chai');
-const sinon = require('sinon');
 const utilsUser = require('../core/utils-user');
 const utilsEvents = require('../core/utils-events');
 const testUsers = require('../../core/users');
@@ -94,7 +90,7 @@ describe('Event Router & Integration', () => {
     });
   });
 
-  describe('PUT /api/users', () => {
+  describe('PUT /api/events', () => {
     it('should update the created event', (done) => {
       const admin = testUsers.admin000;
       utilsUser.createAndLoginUser(api, admin, (userUid, token) => {

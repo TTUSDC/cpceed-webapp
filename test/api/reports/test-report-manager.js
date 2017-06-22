@@ -1,10 +1,11 @@
-mockgoose(mongoose);
-
 const reportManager = require('../../../api/reports/report-manager');
 const reportModels = require('../../../api/reports/report-models');
+const logger = require('common/logger');
 const Report = reportModels.Report;
 const EventReport = reportModels.EventReport;
 const OtherReport = reportModels.OtherReport;
+
+mockgoose(mongoose);
 
 describe('reportManager', () => {
   // Mockgoose doesn't start the mock until after 'mongoose.connect()' is
@@ -92,6 +93,7 @@ describe('reportManager', () => {
       const updatedEventReport = {
         student: 'Jane Doe',
         approvalStatus: true,
+        type: 'event',
       };
 
       originalEventReport.save((err, createdReport) => {
@@ -119,19 +121,23 @@ describe('reportManager', () => {
         datetime: 'Apr 04 2017',
         location: 'EC203',
         description: 'Some report description',
+        approvalStatus: false,
       });
 
       const updatedOtherReport = {
         student: 'Jane Doe',
         approvalStatus: true,
         location: 'EC204',
+        type: 'other',
       };
 
       originalOtherReport.save((err, createdReport) => {
+        console.log(createdReport, 'createdReport');
         expect(err).to.be.null;
         reportManager.modifyReport(
             createdReport.id, updatedOtherReport, {},
             (err, actualUpdatedReport) => {
+              console.log(actualUpdatedReport, 'actualUpdatedReport');
               expect(err).to.be.null;
               expect(actualUpdatedReport.type).to.be.equal('OtherReport');
               expect(actualUpdatedReport.student)
@@ -273,5 +279,4 @@ describe('reportManager', () => {
       });
     });
   });
-
 });

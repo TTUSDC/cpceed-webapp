@@ -7,47 +7,47 @@ const eventRouter = express.Router();
 
 /**
  * Route for creating a new event
- * # API
  * - Endpoint: `/api/events`
  * - Verb: POST
  *
  * @typedef {function} Route-CreateEvent
  * @param {Object} req - Express request object
- * @property {EventSchema} req.body - The event to be created
+ * @param {EventSchema} req.body - The event to be created
  * @param {Object} res - Express result object
- * @property {string} res.body - UID of created event or error message
- * @property {number} res.status - 201 on success
+ * @param {string} res.body - UID of created event or error message
+ * @param {number} res.status - 201 on success
  */
 eventRouter.post('/',
   authManager.verify,
   (req, res) => {
-  eventManager.createEvent(req.body, {}, (err, event) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).json(err).end();
-      return;
-    }
-    res.status(201).json({ uid: event.id }).end();
+    eventManager.createEvent(req.body, {}, (err, event) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).json(err).end();
+        return;
+      }
+      res.status(201).json({ uid: event.id }).end();
+    });
   });
-});
 
 /**
  * Route for modifying an existing event
- * # API
  * - Endpoint: `/api/events`
  * - Verb: PUT
  *
  * @typedef {function} Route-ModifyEvent
  * @param {Object} req - Express request object
- * @property {string} req.query.uid - UID of event to be updated
- * @property {string} req.query.token - Admin or creator of event
- * @property {EventSchema} req.body - Updated fields of the event
+ * @param {string} req.query.uid - UID of event to be updated
+ * @param {string} req.query.token - Admin or creator of event
+ * @param {EventSchema} req.body - Updated fields of the event
  * @param {Object} res - Express result object
- * @property {EventSchema|string} res.body - Modified event | error message
- * @property {number} res.status - 200 on success
+ * @param {EventSchema|string} res.body - Modified event | error message
+ * @param {number} res.status - 200 on success
  */
-eventRouter.put('/', (req, res) => {
-  eventManager.modifyEvent(req.query.uid, req.body, res.locals,
+eventRouter.put('/',
+  authManager.verify,
+  (req, res) => {
+    eventManager.modifyEvent(req.query.uid, req.body, res.locals,
     (err, eventData) => {
       if (err) {
         logger.error(err);
@@ -56,7 +56,7 @@ eventRouter.put('/', (req, res) => {
       }
       res.status(200).json(eventData).end();
     });
-});
+  });
 
 /**
  * Route for deleting an existing event
@@ -66,38 +66,41 @@ eventRouter.put('/', (req, res) => {
  *
  * @typedef {function} Route-DeleteEvent
  * @param {Object} req - Express request object
- * @property {string} req.query.uid - UID of event to be deleted
- * @property {string} req.query.token - Admin or creator of event
+ * @param {string} req.query.uid - UID of event to be deleted
+ * @param {string} req.query.token - Admin or creator of event
  * @param {Object} res - Express result object
- * @property {number} res.status - 200 on success
+ * @param {number} res.status - 200 on success
  */
-eventRouter.delete('/', (req, res) => {
-  eventManager.deleteEvent(req.query.uid, res.locals, (err, result) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).json(err).end();
-      return;
-    }
+eventRouter.delete('/',
+  authManager.verify,
+  (req, res) => {
+    eventManager.deleteEvent(req.query.uid, res.locals, (err, result) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).json(err).end();
+        return;
+      }
 
-    res.status(200).json(result).end();
+      res.status(200).json(result).end();
+    });
   });
-});
 
 /**
  * Route for retrieving a single, existing event by its UID
- * # API
  * - Endpoint: `/api/events`
  * - Verb: GET
  *
  * @typedef {function} Route-GetEventById
  * @param {Object} req - Express request object
- * @property {string} req.query.uid - UID of event to be retrieved
- * @property {string} req.query.token - Admin or creator of event
+ * @param {string} req.query.uid - UID of event to be retrieved
+ * @param {string} req.query.token - Admin or creator of event
  * @param {Object} res - Express result object
- * @property {number} res.status - 200 on success
+ * @param {number} res.status - 200 on success
  */
-eventRouter.get('/', (req, res) => {
-  eventManager.getEventById(req.query.uid, {},
+eventRouter.get('/',
+  authManager.verify,
+  (req, res) => {
+    eventManager.getEventById(req.query.uid, {},
     (err, event) => {
       if (err) {
         logger.error(err);
@@ -106,7 +109,7 @@ eventRouter.get('/', (req, res) => {
       }
       res.status(200).json(event).end();
     });
-});
+  });
 
 /**
  * Route for retrieving all events
@@ -120,16 +123,18 @@ eventRouter.get('/', (req, res) => {
  * @param {Object} res - Express result object
  * @property {number} res.status - 200 on success
  */
-eventRouter.get('/all', (req, res) => {
-  eventManager.getAllEvents(req.body, {}, (err, results) => {
-    if (err) {
-      logger.error(err);
-      res.status(400).json(err).end();
-      return;
-    }
+eventRouter.get('/all',
+  authManager.verify,
+  (req, res) => {
+    eventManager.getAllEvents(req.body, {}, (err, results) => {
+      if (err) {
+        logger.error(err);
+        res.status(400).json(err).end();
+        return;
+      }
 
-    res.status(200).json(results).end();
+      res.status(200).json(results).end();
+    });
   });
-});
 
 module.exports = { eventRouter };

@@ -1,4 +1,5 @@
 const reportModels = require('api/reports/report-models');
+const logger = require('common/logger');
 const newIfPresent = require('api/core/utils').newIfPresent;
 
 const Report = reportModels.Report;
@@ -63,40 +64,30 @@ const createReport = (reqData, locals, createCallback) => {
  * @param {reportCallback} modifyCallback - Called once the operation finishes.
  */
 const modifyReport = (reportUid, reqData, locals, modifyCallback) => {
-  Report.findById(reportUid, (err, report) => {
-    if (err) {
-      modifyCallback(err);
-      return;
-    }
+  // TODO(asclines): Add checks for required data and expection handling
 
-    // If the report's student UID does not match the user UID, and the user is
-    // not an admin, the report should not be updated.
-    // TODO(jmtaber129): Check report's student UID and user UID, and add error
-    // handling.
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the report or an admin.
+  const conditions = { _id: reportUid };
+  const update = {};
 
-    // Update fields by checking if the field in the request is defined and
-    // non-null, then setting the document field to the request field if it is.
+  if (reqData.type !== 'event' && reqData.type !== 'other') {
+    modifyCallback(new Error('Invalid report type'));
+    return;
+  }
 
-    // Generic fields.
-    report.approvalStatus =
-        newIfPresent(reqData.approvalStatus, report.approvalStatus);
-    report.student = newIfPresent(reqData.student, report.student);
 
-    if (report.type === EventReport.modelName) {
-      // Fields specific to event reports.
-      report.event = newIfPresent(reqData.event, report.event);
-    } else if (report.type === OtherReport.modelName) {
-      // Fields specific to other reports.
-      report.category = newIfPresent(reqData.category, report.category);
-      report.datetime = newIfPresent(reqData.datetime, report.datetime);
-      report.location = newIfPresent(reqData.location, report.location);
-      report.title = newIfPresent(reqData.title, report.title);
-      report.description =
-          newIfPresent(reqData.description, report.description);
-    }
-
-    report.save(modifyCallback);
+  Object.keys(reqData).forEach((key) => {
+    if (key !== 'type') { update[key] = reqData[key]; }
   });
+
+  const options = { new: true };
+
+  if (reqData.type === 'other') {
+    OtherReport.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
+  } else {
+    EventReport.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
+  }
 };
 
 /**
@@ -109,25 +100,11 @@ const modifyReport = (reportUid, reqData, locals, modifyCallback) => {
  * @param {reportCallback} deleteCallback - Called once the operation finishes.
  */
 const deleteReport = (reportUid, locals, deleteCallback) => {
-  Report.findById(reportUid, (err, report) => {
-    if (err) {
-      deleteCallback(err);
-      return;
-    }
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the report or an admin.
 
-    if (!report) {
-      // TODO(jmtaber129): Better error handling when report can't be found.
-      deleteCallback({ message: 'Report not found.' });
-      return;
-    }
-
-    // If the report's student UID does not match the user UID, and the user is
-    // not an admin, 'report' should not be deleted.
-    // TODO(jmtaber129): Check report's student UID and user UID, and add error
-    // handling.
-
-    report.remove(deleteCallback);
-  });
+  // TODO(asclines): Look into better error handling.
+  Report.findByIdAndRemove(reportUid, deleteCallback);
 };
 
 /**
