@@ -6,8 +6,8 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const apiRouter = require('api/server.js');
-const logger = require('common/logger.js');
+const apiRouter = require('api/server');
+const logger = require('api/core/logger');
 
 // load environment variables from .env file.
 dotenv.load({ path: process.env.ENV_PATH || '.env.default' });
