@@ -3,7 +3,7 @@ const winston = require('winston');
 /**
  * Logging tool for API
  *
- * @typedef {function}
+ * @typedef {function} - ApiLoggr
  * @example
  * const logger = require('api/core/logger');
  * logger.trace('Message');
