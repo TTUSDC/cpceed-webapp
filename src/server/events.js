@@ -70,7 +70,7 @@ export function modifyEvent(uid, updatedEvent) {
  * Must be the creator of the event or admin to remove
  *
  * @example
- * removeEvent(someEvent).then(() => {
+ * removeEvent(someEvent.uid).then(() => {
  *  logger.info(`Event with UID ${someEvent.uid} removed`);
  * }).catch((err) => {
  *  logger.error(err);
