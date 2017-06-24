@@ -46,22 +46,26 @@ const descriptions = [
  */
 const randomItem = items => items[Math.floor(Math.random() * items.length)];
 
+
 /**
- * Helper method to generate event data to create an event.
+ * Helper method to generate report data to create an other report.
  * Generates filler data for all missing data.
  *
  * @param {string} creator - User UID
  * @param {Object} [data] - Override filler data with this.
+ * @param {boolean} [data.approvalStatus]
  * @param {string} [data.category]
  * @param {Date} [data.datetime]
  * @param {string} [data.location]
  * @param {string} [data.title]
  * @param {string} [data.description]
  */
-const generateEventData = (creator, data) => {
+const generateOtherReportData = (creator, data) => {
   const template = data || {};
   return {
-    creator,
+    student: creator,
+    type: 'other',
+    approvalStatus: template.approvalStatus || false,
     category: template.category || randomItem(categories),
     datetime: template.datetime || new Date(),
     location: template.location || randomItem(locations),
@@ -70,4 +74,26 @@ const generateEventData = (creator, data) => {
   };
 };
 
-module.exports = { generateEventData };
+/**
+ * Helper method to generate report data to create an event report.
+ * Generates filler data for all missing data.
+ *
+ * @param {string} creator - User UID
+ * @param {Object} [data] - Override filler data with this.
+ * @param {boolean} [data.approvalStatus]
+ * @param {string} [data.event] - Event UID
+ */
+const generateEventReportData = (creator, data) => {
+  const template = data || {};
+  return {
+    student: creator,
+    type: 'event',
+    approvalStatus: template.approvalStatus || false,
+    event: template.event || 'random-event-123',
+  };
+};
+
+module.exports = {
+  generateOtherReportData,
+  generateEventReportData,
+};
