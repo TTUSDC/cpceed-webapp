@@ -6,8 +6,8 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const apiRouter = require('api/server.js');
-const logger = require('common/logger.js');
+const apiRouter = require('api/server');
+const logger = require('api/core/logger');
 
 // load environment variables from .env file.
 dotenv.load({ path: process.env.ENV_PATH || '.env.default' });
@@ -28,7 +28,7 @@ app.use(cookieParser());
 const mongoURL = process.env.MONGODB_URI || process.env.MONGOLAB_URI;
 mongoose.Promise = global.Promise;
 mongoose.connection.on('error', (err) => {
-  logger.error(err);
+  logger.fatal(err);
   logger.info('MongoDB connection error. Please make sure MongoDB is running.');
   process.exit(1);
 });
