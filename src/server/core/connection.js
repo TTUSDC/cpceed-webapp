@@ -101,6 +101,8 @@ export default class Connection {
 
   events() { return this.setUrl('/events'); }
 
+  reports() { return this.setUrl('/reports'); }
+
   /**
    * Helper method to add `/all` to endpoint.
    * @returns {*}
