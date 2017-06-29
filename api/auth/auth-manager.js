@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const authErrors = require('api/errors/auth-errors');
-const User = require('api/users/user-models').User;
+const User = require('common/models/users').User;
 const Session = require('api/auth/auth-models').Session;
 
 /**

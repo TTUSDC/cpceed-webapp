@@ -3,7 +3,7 @@ const async = require('async');
 const utilsUser = require('../core/utils-user');
 const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
-const userModels = require('../../../api/users/user-models');
+const userModels = require('../../../common/models/users');
 const compareHelper = require('../core/helper-compare');
 const server = require('../../../server');
 

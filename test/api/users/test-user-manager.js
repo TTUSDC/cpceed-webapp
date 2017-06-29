@@ -1,5 +1,5 @@
 const userManager = require('../../../api/users/user-manager');
-const userModels = require('../../../api/users/user-models');
+const userModels = require('../../../common/models/users');
 const testUsers = require('../../core/users');
 const compareHelper = require('../core/helper-compare');
 

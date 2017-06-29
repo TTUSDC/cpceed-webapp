@@ -1,4 +1,4 @@
-const userModels = require('api/users/user-models');
+const userModels = require('common/models/users');
 
 const User = userModels.User;
 const Student = userModels.Student;
