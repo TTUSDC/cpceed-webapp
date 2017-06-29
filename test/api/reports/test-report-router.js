@@ -4,7 +4,7 @@ const utilsReports = require('../core/utils-reports');
 const testUsers = require('../../core/users');
 const testReports = require('../../core/reports');
 const reportManager = require('../../../api/reports/report-manager');
-const reportModels = require('../../../common/models/report-models');
+const reportModels = require('../../../common/models/reports');
 const server = require('../../../server');
 
 const Report = reportModels.Report;

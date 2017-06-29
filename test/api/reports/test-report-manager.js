@@ -1,5 +1,5 @@
 const reportManager = require('../../../api/reports/report-manager');
-const reportModels = require('../../../common/models/report-models');
+const reportModels = require('../../../common/models/reports');
 // const logger = require('common/logger');
 
 const Report = reportModels.Report;
