@@ -4,7 +4,7 @@ const utilsEvents = require('../core/utils-events');
 const testUsers = require('../../core/users');
 const testEvents = require('../../core/events');
 const eventManager = require('../../../api/events/event-manager');
-const eventModels = require('../../../api/events/event-models');
+const eventModels = require('../../../common/models/event-models');
 const server = require('../../../server');
 
 const Event = eventModels.Event;
