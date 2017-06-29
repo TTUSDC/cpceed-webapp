@@ -1,4 +1,4 @@
-const eventModels = require('common/models/event-models');
+const eventModels = require('common/models/events');
 
 const Event = eventModels.Event;
 

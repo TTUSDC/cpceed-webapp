@@ -1,6 +1,6 @@
 const async = require('async');
 const eventManager = require('../../../api/events/event-manager');
-const eventModels = require('../../../common/models/event-models');
+const eventModels = require('../../../common/models/events');
 
 const Event = eventModels.Event;
 
