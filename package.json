@@ -5,8 +5,9 @@
   "main": "src/index.jsx",
   "scripts": {
     "start": "npm-run-all build start-api",
-    "start-app": "webpack-dev-server --env=dev",
+    "start-app": "npm-run-all --parallel start-api dev-app",
     "start-api": "node server.js",
+    "dev-app": "webpack-dev-server --env=dev",
     "build": "webpack --env=prod",
     "test": "npm-run-all --parallel --continue-on-error test-app test-api",
     "test-app": "karma start karma.conf.js",
