@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as firebase from 'firebase';
-import { connect } from 'react-redux';
+
+import * as server from 'server';
 
 import {
-  updateUser,
   coordinator,
   student,
   AuthStates,
@@ -37,34 +36,29 @@ class AuthContainer extends React.Component {
       regErr: '',
     });
 
-    let userData = {};
+    let userData;
     switch (data.role) {
       case AuthStates.COORDINATOR:
         userData = coordinator;
-
         break;
       case AuthStates.STUDENT:
         userData = student;
-
-        userData.studentId = data.studentId;
-
         break;
       default:
         logger.error('Unknown user role in AuthContainer.js');
     }
 
     userData.email = data.email;
-    userData.firstName = data.firstName;
-    userData.lastName = data.lastName;
+    userData.name = data.name;
 
-    firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
-      .then(user =>
-        firebase.database().ref().child(`users/${user.uid}`).set(userData),
-      )
+    server.createUser(data)
       .then(() => {
         logger.info('User was registered');
 
-        this.props.dispatch(updateUser(userData));
+        return server.login(data.email, data.password);
+      })
+      .then(() => {
+        logger.info('User was logged in');
 
         if (this.props.authFinished) {
           this.props.authFinished();
@@ -85,21 +79,13 @@ class AuthContainer extends React.Component {
       logErr: '',
     });
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((user) => {
-        const rootRef = firebase.database().ref();
-        const userRef = rootRef.child(`users/${user.uid}`);
+    server.login(email, password)
+      .then(() => {
+        logger.info('User was logged in');
 
-        userRef.once('value')
-          .then((snapshot) => {
-            logger.info('User was logged in');
-
-            this.props.dispatch(updateUser(snapshot.val()));
-
-            if (this.props.authFinished) {
-              this.props.authFinished();
-            }
-          });
+        if (this.props.authFinished) {
+          this.props.authFinished();
+        }
       })
       .catch((e) => {
         logger.error(e.message);
@@ -127,11 +113,10 @@ class AuthContainer extends React.Component {
 AuthContainer.propTypes = {
   authFinished: PropTypes.func,
   authCancelled: PropTypes.func.isRequired,
-  dispatch: PropTypes.func.isRequired,
 };
 
 AuthContainer.defaultProps = {
   authFinished: null,
 };
 
-export default connect()(AuthContainer);
+export default AuthContainer;

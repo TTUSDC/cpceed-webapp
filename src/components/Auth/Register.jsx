@@ -11,7 +11,7 @@ import Button from 'grommet/components/Button';
 
 import { AuthStates } from 'redux/actions.js';
 import logger from 'logger.js';
-import { checkEmail, checkPass, checkConfirm, checkID } from './verify.js';
+import { checkEmail, checkPass, checkConfirm } from './verify.js';
 
 class Register extends React.Component {
   constructor(props) {
@@ -20,15 +20,12 @@ class Register extends React.Component {
       email: '',
       password: '',
       confirmPass: '',
-      firstName: '',
-      lastName: '',
-      studentID: '',
+      name: '',
       role: 'student',
       err: {
         emailErr: '',
         passErr: '',
         confirmErr: '',
-        stuIDErr: '',
       },
     };
 
@@ -66,10 +63,6 @@ class Register extends React.Component {
 
     this.setState({
       [name]: option,
-      studentID: '',
-      err: update(this.state.err, {
-        stuIDErr: { $set: '' },
-      }),
     });
   }
 
@@ -77,19 +70,12 @@ class Register extends React.Component {
     // This prevents a '?' from being appended to the URL
     event.preventDefault();
 
-    const data = {
+    this.props.handleRegister({
       email: this.state.email,
       password: this.state.password,
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
+      name: this.state.name,
       role: this.state.role,
-    };
-
-    if (data.role === AuthStates.STUDENT) {
-      data.studentId = this.state.studentID;
-    }
-
-    this.props.handleRegister(data);
+    });
   }
 
   handleFocus(event) {
@@ -121,16 +107,6 @@ class Register extends React.Component {
           this.setState({
             err: update(this.state.err, {
               confirmErr: { $set: '' },
-            }),
-          });
-        }
-
-        break;
-      case 'studentID':
-        if (this.state.err.stuIDErr !== '') {
-          this.setState({
-            err: update(this.state.err, {
-              stuIDErr: { $set: '' },
             }),
           });
         }
@@ -176,47 +152,12 @@ class Register extends React.Component {
         });
 
         break;
-      case 'studentID':
-        value = checkID(this.state.studentID);
-
-        this.setState({
-          err: update(this.state.err, {
-            stuIDErr: { $set: value },
-          }),
-        });
-
-        break;
       default:
         logger.error(`Create an onBlur handler for ${name}`);
     }
   }
 
   render() {
-    let studentIDdesc = null;
-    let studentIDField = null;
-    if (this.state.role === 'student') {
-      studentIDdesc = (
-        <Paragraph margin='none'>
-          Don{'\''}t include the R before your student ID number.
-        </Paragraph>
-      );
-      studentIDField = (
-        <FormField
-          label='Student ID'
-          error={this.state.err.stuIDErr}
-        >
-          <input
-            name='studentID'
-            type='text'
-            value={this.state.studentID}
-            onBlur={this.inputChecking}
-            onFocus={this.handleFocus}
-            onChange={this.handleInputChange}
-          />
-        </FormField>
-      );
-    }
-
     // Turn AuthStates from actions.js into array for Select
     const authArray = [];
     Object.keys(AuthStates).forEach((key) => {
@@ -257,8 +198,6 @@ class Register extends React.Component {
               onChange={this.handleSelectChange}
             />
           </FormField>
-          {studentIDdesc}
-          {studentIDField}
           <FormField
             label='Email'
             error={this.state.err.emailErr}
@@ -303,19 +242,11 @@ class Register extends React.Component {
               onChange={this.handleInputChange}
             />
           </FormField>
-          <FormField label='First Name'>
+          <FormField label='Screen Name'>
             <input
-              name='firstName'
+              name='name'
               type='text'
-              value={this.state.firstName}
-              onChange={this.handleInputChange}
-            />
-          </FormField>
-          <FormField label='Last Name'>
-            <input
-              name='lastName'
-              type='text'
-              value={this.state.lastName}
+              value={this.state.name}
               onChange={this.handleInputChange}
             />
           </FormField>
