@@ -11,6 +11,9 @@ import NavBar from './NavBar.jsx';
 class NavBarContainer extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      auth: false,
+    };
 
     /*
       navigate needs to be bound to the context of NavBarContainer to
@@ -18,6 +21,13 @@ class NavBarContainer extends React.Component {
     */
     this.navigate = this.navigate.bind(this);
     this.logout = this.logout.bind(this);
+    this.toggleAuth = this.toggleAuth.bind(this);
+  }
+
+  toggleAuth() {
+    this.setState({
+      auth: !this.state.auth,
+    });
   }
 
   /*
@@ -59,6 +69,8 @@ class NavBarContainer extends React.Component {
         from NavBar.js, the context switches back to NavBarContainer.js.
       */
       <NavBar
+        toggleAuth={this.toggleAuth}
+        auth={this.state.auth}
         user={this.props.user}
         navigate={this.navigate}
         logout={this.logout}
