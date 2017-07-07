@@ -43,21 +43,17 @@ function NavBar(props) {
             direction='row'
             responsive={false}
           >
-            <Box pad={{ horizontal: 'small' }}>
-              {props.user.firstName}
-            </Box>
             <UserIcon />
           </Box>
         }
       >
-        <Anchor
-          onClick={() => props.navigate('settings/')}
-        >
+        <Anchor disabled>
+          {props.user.firstName}
+        </Anchor>
+        <Anchor onClick={() => props.navigate('settings/')}>
           Settings
         </Anchor>
-        <Anchor
-          onClick={() => props.logout()}
-        >
+        <Anchor onClick={() => props.logout()}>
           Logout
         </Anchor>
       </Menu>
@@ -68,38 +64,35 @@ function NavBar(props) {
     <div>
       <Header
         fixed
-        size='medium'
+        flex
+        direction='row'
+        responsive={false}
+        pad={{ horizontal: 'small' }}
       >
+        <Menu
+          icon={<MenuIcon />}
+          dropAlign={{ left: 'left', top: 'top' }}
+        >
+          <Anchor onClick={() => props.navigate('/')}>
+            Events
+          </Anchor>
+          <Anchor
+            onClick={() => props.navigate('/activity')}
+          >
+            Activity
+          </Anchor>
+        </Menu>
+        <Title>
+          CPCEED
+        </Title>
         <Box
           flex
+          justify='end'
           direction='row'
           responsive={false}
-          pad={{ horizontal: 'small' }}
+          pad='small'
         >
-          <Menu
-            icon={<MenuIcon />}
-            dropAlign={{ left: 'left', top: 'top' }}
-          >
-            <Anchor onClick={() => props.navigate('/')}>
-              Events
-            </Anchor>
-            <Anchor
-              onClick={() => props.navigate('/activity')}
-            >
-              Activity
-            </Anchor>
-          </Menu>
-          <Title>
-            CPCEED
-          </Title>
-          <Box
-            flex
-            justify='end'
-            direction='row'
-            responsive={false}
-          >
-            {authButton}
-          </Box>
+          {authButton}
         </Box>
       </Header>
       {authView}
