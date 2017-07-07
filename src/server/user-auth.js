@@ -3,6 +3,7 @@ import { updateUser, logoutUser } from 'redux/actions';
 import Connection from 'server/core/connection';
 // import logger from 'logger/logger';
 import * as tokenManager from 'server/core/tokenmanager';
+import { getUser } from './user.js';
 
 /**
  * Attempt to login using email and password.
@@ -17,7 +18,10 @@ export function login(email, password) {
       tokenManager.saveToken(res.token);
       const userData = tokenManager.decode(res.token);
       userData.role = userData.role.toLowerCase();
-      store.dispatch(updateUser(userData)); // TODO(asclines): This is temp until getUser is setup
+      getUser(userData.id).then((user) => {
+        // TODO(asclines): This is temp until getUser is setup
+        store.dispatch(updateUser(user));
+      });
       resolve(userData);
     };
 
