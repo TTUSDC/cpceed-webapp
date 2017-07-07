@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import * as firebase from 'firebase';
 import { connect } from 'react-redux';
 
+import * as server from 'server';
 import { logoutUser } from 'redux/actions.js';
 import logger from 'logger.js';
 import NavBar from './NavBar.jsx';
@@ -46,9 +46,9 @@ class NavBarContainer extends React.Component {
   }
 
   logout() {
-    firebase.auth().signOut()
+    server.logout()
       .then(() => {
-        logger.info('User was signed out');
+        logger.info('User was logged out');
 
         // Set user to guest
         this.props.dispatch(logoutUser());
@@ -81,18 +81,10 @@ class NavBarContainer extends React.Component {
 
 NavBarContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    email: PropTypes.string,
-  }).isRequired,
+  user: PropTypes.shape({}).isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-};
-
-NavBarContainer.defaultProps = {
-  user: {
-    email: '',
-  },
 };
 
 // Used by connect to map user to this.props.user

@@ -48,7 +48,7 @@ function NavBar(props) {
         }
       >
         <Anchor disabled>
-          {props.user.firstName}
+          {props.user.name}
         </Anchor>
         <Anchor onClick={() => props.navigate('settings/')}>
           Settings
@@ -105,7 +105,7 @@ NavBar.propTypes = {
   toggleAuth: PropTypes.func.isRequired,
   user: PropTypes.shape({
     role: PropTypes.string.isRequired,
-    firstName: PropTypes.string,
+    name: PropTypes.string,
   }).isRequired,
   navigate: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
@@ -113,7 +113,7 @@ NavBar.propTypes = {
 
 NavBar.defaultProps = {
   user: {
-    firstName: '',
+    name: '',
   },
 };
 
