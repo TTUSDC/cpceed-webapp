@@ -17,6 +17,7 @@ const Admin = userModels.Admin;
  * @param {String} data.role - The user role.
  * @param {String} data.email - The user email address.
  * @param {String} data.password - The user password.
+ * @param {String} data.name - The user name.
  * @param {CreateUserCallback} next - The callback function to run after this function
  *     finishes.
  */
