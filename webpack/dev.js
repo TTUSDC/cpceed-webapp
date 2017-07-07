@@ -10,7 +10,7 @@ const dev = webpackMerge(base, {
   output: {
     path: buildPath,
     publicPath: '/',
-    filename: "bundle.js"
+    filename: 'bundle.js',
   },
 
   entry: './src/index.jsx',
@@ -21,15 +21,17 @@ const dev = webpackMerge(base, {
   devServer: {
     port: 8080,
     host: '0.0.0.0',
+    contentBase: buildPath,
     inline: true,
-    contentBase: buildPath
+    hot: true,
   },
 
   plugins: [
     new webpack.DefinePlugin({
-      ENV: JSON.stringify('dev')
-    })
-  ]
+      ENV: JSON.stringify('dev'),
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
 });
 
 module.exports = dev;
