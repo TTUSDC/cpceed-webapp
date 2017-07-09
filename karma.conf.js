@@ -16,7 +16,7 @@ module.exports = function(config) {
 
     // preprocess matching files before serving them to the browser
     preprocessors: {
-      'test/index.js': ['webpack']
+      'test/index.js': ['webpack', 'sourcemap'],
     },
 
     webpack: webpackConfig,

@@ -10,6 +10,8 @@ const test = webpackMerge(base, {
     'react/lib/ReactContext': true
   },
 
+  devtool: 'inline-source-map',
+
   plugins: [
     new webpack.DefinePlugin({
       ENV: JSON.stringify('test')
