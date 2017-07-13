@@ -1,4 +1,4 @@
-import { store } from 'App.jsx';
+import store from 'redux/store.js';
 import { updateUser, logoutUser } from 'redux/actions';
 import Connection from 'server/core/connection';
 // import logger from 'logger/logger';
