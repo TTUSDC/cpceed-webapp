@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 
 import Auth from 'components/Auth/Auth.jsx';
 
-export default describe('Auth.jsx', () => {
+describe('Auth.jsx', () => {
   it('Changes tabs', () => {
     const authTest = shallow(<Auth authCancelled={() => {}} />);
     authTest.instance().handleTabChange(1);

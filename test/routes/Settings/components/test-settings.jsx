@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 import { Settings } from 'routes/Settings/components/Settings.jsx';
 
-export default describe('Settings.jsx', () => {
+describe('Settings.jsx', () => {
   it('Pushes to the router', () => {
     const push = sinon.spy();
     const history = {

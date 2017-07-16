@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import * as server from 'server';
-import { logoutUser } from 'redux/actions.js';
 import logger from 'logger.js';
 import NavBar from './NavBar.jsx';
 
@@ -49,9 +48,6 @@ class NavBarContainer extends React.Component {
     server.logout()
       .then(() => {
         logger.info('User was logged out');
-
-        // Set user to guest
-        this.props.dispatch(logoutUser());
       })
       .catch((e) => {
         logger.error(e.message);
@@ -80,7 +76,6 @@ class NavBarContainer extends React.Component {
 }
 
 NavBarContainer.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   user: PropTypes.shape({}).isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,

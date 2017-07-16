@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 import Register from 'components/Auth/Register.jsx';
 
-export default describe('Register.jsx', () => {
+describe('Register.jsx', () => {
   let props;
 
   beforeEach(() => {

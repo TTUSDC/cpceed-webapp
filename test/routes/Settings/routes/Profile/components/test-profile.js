@@ -5,50 +5,50 @@ import sinon from 'sinon';
 
 import Profile from 'routes/Settings/routes/Profile/components/Profile.jsx';
 
-export default describe("Profile.js", () => {
-  it("Handles input changes", () => {
+describe('Profile.jsx', () => {
+  it('Handles input changes', () => {
     const wrapper = shallow(<Profile />);
     const event = {
       target: {
         value: 'temp',
-        name: 'firstName'
-      }
+        name: 'firstName',
+      },
     };
 
     wrapper.instance().handleInputChange(event);
     expect(wrapper.state().firstName).to.equal('temp');
   });
 
-  it("Calls handleSubmit when button is pressed", () => {
+  it('Calls handleSubmit when button is pressed', () => {
     const handleSubmit = sinon.spy();
     const wrapper = shallow(<Profile handleSubmit={handleSubmit} />);
     const event = {
-      preventDefault: () => {}
+      preventDefault: () => {},
     };
 
-    wrapper.find({label: 'Change Information'}).simulate('click', event);
+    wrapper.find({ label: 'Change Information' }).simulate('click', event);
     expect(handleSubmit.calledOnce).to.equal(true);
   });
 
-  it("Displays server errors", () => {
+  it('Displays server errors', () => {
     const proErr = 'Message';
     const wrapper = shallow(<Profile proErr={proErr} />);
 
-    expect(wrapper.contains(
-      <span style={{color: 'red'}}>{proErr}</span>)
-    ).to.equal(true);
+    expect(wrapper.contains(<span style={{ color: 'red' }}>{proErr}</span>))
+      .to.equal(true);
   });
 
-  it("Disables button while waiting for server", () => {
+  it('Disables button while waiting for server', () => {
     const waiting = true;
     const handleSubmit = sinon.spy();
     const wrapper = shallow(
       <Profile
         handleSubmit={handleSubmit}
-        waiting={waiting} />
+        waiting={waiting}
+      />
     );
 
-    wrapper.find({label: 'Change Information'}).simulate('click');
+    wrapper.find({ label: 'Change Information' }).simulate('click');
     expect(handleSubmit.calledOnce).to.equal(false);
   });
 });
