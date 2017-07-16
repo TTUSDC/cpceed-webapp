@@ -1,1 +1,1 @@
-import testProfile from './test-profile';
+import testProfile from './test-profile.jsx';

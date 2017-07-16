@@ -13,7 +13,12 @@ const dev = webpackMerge(base, {
     filename: 'bundle.js',
   },
 
-  entry: './src/index.jsx',
+  entry: {
+    app: [
+      'react-hot-loader/patch',
+      './src/index.jsx',
+    ],
+  },
 
   // Enables source maps that can be accessed in browser dev tools
   devtool: 'cheap-module-eval-source-map',
