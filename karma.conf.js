@@ -22,7 +22,7 @@ module.exports = function(config) {
     webpack: webpackConfig,
 
     // test results reporter to use
-    reporters: ['progress'],
+    reporters: ['mocha'],
 
     // web server port
     port: 9876,

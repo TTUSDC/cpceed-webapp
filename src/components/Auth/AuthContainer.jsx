@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 
 import * as server from 'server';
 import store from 'redux/store.js';
-import { updateUser } from 'redux/actions.js';
-
 import {
   coordinator,
   student,
   AuthStates,
+  updateUser,
 } from 'redux/actions.js';
 import logger from 'logger.js';
 import Auth from './Auth.jsx';
