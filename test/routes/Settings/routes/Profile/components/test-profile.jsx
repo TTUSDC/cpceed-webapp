@@ -11,20 +11,24 @@ describe('Profile.jsx', () => {
     const event = {
       target: {
         value: 'temp',
-        name: 'firstName',
+        name: 'name',
       },
     };
 
     wrapper.instance().handleInputChange(event);
-    expect(wrapper.state().firstName).to.equal('temp');
+    expect(wrapper.state().name).to.equal('temp');
   });
 
   it('Calls handleSubmit when button is pressed', () => {
     const handleSubmit = sinon.spy();
-    const wrapper = shallow(<Profile handleSubmit={handleSubmit} />);
+    const wrapper = shallow(<Profile handleSubmit={handleSubmit} name="temp1" />);
     const event = {
       preventDefault: () => {},
     };
+
+    wrapper.setState({
+      name: 'temp2',
+    });
 
     wrapper.find({ label: 'Change Information' }).simulate('click', event);
     expect(handleSubmit.calledOnce).to.equal(true);

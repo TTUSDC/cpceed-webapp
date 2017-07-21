@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
 
 import Box from 'grommet/components/Box';
 import Heading from 'grommet/components/Heading';
@@ -13,8 +12,7 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: this.props.firstName,
-      lastName: this.props.lastName
+      name: this.props.name,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -27,65 +25,56 @@ class Profile extends React.Component {
     const name = target.name;
 
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
   handleSubmit(event) {
     // This prevents a '?' from being appended to the URL
     event.preventDefault();
-    var data = {};
 
-    if(this.props.firstName !== this.state.firstName) {
-      data.firstName = this.state.firstName;
+    if (this.props.name !== this.state.name) {
+      this.props.handleSubmit({
+        name: this.state.name,
+      });
     }
-
-    if(this.props.lastName !== this.state.lastName) {
-      data.lastName = this.state.lastName;
-    }
-
-    this.props.handleSubmit(data);
   }
 
   render() {
-    var errMessage = null;
-    if(this.props.proErr !== '') {
+    let errMessage = null;
+    if (this.props.proErr !== '') {
       errMessage = (
-        <span style={{color: 'red'}}>{this.props.proErr}</span>
+        <span style={{ color: 'red' }}>{this.props.proErr}</span>
       );
     }
 
-    var passHandleSubmit = this.handleSubmit;
-    if(this.props.waiting === true) {
+    let passHandleSubmit = this.handleSubmit;
+    if (this.props.waiting === true) {
       passHandleSubmit = null;
     }
 
     return (
       <Box
-        flex={true}
+        flex
         align='center'
-        size={{width: 'full'}}>
+        size={{ width: 'full' }}
+      >
         <Heading tag='h2'>
           Personal Information
         </Heading>
         <Form
           pad='medium'
           plain={false}
-          onSubmit={passHandleSubmit}>
+          onSubmit={passHandleSubmit}
+        >
           <fieldset>
-            <FormField label='First Name'>
+            <FormField label='Screen Name'>
               <input
-                name='firstName'
+                name='name'
                 type='text'
-                value={this.state.firstName}
-                onChange={this.handleInputChange}/>
-            </FormField>
-            <FormField label='Last Name'>
-              <input
-                name='lastName'
-                type='text'
-                value={this.state.lastName}
-                onChange={this.handleInputChange}/>
+                value={this.state.name}
+                onChange={this.handleInputChange}
+              />
             </FormField>
             {errMessage}
           </fieldset>
@@ -93,8 +82,9 @@ class Profile extends React.Component {
             <Button
               label='Change Information'
               type='submit'
-              primary={true}
-              onClick={passHandleSubmit}/>
+              primary
+              onClick={passHandleSubmit}
+            />
           </Footer>
         </Form>
       </Box>
@@ -103,16 +93,10 @@ class Profile extends React.Component {
 }
 
 Profile.propTypes = {
-  handleSubmit: PropTypes.func,
-  proErr: PropTypes.string,
-  waiting: PropTypes.bool,
-  firstName: PropTypes.string,
-  lastName: PropTypes.string
-};
-
-Profile.defaultProps = {
-  proErr: '',
-  waiting: false
+  handleSubmit: PropTypes.func.isRequired,
+  proErr: PropTypes.string.isRequired,
+  waiting: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired,
 };
 
 export default Profile;
