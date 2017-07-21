@@ -88,7 +88,27 @@ const modifyUser = (userUid, reqData, locals, modifyCallback) => {
 
   const options = { new: true };
 
-  Student.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
+  Student.findOneAndUpdate(conditions, { $set: update }, options,
+    (err, results) => {
+      if (err) {
+        modifyCallback(err);
+        return;
+      }
+
+      const user = {
+        uid: results.id,
+        email: results.email,
+        name: results.name,
+        role: results.role,
+      };
+
+      if (user.role === 'student') {
+        user.points = results.points;
+        user.isApproved = results.isApproved;
+      }
+
+      modifyCallback(err, user);
+    });
 };
 
 /**

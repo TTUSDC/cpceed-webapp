@@ -39,8 +39,8 @@ export const coordinator = {
 };
 
 export const student = {
-  approvalStatus: false,
   email: '',
+  isApproved: false,
   name: '',
   points: {
     career: 0,
@@ -55,6 +55,7 @@ export const student = {
     misc: 0,
   },
   role: AuthStates.STUDENT,
+  uid: '',
 };
 
 export const guest = {
