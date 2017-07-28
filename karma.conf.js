@@ -16,13 +16,13 @@ module.exports = function(config) {
 
     // preprocess matching files before serving them to the browser
     preprocessors: {
-      'test/index.js': ['webpack']
+      'test/index.js': ['webpack', 'sourcemap'],
     },
 
     webpack: webpackConfig,
 
     // test results reporter to use
-    reporters: ['progress'],
+    reporters: ['mocha'],
 
     // web server port
     port: 9876,

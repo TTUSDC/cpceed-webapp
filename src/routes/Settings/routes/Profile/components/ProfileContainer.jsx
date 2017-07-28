@@ -1,17 +1,18 @@
 import React from 'react';
-import * as firebase from 'firebase';
-import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import Profile from './Profile.jsx';
-import {updateUser} from 'redux/actions.js';
+import * as server from 'server';
+import { updateUser } from 'redux/actions.js';
 import logger from 'logger.js';
+import Profile from './Profile.jsx';
 
 class ProfileContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       proErr: '',
-      waiting: false
+      waiting: false,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -20,38 +21,25 @@ class ProfileContainer extends React.Component {
   handleSubmit(data) {
     this.setState({
       waiting: true,
-      proErr: ''
+      proErr: '',
     });
 
-    var user = firebase.auth().currentUser;
-    const userRef = firebase.database().ref().child('users/' + user.uid);
-
-    userRef.update(data)
-      .then(() => {
+    server.modifyUser(data, this.props.user.uid)
+      .then((newUser) => {
         logger.info('User data was updated');
 
-        // Make newUser from user in the redux store
-        var newUser = this.props.user;
-        for(var key in data) {
-          if(!data.hasOwnProperty(key)) {
-            continue;
-          }
-
-          // If a value was altered, put the new value in newUser
-          newUser[key] = data[key];
-        }
         // Update user in the redux store
         this.props.dispatch(updateUser(newUser));
 
         this.setState({
-          waiting: false
+          waiting: false,
         });
       })
       .catch((e) => {
         logger.error(e.message);
         this.setState({
           waiting: false,
-          proErr: e.message
+          proErr: e.message,
         });
       });
   }
@@ -59,23 +47,27 @@ class ProfileContainer extends React.Component {
   render() {
     return (
       <Profile
-        lastName={this.props.user.lastName}
-        firstName={this.props.user.firstName}
+        name={this.props.user.name}
         proErr={this.state.proErr}
         waiting={this.state.waiting}
-        handleSubmit={this.handleSubmit}/>
+        handleSubmit={this.handleSubmit}
+      />
     );
   }
 }
 
-const getUser = (user) => {
-  return user;
-}
+ProfileContainer.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    uid: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
-const mapStateToProps = (state) => {
+function mapStateToProps(state) {
   return {
-    user: getUser(state.user)
-  }
+    user: state.user,
+  };
 }
 
 export default connect(mapStateToProps)(ProfileContainer);

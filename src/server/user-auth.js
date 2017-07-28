@@ -1,9 +1,16 @@
-import { store } from 'App.jsx';
+import store from 'redux/store.js';
 import { updateUser, logoutUser } from 'redux/actions';
 import Connection from 'server/core/connection';
 // import logger from 'logger/logger';
 import * as tokenManager from 'server/core/tokenmanager';
 
+/**
+ * Attempt to login using email and password.
+ * @param {String} email - The email address.
+ * @param {String} password - The password.
+ * @return {Promise<string, Error>} - Promise that resolves with the user's
+ *                                    data or rejects with an error.
+ */
 export function login(email, password) {
   return new Promise((resolve, reject) => {
     const onSuccess = (res) => {
@@ -22,6 +29,11 @@ export function login(email, password) {
   });
 }
 
+/**
+ * Attempt to logout.
+ * @return {Promise<string, Error>} - Promise that resolves as undefined or
+ *                                    rejects with an error.
+ */
 export function logout() {
   return new Promise((resolve, reject) => {
     const onSuccess = () => {

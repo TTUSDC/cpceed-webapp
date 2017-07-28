@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 import Login from 'components/Auth/Login.jsx';
 
-export default describe('Login.jsx', () => {
+describe('Login.jsx', () => {
   let props;
 
   beforeEach(() => {

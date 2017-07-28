@@ -24,7 +24,7 @@ const user = (state = guest, action) => {
           user.permissions = PermissionStates.COORDINATOR;
           break;
         default:
-          logger.error('Unknown user role in reducers.js');
+          logger.error(`Unknown user role ${user.role} in reducers.js`);
       };
 
       return update(state, {$set: user});

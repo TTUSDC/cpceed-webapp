@@ -2,14 +2,14 @@
 
 export const UserActionTypes = {
   UPDATE: 'UPDATE',
-  LOGOUT: 'LOGOUT'
+  LOGOUT: 'LOGOUT',
 };
 
 // Register.js uses AuthStates to set the database values for role.
 export const AuthStates = {
   GUEST: 'guest',
   STUDENT: 'student',
-  COORDINATOR: 'admin'
+  COORDINATOR: 'admin',
 };
 
 /*
@@ -20,31 +20,28 @@ export const AuthStates = {
 export const PermissionStates = {
   GUEST: {
     viewActivity: false,
-    viewSettings: false
+    viewSettings: false,
   },
   STUDENT: {
     viewActivity: true,
-    viewSettings: true
+    viewSettings: true,
   },
   COORDINATOR: {
     viewActivity: true,
-    viewSettings: true
-  }
+    viewSettings: true,
+  },
 };
 
-export var coordinator = {
+export const coordinator = {
   email: '',
-  firstName: '',
-  lastName: '',
-  role: AuthStates.COORDINATOR
+  name: '',
+  role: AuthStates.COORDINATOR,
 };
 
-export var student = {
-  approvalStatus: false,
+export const student = {
   email: '',
-  firstName: '',
-  lastName: '',
-  studentId: '',
+  isApproved: false,
+  name: '',
   points: {
     career: 0,
     community: 0,
@@ -55,29 +52,30 @@ export var student = {
     outreach: 0,
     professor: 0,
     staff: 0,
-    misc: 0
+    misc: 0,
   },
-  role: AuthStates.STUDENT
+  role: AuthStates.STUDENT,
+  uid: '',
 };
 
-export var guest = {
-  role: AuthStates.GUEST
+export const guest = {
+  role: AuthStates.GUEST,
 };
 
 // action creators
 
-export const updateUser = (user) => {
+export function updateUser(user) {
   return {
     type: UserActionTypes.UPDATE,
-    user
+    user,
   };
 }
 
-export const logoutUser = () => {
-  var user = guest;
+export function logoutUser() {
+  const user = guest;
 
   return {
     type: UserActionTypes.LOGOUT,
-    user
+    user,
   };
 }

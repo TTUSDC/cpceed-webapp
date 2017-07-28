@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 import Account from 'routes/Settings/routes/Account/components/Account.jsx';
 
-export default describe('Account.js', () => {
+describe('Account.jsx', () => {
   let props;
 
   beforeEach(() => {

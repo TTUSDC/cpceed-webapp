@@ -1,16 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import * as firebase from 'firebase';
 import { connect } from 'react-redux';
 
-import { logoutUser } from 'redux/actions.js';
+import * as server from 'server';
 import logger from 'logger.js';
 import NavBar from './NavBar.jsx';
 
 class NavBarContainer extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      auth: false,
+    };
 
     /*
       navigate needs to be bound to the context of NavBarContainer to
@@ -18,6 +20,13 @@ class NavBarContainer extends React.Component {
     */
     this.navigate = this.navigate.bind(this);
     this.logout = this.logout.bind(this);
+    this.toggleAuth = this.toggleAuth.bind(this);
+  }
+
+  toggleAuth() {
+    this.setState({
+      auth: !this.state.auth,
+    });
   }
 
   /*
@@ -36,12 +45,9 @@ class NavBarContainer extends React.Component {
   }
 
   logout() {
-    firebase.auth().signOut()
+    server.logout()
       .then(() => {
-        logger.info('User was signed out');
-
-        // Set user to guest
-        this.props.dispatch(logoutUser());
+        logger.info('User was logged out');
       })
       .catch((e) => {
         logger.error(e.message);
@@ -59,6 +65,8 @@ class NavBarContainer extends React.Component {
         from NavBar.js, the context switches back to NavBarContainer.js.
       */
       <NavBar
+        toggleAuth={this.toggleAuth}
+        auth={this.state.auth}
         user={this.props.user}
         navigate={this.navigate}
         logout={this.logout}
@@ -68,19 +76,10 @@ class NavBarContainer extends React.Component {
 }
 
 NavBarContainer.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    email: PropTypes.string,
-  }).isRequired,
+  user: PropTypes.shape({}).isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-};
-
-NavBarContainer.defaultProps = {
-  user: {
-    email: '',
-  },
 };
 
 // Used by connect to map user to this.props.user

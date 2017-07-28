@@ -1,22 +1,15 @@
 import React from 'react';
 import { HashRouter, Route, Redirect } from 'react-router-dom';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
 import GrommetApp from 'grommet/components/App';
 import Box from 'grommet/components/Box';
 
-import init from 'server/server';
-import cpceedApp from 'redux/reducers.js';
 import NavBarContainer from 'components/NavBar/NavBarContainer.jsx';
 import Events from 'routes/Events';
 import Activity from 'routes/Activity';
 import Settings from 'routes/Settings';
-
-init();
-
-// store holds the redux store that allows app-wide state to be shared
-const store = createStore(cpceedApp);
+import store from 'redux/store.js';
 
 const App = () => (
   // Provider shares store with components joined by connect()
@@ -48,5 +41,4 @@ const App = () => (
   </Provider>
 );
 
-export { store };
 export default App;
