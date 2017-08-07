@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const authErrors = require('api/errors/auth-errors');
 const User = require('api/users/user-models').User;
 const Session = require('api/auth/auth-models').Session;
@@ -37,22 +36,15 @@ const login = async (email, password) => {
 };
 
 /**
- * Callback for sending the response to the client.
- *
- * @callback logoutResponse
- * @param {Object} err - The error.
- * @param {string} err.err - The error message.
- */
-
-/**
  * Delete a specific session from the database.
  * @param {string} token - The client's token.
- * @param {logoutResponse} next - The callback function to run after this function
- *     finishes.
+ * @returns {Promise<SessionSchema, Error>} - Resolves, or rejects with an error.
  */
-const logout = (token, next) => {
+const logout = async (token) => {
   // Delete the session from the DB.
-  Session.findOneAndRemove({ id: token }, (err) => { next(err); });
+  const session = await Session.findOneAndRemove({ id: token }).exec();
+
+  return session;
 };
 
 /**
@@ -74,7 +66,7 @@ const changePassword = (email, password, next) => {
 };
 
 /**
- * Middleware to verify the JWT.
+ * Middleware to verify the token.
  * For valid tokens, an `auth` object is added to the response.locals object.
  * @param {Object} req - The request object.
  * @param {Object} res - The response object.
@@ -82,6 +74,7 @@ const changePassword = (email, password, next) => {
  */
 const verify = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
   // If no token is provided, inform the client.
   if (!token) {
     res.locals.err = new Error(authErrors.missingTokenError);
@@ -89,44 +82,36 @@ const verify = (req, res, next) => {
     return;
   }
 
-  // Verify the client token has a valid signature.
-  jwt.verify(token, process.env.SECRET, (verifyErr, decoded) => {
-    if (verifyErr) {
-      res.locals.err = new Error(verifyErr);
-      next();
-      return;
-    }
-
-    // Verify that the session is current.
-    Session.findOne({ email: decoded.email }, (sessionErr, session) => {
-      if (sessionErr) {
-        res.locals.err = new Error(sessionErr);
-        next();
-        return;
-      }
-
+  Session.findOne({ id: token }).exec()
+    .then((session) => {
       // If no session is found, then the user was logged out of their account.
       if (!session) {
-        res.locals.err = new Error(authErrors.sessionNotFoundError);
-        next();
-        return;
+        throw authErrors.invalidSessionError;
       }
 
-      // Verify that the stored token and the client token are the same.
-      session.compareId(token, (isMatch) => {
-        // The token is expired.
-        if (!isMatch) {
-          res.locals.err = new Error(authErrors.invalidSessionError);
-          next();
-          return;
-        }
+      return User.findOne({ email: session.email }).exec();
+    })
+    .then((user) => {
+      // If, for some weird reason, the user isn't found.
+      if (!user) {
+        throw authErrors.userNotFoundError;
+      }
 
-        // Add the token information to `res.locals.auth`.
-        res.locals.auth = decoded;
-        next();
-      });
+      // Add the token information to `res.locals.auth`.
+      res.locals.auth = {
+        email: user.email,
+        role: user.role,
+        isApproved: user.isApproved,
+        id: user.id,
+      };
+
+      next();
+    })
+    .catch((err) => {
+      res.locals.err = err;
+
+      next();
     });
-  });
 };
 
 /*
