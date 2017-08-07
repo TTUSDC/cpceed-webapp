@@ -4,73 +4,36 @@ const User = require('api/users/user-models').User;
 const Session = require('api/auth/auth-models').Session;
 
 /**
- * Callback for sending the response to the client.
- *
- * @callback loginResponse
- * @param {Object} err - The error.
- * @param {string} token - The JWT token.
- */
-
-/**
- * Given a valid email/password, generates and returns a JWT.
+ * Given a valid email/password, generates and returns a token (session id).
  * @param {string} email - The user's email address.
  * @param {string} password - The user's password.
- * @param {loginResponse} next - The callback function to run after this function
- *     finishes.
+ * @returns {Promise<string, Error>} - Resolves with the token, or rejects.
  */
-const login = (email, password, next) => {
-  User.findOne({ email }, (findErr, user) => {
-    if (findErr) {
-      next(findErr);
-      return;
-    }
+const login = async (email, password) => {
+  try {
+    const user = await User.findOne({ email }).exec();
 
     // No user found for the given email address.
     if (!user) {
-      next(authErrors.userNotFoundError);
-      return;
+      throw authErrors.userNotFoundError;
     }
 
-    user.comparePassword(password, (passwordErr, isMatch) => {
-      if (passwordErr) {
-        next(passwordErr);
-        return;
-      }
+    const isMatch = await user.comparePassword(password);
 
-      // The wrong password was provided.
-      if (!isMatch) {
-        next(authErrors.invalidLoginInfoError);
-        return;
-      }
+    // The wrong password was provided.
+    if (!isMatch) {
+      throw authErrors.invalidLoginInfoError;
+    }
 
-      Session.findOne({ email }, (sessionErr, session) => {
-        // If a session token exists, return the session token.
-        if (sessionErr || session) {
-          next(sessionErr, session.token);
-          return;
-        }
+    const id = await Session.genId();
 
-        // If no session currently exists, create a new session.
-        const jwtData = {
-          email,
-          role: user.role,
-          isApproved: user.isApproved,
-          id: user.id,
-        };
+    const newSession = new Session({ id, email });
+    await newSession.save();
 
-        // Sign and save the session.
-        jwt.sign(jwtData, process.env.SECRET, { algorithm: 'HS512' }, (signErr, token) => {
-          if (signErr) {
-            next(signErr);
-            return;
-          }
-
-          const newSession = new Session({ email, token });
-          newSession.save((saveErr) => { next(saveErr, token); });
-        });
-      });
-    });
-  });
+    return id;
+  } catch (err) {
+    throw err;
+  }
 };
 
 /**
@@ -82,14 +45,14 @@ const login = (email, password, next) => {
  */
 
 /**
- * Delete the user's JWT from the DB.
- * @param {string} email - The user's email address.
+ * Delete a specific session from the database.
+ * @param {string} token - The client's token.
  * @param {logoutResponse} next - The callback function to run after this function
  *     finishes.
  */
-const logout = (email, next) => {
+const logout = (token, next) => {
   // Delete the session from the DB.
-  Session.findOneAndRemove({ email }, (err) => { next(err); });
+  Session.findOneAndRemove({ id: token }, (err) => { next(err); });
 };
 
 /**
@@ -150,7 +113,7 @@ const verify = (req, res, next) => {
       }
 
       // Verify that the stored token and the client token are the same.
-      session.compareToken(token, (isMatch) => {
+      session.compareId(token, (isMatch) => {
         // The token is expired.
         if (!isMatch) {
           res.locals.err = new Error(authErrors.invalidSessionError);

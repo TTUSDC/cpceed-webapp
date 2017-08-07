@@ -20,13 +20,10 @@ authRouter.get('/', authManager.verify, (req, res) => {
 
 // Log the User in (uses same token across all devices).
 authRouter.post('/', (req, res) => {
-  authManager.login(req.body.email, req.body.password, (err, token) => {
-    if (err) {
-      res.status(400).json(err).end();
-      return;
-    }
-
-    res.status(201).json({ token }).end();
+  authManager.login(req.body.email, req.body.password).then((id) => {
+    res.status(201).json({ token: id }).end();
+  }).catch((err) => {
+    res.status(400).json(err).end();
   });
 });
 

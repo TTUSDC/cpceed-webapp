@@ -71,23 +71,14 @@ userSchema.pre('save', function pre(next) {
   });
 });
 
-
-/**
-* Callback for {@link userSchema.methods.comparePassword}
-* @typedef {Object} ComparePasswordNext
-* @param {Object} err - error
-* @param {boolean} isMatch - Whether or not the passwords matched
-*/
-
 /**
 * Helper method to check users password
 * @param {string} password - The password to be compared to the user's password
-* @param {ComparePasswordNext} next
+* @returns {Promise<boolean, Error>} - Resolves with a boolean indicating whether
+* or not the password is a match
 */
-userSchema.methods.comparePassword = function comparePassword(password, next) {
-  bcrypt.compare(password, this.password, (err, isMatch) => {
-    next(err, isMatch);
-  });
+userSchema.methods.comparePassword = function comparePassword(password) {
+  return bcrypt.compare(password, this.password);
 };
 
 const studentSchema = new Schema({
