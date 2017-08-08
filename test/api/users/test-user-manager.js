@@ -32,11 +32,12 @@ describe('userManager', () => {
 
           Student.findById(uid, (studentErr, foundStudent) => {
             expect(studentErr).to.be.null;
-            foundStudent.comparePassword(student.password, (passwordErr, isMatch) => {
-              expect(isMatch).to.be.true;
-              compareHelper.compareStudentInfo(student, foundStudent);
-              done();
-            });
+            foundStudent.comparePassword(student.password)
+              .then((isMatch) => {
+                expect(isMatch).to.be.true;
+                compareHelper.compareStudentInfo(student, foundStudent);
+                done();
+              });
           });
         });
       });
@@ -67,11 +68,12 @@ describe('userManager', () => {
 
           Admin.findById(uid, (adminErr, foundAdmin) => {
             expect(adminErr).to.be.null;
-            foundAdmin.comparePassword(admin.password, (passwordErr, isMatch) => {
-              expect(isMatch).to.be.true;
-              compareHelper.compareUserInfo(admin, foundAdmin);
-              done();
-            });
+            foundAdmin.comparePassword(admin.password)
+              .then((isMatch) => {
+                expect(isMatch).to.be.true;
+                compareHelper.compareUserInfo(admin, foundAdmin);
+                done();
+              });
           });
         });
       });
