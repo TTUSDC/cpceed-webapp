@@ -1,5 +1,3 @@
-const bluebird = require('bluebird');
-const jwt = require('jsonwebtoken');
 const authManager = require('../../../api/auth/auth-manager');
 const authModels = require('../../../api/auth/auth-models');
 const userManager = require('../../../api/users/user-manager');
@@ -9,7 +7,6 @@ const testTokens = require('../../core/tokens');
 const authErrors = require('../../../api/errors/auth-errors');
 
 const Session = authModels.Session;
-const Admin = userModels.Admin;
 const Student = userModels.Student;
 
 mockgoose(mongoose);
@@ -18,7 +15,7 @@ describe('authManager', () => {
   // Connect to the database.
   before((done) => {
     process.env.SECRET = 'testsecret';
-    mongoose.Promise = bluebird;
+    mongoose.Promise = global.Promise;
     mongoose.connect('', done);
   });
 
@@ -31,52 +28,39 @@ describe('authManager', () => {
   after((done) => { mongoose.unmock(done); });
 
   describe('#login', () => {
-    it('should pass a student token to the callback.', (done) => {
+    it('should resolve a token.', (done) => {
       const student = testUsers.student000;
 
       userManager.createUser(student, (createErr, uid) => {
         expect(createErr).to.be.null;
         expect(uid).to.be.a('string');
 
-        authManager.login(student.email, student.password, (loginErr, token) => {
-          expect(loginErr).to.be.null;
+        authManager.login(student.email, student.password)
+          .then((token) => {
+            expect(token).to.be.a('string');
 
-          const decoded = jwt.decode(token);
-          expect(decoded.email).to.be.equal(student.email);
-          expect(decoded.role).to.be.equal(student.role);
-          expect(decoded.isApproved).to.be.false;
-          expect(decoded.id).to.be.a('string');
-          Student.findById(decoded.id, (studentErr, foundStudent) => {
-            expect(studentErr).to.be.null;
-            expect(foundStudent.email).to.equal(student.email);
+            return Session.findOne({ id: token }).exec();
+          })
+          .then((session) => {
+            expect(session.id).to.be.a('string');
+            expect(session.email).to.be.a('string');
+
+            return Student.findOne({ email: session.email }).exec();
+          })
+          .then((user) => {
+            expect(user.email).to.be.equal(student.email);
+            expect(user.role).to.be.equal(student.role);
+            expect(user.isApproved).to.be.false;
+            expect(user.id).to.be.a('string');
+
+            done();
+          })
+          .catch((err) => {
+            // If an error is ever thrown, this unit test should fail
+            expect(err).to.be.null;
+
             done();
           });
-        });
-      });
-    });
-
-    it('should pass an admin token to the callback.', (done) => {
-      const admin = testUsers.admin000;
-
-      userManager.createUser(admin, (createErr, uid) => {
-        expect(createErr).to.be.null;
-        expect(uid).to.be.a('string');
-
-        authManager.login(admin.email, admin.password, (loginErr, token) => {
-          expect(loginErr).to.be.null;
-
-          const decoded = jwt.decode(token);
-          expect(decoded.email).to.be.equal(admin.email);
-          expect(decoded.role).to.be.equal(admin.role);
-          expect(decoded.isApproved).to.be.false;
-          expect(decoded.id).to.be.a('string');
-
-          Admin.findById(decoded.id, (adminErr, foundAdmin) => {
-            expect(adminErr).to.be.null;
-            expect(foundAdmin.email).to.equal(admin.email);
-            done();
-          });
-        });
       });
     });
   });
@@ -84,42 +68,51 @@ describe('authManager', () => {
   describe('#logout', () => {
     it('should not find a session', (done) => {
       const email = 'session@test.com';
-      const token = jwt.sign({ email }, process.env.SECRET);
-      const session = new Session({ email, token });
+      let sessionId;
 
-      session.save((saveErr) => {
-        expect(saveErr).to.be.null;
+      Session.genId()
+        .then((id) => {
+          sessionId = id;
+          const session = new Session({ email, id });
 
-        authManager.logout(email, (logoutErr) => {
-          expect(logoutErr).to.be.null;
+          return session.save();
+        })
+        .then(() => authManager.logout(sessionId))
+        .then(() => Session.findOne({ id: sessionId }).exec())
+        .then((session) => {
+          expect(session).to.be.null;
 
-          Session.findOne({ email }, (findErr, foundSession) => {
-            expect(findErr).to.be.null;
-            expect(foundSession).to.be.null;
-            done();
-          });
+          done();
+        })
+        .catch((err) => {
+          expect(err).to.be.null;
+
+          done();
         });
-      });
     });
   });
 
   describe('#verify', () => {
     it('should verify the passed token', (done) => {
-      const email = 'session@test.com';
-      const token = jwt.sign({ email }, process.env.SECRET);
-      const session = new Session({ email, token });
+      const student = testUsers.student000;
 
-      session.save((saveErr) => {
-        expect(saveErr).to.be.null;
+      userManager.createUser(student, () => {
+        authManager.login(student.email, student.password)
+          .then((token) => {
+            const req = { body: { token } };
+            const res = { locals: { err: null, auth: null } };
 
-        const req = { body: { token } };
-        const res = { locals: { err: null, auth: null } };
+            authManager.verify(req, res, () => {
+              expect(res.locals.err).to.be.null;
 
-        authManager.verify(req, res, () => {
-          expect(res.locals.err).to.be.null;
-          expect(res.locals.auth).to.deep.equal(jwt.decode(token));
-          done();
-        });
+              done();
+            });
+          })
+          .catch((err) => {
+            expect(err).to.be.null;
+
+            done();
+          });
       });
     });
   });
