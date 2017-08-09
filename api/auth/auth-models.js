@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
+const authErrors = require('api/errors/auth-errors');
 
 // Set up session model.
 const sessionSchema = new mongoose.Schema({
@@ -30,11 +31,9 @@ sessionSchema.statics.genId = async function genId() {
   let id;
   let isValid;
 
-  // TODO(NilsG-S): Limit number of retries?
-  do {
+  for (let i = 0; i < 10; i += 1) {
     try {
       id = await new Promise((resolve, reject) => {
-        // TODO(NilsG-S): Make this string longer?
         crypto.randomBytes(32, (err, buf) => {
           if (err) {
             return reject(err);
@@ -43,25 +42,24 @@ sessionSchema.statics.genId = async function genId() {
           return resolve(buf.toString('hex'));
         });
       });
-    } catch (err) {
-      throw err;
-    }
 
-    try {
       isValid = await this.findOne({ id }).exec().then((session) => {
-        if (session) {
-          return false;
+        if (!session) {
+          return true;
         }
 
-        // TODO(NilsG-S): Return id from here to break out of loop?
-        return true;
+        return false;
       });
+
+      if (isValid) {
+        return id;
+      }
     } catch (err) {
       throw err;
     }
-  } while (!isValid);
+  }
 
-  return id;
+  throw authErrors.serverMaxRetriesError;
 };
 
 /* eslint-enable no-await-in-loop */

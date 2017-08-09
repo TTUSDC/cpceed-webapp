@@ -1,7 +1,7 @@
 const authErrors = require('api/errors/auth-errors');
 const User = require('api/users/user-models').User;
 const Session = require('api/auth/auth-models').Session;
-const getToken = require('core/utils.js').getToken;
+const getToken = require('api/core/utils.js').getToken;
 
 /**
  * Given a valid email/password, generates and returns a token (session id).

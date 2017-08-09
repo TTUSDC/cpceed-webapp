@@ -1,7 +1,7 @@
 const express = require('express');
 const authManager = require('api/auth/auth-manager');
 const logger = require('common/logger.js');
-const getToken = require('core/utils.js').getToken;
+const getToken = require('api/core/utils.js').getToken;
 
 const authRouter = express.Router();
 
