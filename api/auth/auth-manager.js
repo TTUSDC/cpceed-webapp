@@ -1,6 +1,7 @@
 const authErrors = require('api/errors/auth-errors');
 const User = require('api/users/user-models').User;
 const Session = require('api/auth/auth-models').Session;
+const getToken = require('core/utils.js').getToken;
 
 /**
  * Given a valid email/password, generates and returns a token (session id).
@@ -129,7 +130,7 @@ const changeEmail = async (email, password, newEmail) => {
  * @param {function} next - Invoke the next middleware or route.
  */
 const verify = (req, res, next) => {
-  const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  const token = getToken(req);
 
   // If no token is provided, inform the client.
   if (!token) {

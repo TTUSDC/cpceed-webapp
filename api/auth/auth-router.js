@@ -1,6 +1,7 @@
 const express = require('express');
 const authManager = require('api/auth/auth-manager');
 const logger = require('common/logger.js');
+const getToken = require('core/utils.js').getToken;
 
 const authRouter = express.Router();
 
@@ -29,15 +30,14 @@ authRouter.post('/', (req, res) => {
     });
 });
 
-// Log the User out of a specific device.
+// Log the user out of a specific device.
 authRouter.delete('/', authManager.verify, (req, res) => {
   if (res.locals.err) {
     res.status(400).json({ message: res.locals.err.message }).end();
     return;
   }
 
-  // TODO(NilsG-S): Make standard function to retrieve token?
-  const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  const token = getToken(req);
 
   authManager.logout(token)
     .then(() => {
@@ -48,6 +48,7 @@ authRouter.delete('/', authManager.verify, (req, res) => {
     });
 });
 
+// Change the user's password.
 authRouter.put('/password',
   authManager.verify,
   authManager.validateUidPermissions,
@@ -69,6 +70,7 @@ authRouter.put('/password',
       });
   });
 
+// Change the user's email.
 authRouter.put('/email',
   authManager.verify,
   authManager.validateUidPermissions,
