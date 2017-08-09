@@ -18,7 +18,7 @@ authRouter.get('/', authManager.verify, (req, res) => {
   }
 });
 
-// Log the User in (uses same token across all devices).
+// Log the User in on a specific device.
 authRouter.post('/', (req, res) => {
   authManager.login(req.body.email, req.body.password)
     .then((id) => {
@@ -29,22 +29,39 @@ authRouter.post('/', (req, res) => {
     });
 });
 
-// Log the User out of all devices.
+// Log the User out of a specific device.
 authRouter.delete('/', authManager.verify, (req, res) => {
-  // TODO(NilsG-S): Make standard function to retrieve token?
-  const token = req.body.token || req.query.token || req.headers['x-access-token'];
-
   if (res.locals.err) {
-    res.json({ message: res.locals.err.message, status: 400 }).end();
+    res.status(400).json({ message: res.locals.err.message }).end();
     return;
   }
+
+  // TODO(NilsG-S): Make standard function to retrieve token?
+  const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
   authManager.logout(token)
     .then(() => {
       res.status(204).end();
     })
     .catch((err) => {
-      res.json({ message: err.message, status: 400 }).end();
+      res.status(400).json({ message: err.message }).end();
+    });
+});
+
+authRouter.put('/password', authManager.verify, (req, res) => {
+  if (res.locals.err) {
+    res.status(400).json({ message: res.locals.err.message }).end();
+    return;
+  }
+
+  const body = req.body;
+
+  authManager.changePassword(body.email, body.password, body.newPassword)
+    .then(() => {
+      res.status(200).end();
+    })
+    .catch((err) => {
+      res.status(400).json({ message: err.message }).end();
     });
 });
 

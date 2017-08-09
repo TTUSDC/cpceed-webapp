@@ -14,7 +14,7 @@ const login = async (email, password) => {
 
     // No user found for the given email address.
     if (!user) {
-      throw authErrors.userNotFoundError;
+      throw authErrors.invalidLoginInfoError;
     }
 
     const isMatch = await user.comparePassword(password);
@@ -48,21 +48,40 @@ const logout = async (token) => {
 };
 
 /**
- * Callback for sending the response to the client.
- *
- * @callback changePasswordResponse
- */
-
-/**
- * Delete the user's JWT from the DB.
+ * Delete all of user's sessions from database and change their password.
  * @param {string} email - The user's email address.
+ * @param {string} password - The user's old password.
  * @param {string} newPassword - The user's new password.
- * @param {changePasswordResponse} next - The callback function to run after this function
-  *     finishes.
+ * @returns {Promise<undefined, Error>} - resolves, or rejects with an error.
  */
-const changePassword = (email, password, next) => {
-  // TODO(the-pat): Update the user's password and regen the JWT.
-  next();
+const changePassword = async (email, password, newPassword) => {
+  try {
+    const user = await User.findOne({ email }).exec();
+
+    // No user found for the given email address.
+    if (!user) {
+      throw authErrors.userNotFoundError;
+    }
+
+    const isMatch = await user.comparePassword(password);
+
+    // The wrong password was provided.
+    if (!isMatch) {
+      throw authErrors.invalidPasswordError;
+    }
+
+    await Session.deleteMany({ email });
+
+    const conditions = { email };
+    const update = { password: newPassword };
+    const options = { new: true };
+
+    await User.findOneAndUpdate(conditions, { $set: update }, options).exec();
+
+    return;
+  } catch (err) {
+    throw err;
+  }
 };
 
 /**
