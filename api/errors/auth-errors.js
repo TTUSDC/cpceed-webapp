@@ -16,6 +16,8 @@ const sessionNotFoundError = errorConstructor('No session found.', 400);
  */
 const invalidLoginInfoError = errorConstructor('Invalid username/password.', 401);
 
+const invalidPasswordError = errorConstructor('Invalid password.', 401);
+
 const invalidSessionError = errorConstructor('Invalid session token.', 401);
 
 /*
@@ -29,6 +31,7 @@ module.exports = {
   userNotFoundError,
   sessionNotFoundError,
   invalidLoginInfoError,
+  invalidPasswordError,
   invalidSessionError,
   missingTokenError,
   unauthorizedError,

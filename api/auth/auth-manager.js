@@ -85,6 +85,43 @@ const changePassword = async (email, password, newPassword) => {
 };
 
 /**
+ * Delete all of user's sessions from database and change their email.
+ * @param {string} email - The user's email address.
+ * @param {string} password - The user's old password.
+ * @param {string} newEmail - The user's new email.
+ * @returns {Promise<undefined, Error>} - resolves, or rejects with an error.
+ */
+const changeEmail = async (email, password, newEmail) => {
+  try {
+    const user = await User.findOne({ email }).exec();
+
+    // No user found for the given email address.
+    if (!user) {
+      throw authErrors.userNotFoundError;
+    }
+
+    const isMatch = await user.comparePassword(password);
+
+    // The wrong password was provided.
+    if (!isMatch) {
+      throw authErrors.invalidPasswordError;
+    }
+
+    await Session.deleteMany({ email });
+
+    const conditions = { email };
+    const update = { email: newEmail };
+    const options = { new: true };
+
+    await User.findOneAndUpdate(conditions, { $set: update }, options).exec();
+
+    return;
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
  * Middleware to verify the token.
  * For valid tokens, an `auth` object is added to the response.locals object.
  * @param {Object} req - The request object.
@@ -148,6 +185,8 @@ const validateUidPermissions = (req, res, next) => {
     next();
     return;
   }
+  // TODO(NilsG-S): Why reference req.query when the uid is known to be in res.locals?
+  // I'm pretty sure this won't ever do anything...
   if (req.query.uid) {
     if (res.locals.auth.role === 'admin') {
       uid = req.query.uid;
@@ -164,6 +203,7 @@ const validateUidPermissions = (req, res, next) => {
 
 module.exports = {
   changePassword,
+  changeEmail,
   login,
   logout,
   verify,

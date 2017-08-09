@@ -48,21 +48,45 @@ authRouter.delete('/', authManager.verify, (req, res) => {
     });
 });
 
-authRouter.put('/password', authManager.verify, (req, res) => {
-  if (res.locals.err) {
-    res.status(400).json({ message: res.locals.err.message }).end();
-    return;
-  }
+authRouter.put('/password',
+  authManager.verify,
+  authManager.validateUidPermissions,
+  (req, res) => {
+    // TODO(NilsG-S): Move this error handling to the middleware? Just don't call next()...
+    if (res.locals.err) {
+      res.status(400).json({ message: res.locals.err.message }).end();
+      return;
+    }
 
-  const body = req.body;
+    const body = req.body;
 
-  authManager.changePassword(body.email, body.password, body.newPassword)
-    .then(() => {
-      res.status(200).end();
-    })
-    .catch((err) => {
-      res.status(400).json({ message: err.message }).end();
-    });
-});
+    authManager.changePassword(body.email, body.password, body.newPassword)
+      .then(() => {
+        res.status(200).end();
+      })
+      .catch((err) => {
+        res.status(400).json({ message: err.message }).end();
+      });
+  });
+
+authRouter.put('/email',
+  authManager.verify,
+  authManager.validateUidPermissions,
+  (req, res) => {
+    if (res.locals.err) {
+      res.status(400).json({ message: res.locals.err.message }).end();
+      return;
+    }
+
+    const body = req.body;
+
+    authManager.changeEmail(body.email, body.password, body.newEmail)
+      .then(() => {
+        res.status(200).end();
+      })
+      .catch((err) => {
+        res.status(400).json({ message: err.message }).end();
+      });
+  });
 
 module.exports = { router: authRouter };

@@ -34,6 +34,7 @@ sessionSchema.statics.genId = async function genId() {
   do {
     try {
       id = await new Promise((resolve, reject) => {
+        // TODO(NilsG-S): Make this string longer?
         crypto.randomBytes(32, (err, buf) => {
           if (err) {
             return reject(err);
