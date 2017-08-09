@@ -71,6 +71,30 @@ userSchema.pre('save', function pre(next) {
   });
 });
 
+userSchema.pre('findOneAndUpdate', function preUpdate(next) {
+  const password = this.getUpdate().$set.password;
+
+  // If the password is not modified, continue saving the user.
+  if (!password) {
+    next();
+    return;
+  }
+
+  bcrypt.genSalt(Number(process.env.SALT), (saltErr, salt) => {
+    if (saltErr) {
+      next(saltErr);
+      return;
+    }
+
+    bcrypt.hash(password, salt, (hashErr, hash) => {
+      /* eslint-disable no-underscore-dangle */
+      this._update.$set.password = hash;
+      /* eslint-enable no-underscore-dangle */
+      next(hashErr);
+    });
+  });
+});
+
 /**
 * Helper method to check users password
 * @param {string} password - The password to be compared to the user's password
