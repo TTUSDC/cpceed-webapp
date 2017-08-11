@@ -19,7 +19,9 @@ app.use(cors());
 // Express configuration.
 const port = process.env.PORT || 3000;
 app.set('port', port);
-app.use(morgan('dev'));
+app.use(morgan(process.env.MORGAN, {
+  skip(req, res) { return process.env.LOGSUPRESS; },
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -51,6 +53,10 @@ app.use((err, req, res) => {
 
 let service;
 
+const suppressOutput = (toggle) => {
+  if (toggle) logger.disableAll();
+};
+
 /**
  * Performs all start up operations such as connectiong to the database
  * and listening at the port.
@@ -74,7 +80,11 @@ const stop = (cb) => {
   service.close(cb);
 };
 
-const server = { start, stop };
+const server = {
+  start,
+  stop,
+  suppressOutput,
+};
 
 if (require.main === module) {
   start(() => {
