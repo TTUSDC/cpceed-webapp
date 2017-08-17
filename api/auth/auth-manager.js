@@ -4,39 +4,6 @@ const Session = require('api/auth/auth-models').Session;
 const getToken = require('api/core/utils.js').getToken;
 
 /**
- * Given a valid email/password, generates and returns a token (session id).
- * @param {string} email - The user's email address.
- * @param {string} password - The user's password.
- * @returns {Promise<string, Error>} - Resolves with the token, or rejects.
- */
-const login = async (email, password) => {
-  try {
-    const user = await User.findOne({ email }).exec();
-
-    // No user found for the given email address.
-    if (!user) {
-      throw authErrors.invalidLoginInfoError;
-    }
-
-    const isMatch = await user.comparePassword(password);
-
-    // The wrong password was provided.
-    if (!isMatch) {
-      throw authErrors.invalidLoginInfoError;
-    }
-
-    const id = await Session.genId();
-
-    const newSession = new Session({ id, email });
-    await newSession.save();
-
-    return id;
-  } catch (err) {
-    throw err;
-  }
-};
-
-/**
  * Delete a specific session from the database.
  * @param {string} token - The client's token.
  * @returns {Promise<SessionSchema, Error>} - Resolves, or rejects with an error.
@@ -205,7 +172,6 @@ const validateUidPermissions = (req, res, next) => {
 module.exports = {
   changePassword,
   changeEmail,
-  login,
   logout,
   verify,
   validateUidPermissions,
