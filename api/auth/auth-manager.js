@@ -1,7 +1,6 @@
 const authErrors = require('api/errors/auth-errors');
 const User = require('api/users/user-models').User;
 const Session = require('api/auth/auth-models').Session;
-const getToken = require('api/core/utils.js').getToken;
 
 /**
  * Delete a specific session from the database.
@@ -90,52 +89,22 @@ const changeEmail = async (email, password, newEmail) => {
 };
 
 /**
- * Middleware to verify the token.
- * For valid tokens, an `auth` object is added to the response.locals object.
+ * Middleware to determine whether the session is verified.
+ * For valid sessions, the next middleware is called.
  * @param {Object} req - The request object.
  * @param {Object} res - The response object.
  * @param {function} next - Invoke the next middleware or route.
  */
 const verify = (req, res, next) => {
-  const token = getToken(req);
-
-  // If no token is provided, inform the client.
-  if (!token) {
-    res.locals.err = new Error(authErrors.missingTokenError);
-    next();
+  // No user was retrieved, so no valid session exists. Inform the client.
+  if (!req.user) {
+    const message = authErrors.invalidSessionError.message;
+    // Prevent execution of later middleware for efficiency and clarity.
+    res.status(400).json({ message }).end();
     return;
   }
 
-  Session.findOne({ id: token }).exec()
-    .then((session) => {
-      // If no session is found, then the user was logged out of their account.
-      if (!session) {
-        throw authErrors.invalidSessionError;
-      }
-
-      return User.findOne({ email: session.email }).exec();
-    })
-    .then((user) => {
-      // If, for some weird reason, the user isn't found.
-      if (!user) {
-        throw authErrors.userNotFoundError;
-      }
-
-      // Add the token information to `res.locals.auth`.
-      res.locals.auth = {
-        email: user.email,
-        role: user.role,
-        isApproved: user.isApproved,
-        id: user.id,
-      };
-
-      next();
-    })
-    .catch((err) => {
-      res.locals.err = err;
-
-      next();
-    });
+  next();
 };
 
 /*
@@ -147,7 +116,7 @@ const verify = (req, res, next) => {
  * @param {function} next - Invoke the next middleware or route.
  */
 const validateUidPermissions = (req, res, next) => {
-  let uid = res.locals.auth.id;
+  let uid = req.user.id;
   if (!uid) {
     res.locals.err = authErrors.missingTokenError;
     next();
@@ -156,7 +125,7 @@ const validateUidPermissions = (req, res, next) => {
   // TODO(NilsG-S): Why reference req.query when the uid is known to be in res.locals?
   // I'm pretty sure this won't ever do anything...
   if (req.query.uid) {
-    if (res.locals.auth.role === 'admin') {
+    if (req.user.role === 'admin') {
       uid = req.query.uid;
     } else if (req.query.uid !== uid) {
       res.locals.err = authErrors.unauthorizedError;

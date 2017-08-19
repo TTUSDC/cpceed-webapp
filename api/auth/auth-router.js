@@ -1,7 +1,6 @@
 const express = require('express');
 const authManager = require('api/auth/auth-manager');
 const logger = require('common/logger.js');
-const getToken = require('api/core/utils.js').getToken;
 const passport = require('api/passport-config.js');
 
 const authRouter = express.Router();
@@ -11,13 +10,9 @@ authRouter.get('/', authManager.verify, (req, res) => {
   if (res.locals.err) {
     logger.error(res.locals.err);
     res.status(400).json(res.locals.err).end();
-  } else if (!res.locals.auth) {
-    const noAuthError = new Error('User not verified.');
-    logger.error(noAuthError);
-    res.status(400).json(noAuthError).end();
-  } else {
-    res.status(200).json({ role: res.locals.auth.role }).end();
   }
+
+  res.status(200).json({ role: req.user.role }).end();
 });
 
 // Log the User in on a specific device.
@@ -33,9 +28,7 @@ authRouter.delete('/', authManager.verify, (req, res) => {
     return;
   }
 
-  const token = getToken(req);
-
-  authManager.logout(token)
+  authManager.logout()
     .then(() => {
       res.status(204).end();
     })

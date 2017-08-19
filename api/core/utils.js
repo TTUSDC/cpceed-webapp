@@ -15,18 +15,6 @@ const newIfPresent = (newValue, oldValue) => {
   return newValue;
 };
 
-
-/**
- * Hides the logic behind retrieving the token from the request, cleaning up
- * code and allowing for easy changes in the future.
- * @param {Object} req - The request object.
- * @returns {string} - The token.
- */
-function getToken(req) {
-  return req.body.token || req.query.token || req.headers['x-access-token'];
-}
-
 module.exports = {
   newIfPresent,
-  getToken,
 };
