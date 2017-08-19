@@ -28,7 +28,7 @@ authRouter.delete('/', authManager.verify, (req, res) => {
     return;
   }
 
-  authManager.logout()
+  authManager.logout(req.session)
     .then(() => {
       res.status(204).end();
     })

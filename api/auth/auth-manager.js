@@ -4,14 +4,24 @@ const Session = require('api/auth/auth-models').Session;
 
 /**
  * Delete a specific session from the database.
- * @param {string} token - The client's token.
- * @returns {Promise<SessionSchema, Error>} - Resolves, or rejects with an error.
+ * @param {Object} session - The client's session.
+ * @returns {Promise<undefined, Error>} - Resolves, or rejects with an error.
  */
-const logout = async (token) => {
-  // Delete the session from the DB.
-  const session = await Session.findOneAndRemove({ id: token }).exec();
+const logout = async (session) => {
+  try {
+    await new Promise((resolve, reject) => {
+      // Delete the session from the DB.
+      session.destroy((err) => {
+        if (err) {
+          return reject(err);
+        }
 
-  return session;
+        return resolve();
+      });
+    });
+  } catch (err) {
+    throw err;
+  }
 };
 
 /**
