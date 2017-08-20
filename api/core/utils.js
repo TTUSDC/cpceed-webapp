@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 /**
  * If the new value is defined and non-null, returns the new value.  Otherwise,
  * returns the old value.
@@ -15,6 +17,18 @@ const newIfPresent = (newValue, oldValue) => {
   return newValue;
 };
 
+/**
+* Utility function to compare against a bcrypt'd password.
+* @param {string} password - The password to be compared.
+* @param {string} target - The target of comparison.
+* @returns {Promise<boolean, Error>} - Resolves with a boolean indicating whether
+* or not the password is a match.
+*/
+function comparePassword(password, target) {
+  return bcrypt.compare(password, target);
+}
+
 module.exports = {
   newIfPresent,
+  comparePassword,
 };

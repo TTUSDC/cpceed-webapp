@@ -42,15 +42,17 @@ authRouter.put('/password',
   authManager.verify,
   authManager.validateUidPermissions,
   (req, res) => {
-    // TODO(NilsG-S): Move this error handling to the middleware? Just don't call next()...
     if (res.locals.err) {
       res.status(400).json({ message: res.locals.err.message }).end();
       return;
     }
 
-    const body = req.body;
+    const email = req.body.email;
+    const storedPassword = req.user.password;
+    const password = req.body.password;
+    const newPassword = req.body.newPassword;
 
-    authManager.changePassword(body.email, body.password, body.newPassword)
+    authManager.changePassword(email, storedPassword, password, newPassword)
       .then(() => {
         res.status(200).end();
       })
