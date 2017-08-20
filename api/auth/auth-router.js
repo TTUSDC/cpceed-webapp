@@ -16,9 +16,29 @@ authRouter.get('/', authManager.verify, (req, res) => {
 });
 
 // Log the User in on a specific device.
-authRouter.post('/', passport.authenticate('local'), (req, res) => {
-  // The token is in a cookie, so it doesn't have to be in the body
-  res.status(201).end();
+authRouter.post('/', (req, res) => {
+  // Arguments come from passport-config.js callback.
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      res.status(400).json({ message: err.message }).end();
+      return;
+    }
+
+    if (!user) {
+      res.status(401).json(info).end();
+      return;
+    }
+
+    req.logIn(user, (authErr) => {
+      if (authErr) {
+        res.status(400).json({ message: authErr.message }).end();
+        return;
+      }
+
+      // The token is in a cookie, so it doesn't have to be in the body
+      res.status(201).end();
+    });
+  })(req, res);
 });
 
 // Log the user out of a specific device.

@@ -16,24 +16,23 @@ passport.use(new LocalStrategy({
       done(err);
     })
     .then((user) => {
-      userStorage = user;
-
       // No user found for the given email address.
       if (!user) {
-        const message = authErrors.invalidLoginInfoError.message;
-
-        return done(null, false, { message });
+        throw authErrors.invalidLoginInfoError;
       }
 
+      userStorage = user;
       return user.comparePassword(password);
     })
-    .then(() => {
+    .then((isMatch) => {
+      if (!isMatch) {
+        throw authErrors.invalidLoginInfoError;
+      }
+
       done(null, userStorage);
     })
-    .catch(() => {
-      const message = authErrors.invalidLoginInfoError.message;
-
-      done(null, false, { message });
+    .catch((err) => {
+      done(null, false, { message: err.message });
     });
 }));
 
