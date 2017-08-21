@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 
 /**
  * If the new value is defined and non-null, returns the new value.  Otherwise,
@@ -18,6 +19,62 @@ const newIfPresent = (newValue, oldValue) => {
 };
 
 /**
+* Utility function to get a MongoClient collection instance from Mongoose.
+* @param {string} name - The name of the collection.
+* @returns {Promise<{Object}, Error>} - Resolves with the collection.
+*/
+async function getCollection(name) {
+  let output;
+
+  try {
+    output = await new Promise((resolve, reject) => {
+      mongoose.connection.db.collection(name, (err, coll) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        resolve(coll);
+      });
+    });
+  } catch (err) {
+    throw err;
+  }
+
+  return output;
+}
+
+/**
+* Utility function to delete all sessions for a given user's email.
+* @param {string} email - The user's email.
+* @returns {Promise<{Object}, Error>} - Resolves with the number of sessions
+* deleted.
+*/
+async function deleteSessionsByEmail(email) {
+  let deleted;
+
+  try {
+    // Native MongoClient gets around lack of Session schema
+    const coll = await getCollection('sessions');
+
+    deleted = await new Promise((resolve, reject) => {
+      coll.remove({ 'session.passport.user': email }, (err, num) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        resolve(num);
+      });
+    });
+  } catch (err) {
+    throw err;
+  }
+
+  return deleted;
+}
+
+/**
 * Utility function to compare against a bcrypt'd password.
 * @param {string} password - The password to be compared.
 * @param {string} target - The target of comparison.
@@ -30,5 +87,7 @@ function comparePassword(password, target) {
 
 module.exports = {
   newIfPresent,
+  getCollection,
+  deleteSessionsByEmail,
   comparePassword,
 };

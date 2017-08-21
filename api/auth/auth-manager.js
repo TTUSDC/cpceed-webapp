@@ -1,8 +1,6 @@
-const mongoose = require('mongoose');
-
 const authErrors = require('api/errors/auth-errors');
 const User = require('api/users/user-models').User;
-const comparePassword = require('api/core/utils.js').comparePassword;
+const utils = require('api/core/utils.js');
 
 /**
  * Delete a specific session from the database.
@@ -36,31 +34,14 @@ const logout = async (session) => {
  */
 const changePassword = async (email, storedPassword, password, newPassword) => {
   try {
-    const isMatch = await comparePassword(password, storedPassword);
+    const isMatch = await utils.comparePassword(password, storedPassword);
 
     // The wrong password was provided.
     if (!isMatch) {
       throw authErrors.invalidPasswordError;
     }
 
-    await new Promise((resolve, reject) => {
-      // Native MongoClient gets around lack of Session schema
-      mongoose.connection.db.collection('sessions', (collErr, coll) => {
-        if (collErr) {
-          reject(collErr);
-          return;
-        }
-
-        coll.remove({ 'session.passport.user': email }, (err, num) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-
-          resolve(num);
-        });
-      });
-    });
+    await utils.deleteSessionsByEmail(email);
 
     const conditions = { email };
     const update = { password: newPassword };
