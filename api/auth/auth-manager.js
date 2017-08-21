@@ -41,13 +41,13 @@ const changePassword = async (email, storedPassword, password, newPassword) => {
       throw authErrors.invalidPasswordError;
     }
 
-    await utils.deleteSessionsByEmail(email);
-
     const conditions = { email };
     const update = { password: newPassword };
     const options = { new: true };
 
     await User.findOneAndUpdate(conditions, { $set: update }, options).exec();
+
+    await utils.deleteSessionsByEmail(email);
 
     return;
   } catch (err) {
@@ -72,13 +72,13 @@ const changeEmail = async (email, storedPassword, password, newEmail) => {
       throw authErrors.invalidPasswordError;
     }
 
-    await utils.deleteSessionsByEmail(email);
-
     const conditions = { email };
     const update = { email: newEmail };
     const options = { new: true };
 
     await User.findOneAndUpdate(conditions, { $set: update }, options).exec();
+
+    await utils.deleteSessionsByEmail(email);
 
     return;
   } catch (err) {
