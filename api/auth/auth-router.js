@@ -91,9 +91,12 @@ authRouter.put('/email',
       return;
     }
 
-    const body = req.body;
+    const email = req.body.email;
+    const storedPassword = req.user.password;
+    const password = req.body.password;
+    const newEmail = req.body.newEmail;
 
-    authManager.changeEmail(body.email, body.password, body.newEmail)
+    authManager.changeEmail(email, storedPassword, password, newEmail)
       .then(() => {
         res.status(200).end();
       })

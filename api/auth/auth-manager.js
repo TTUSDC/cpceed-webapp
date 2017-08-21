@@ -58,27 +58,21 @@ const changePassword = async (email, storedPassword, password, newPassword) => {
 /**
  * Delete all of user's sessions from database and change their email.
  * @param {string} email - The user's email address.
+ * @param {string} storedPassword - The user's stored password.
  * @param {string} password - The user's old password.
  * @param {string} newEmail - The user's new email.
  * @returns {Promise<undefined, Error>} - resolves, or rejects with an error.
  */
-const changeEmail = async (email, password, newEmail) => {
+const changeEmail = async (email, storedPassword, password, newEmail) => {
   try {
-    const user = await User.findOne({ email }).exec();
-
-    // No user found for the given email address.
-    if (!user) {
-      throw authErrors.userNotFoundError;
-    }
-
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await utils.comparePassword(password, storedPassword);
 
     // The wrong password was provided.
     if (!isMatch) {
       throw authErrors.invalidPasswordError;
     }
 
-    await Session.deleteMany({ email });
+    await utils.deleteSessionsByEmail(email);
 
     const conditions = { email };
     const update = { email: newEmail };
