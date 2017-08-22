@@ -27,13 +27,8 @@ const missingTokenError = errorConstructor('Token not found.', 400);
 
 const unauthorizedError = errorConstructor('Unauthorized.', 401);
 
-/*
- * Server: Did something go wrong with the server/network?
- */
-
-const serverMaxRetriesError = errorConstructor('Max retries exceeded.', 500);
-
 module.exports = {
+  errorConstructor,
   userNotFoundError,
   sessionNotFoundError,
   invalidLoginInfoError,
@@ -41,5 +36,4 @@ module.exports = {
   invalidSessionError,
   missingTokenError,
   unauthorizedError,
-  serverMaxRetriesError,
 };

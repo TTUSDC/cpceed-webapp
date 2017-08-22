@@ -21,7 +21,7 @@ const newIfPresent = (newValue, oldValue) => {
 /**
 * Utility function to get a MongoClient collection instance from Mongoose.
 * @param {string} name - The name of the collection.
-* @returns {Promise<{Object}, Error>} - Resolves with the collection.
+* @returns {Promise<Object, Error>} - Resolves with the collection.
 */
 async function getCollection(name) {
   let output;
@@ -47,7 +47,7 @@ async function getCollection(name) {
 /**
 * Utility function to delete all sessions for a given user's email.
 * @param {string} email - The user's email.
-* @returns {Promise<{Object}, Error>} - Resolves with the number of sessions
+* @returns {Promise<Object, Error>} - Resolves with the number of sessions
 * deleted.
 */
 async function deleteSessionsByEmail(email) {

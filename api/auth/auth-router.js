@@ -1,7 +1,6 @@
 const express = require('express');
 const authManager = require('api/auth/auth-manager');
 const logger = require('common/logger.js');
-const passport = require('api/passport-config.js');
 
 const authRouter = express.Router();
 
@@ -17,28 +16,14 @@ authRouter.get('/', authManager.verify, (req, res) => {
 
 // Log the User in on a specific device.
 authRouter.post('/', (req, res) => {
-  // Arguments come from passport-config.js callback.
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      res.status(400).json({ message: err.message }).end();
-      return;
-    }
-
-    if (!user) {
-      res.status(401).json(info).end();
-      return;
-    }
-
-    req.logIn(user, (authErr) => {
-      if (authErr) {
-        res.status(400).json({ message: authErr.message }).end();
-        return;
-      }
-
+  authManager.login(req, res)
+    .then(() => {
       // The token is in a cookie, so it doesn't have to be in the body
       res.status(201).end();
+    })
+    .catch((err) => {
+      res.status(err.status).json({ message: err.message }).end();
     });
-  })(req, res);
 });
 
 // Log the user out of a specific device.

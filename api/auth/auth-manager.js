@@ -1,6 +1,47 @@
+const passport = require('api/passport-config.js');
+
 const authErrors = require('api/errors/auth-errors');
 const User = require('api/users/user-models').User;
 const utils = require('api/core/utils.js');
+
+/**
+ * Given a valid email/password, generates a session and returns the id.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<string, Error>} - Resolves with the session id, or
+ * rejects with an error that contains a status code and a message.
+ */
+const login = async (req, res) => {
+  try {
+    await new Promise((resolve, reject) => {
+      // Arguments come from passport-config.js callback.
+      passport.authenticate('local', (err, user, info) => {
+        if (err) {
+          reject(authErrors.errorConstructor(err.message, 400));
+          return;
+        }
+
+        if (!user) {
+          reject(authErrors.errorConstructor(info.message, 401));
+          return;
+        }
+
+        req.logIn(user, (authErr) => {
+          if (authErr) {
+            reject(authErrors.errorConstructor(authErr.message, 400));
+            return;
+          }
+
+          resolve();
+        });
+      })(req, res);
+    });
+
+    return req.session.id;
+  } catch (err) {
+    throw err;
+  }
+};
 
 /**
  * Delete a specific session from the database.
@@ -120,7 +161,7 @@ const validateUidPermissions = (req, res, next) => {
     next();
     return;
   }
-  // TODO(NilsG-S): Why reference req.query when the uid is known to be in res.locals?
+  // TODO(NilsG-S): Why reference req.query when the id is known to be in req.user?
   // I'm pretty sure this won't ever do anything...
   if (req.query.uid) {
     if (req.user.role === 'admin') {
@@ -139,6 +180,7 @@ const validateUidPermissions = (req, res, next) => {
 module.exports = {
   changePassword,
   changeEmail,
+  login,
   logout,
   verify,
   validateUidPermissions,
