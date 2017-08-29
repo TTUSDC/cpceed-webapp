@@ -22,6 +22,14 @@ function open() {
 }
 
 function close() {
+  if (process.env.NODE_ENV === 'test') {
+    return new Promise((resolve) => {
+      mongoose.unmock(() => {
+        resolve();
+      });
+    });
+  }
+
   return mongoose.disconnect();
 }
 
