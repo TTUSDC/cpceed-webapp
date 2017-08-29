@@ -8,15 +8,24 @@ const cors = require('cors');
 
 const passport = require('api/passport-config.js');
 const apiRouter = require('api/router.js');
+const logger = require('common/logger.js');
 
 // Declarations/Definitions
 const port = process.env.PORT || 3000;
 const app = express();
+const format = ':method :url :status :response-time ms - :res[content-length]';
+
+// NODE_ENV dependent variations
+if (process.env.NODE_ENV === 'test') {
+  logger.disableAll();
+}
 
 // Express configuration.
 app.use(cors());
 app.set('port', port);
-app.use(morgan('dev'));
+app.use(morgan(format, {
+  skip() { return process.env.NODE_ENV === 'test'; },
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // TODO(NilsG-S): setup https for production
