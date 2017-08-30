@@ -5,12 +5,12 @@ const request = require('supertest');
  *
  * @typedef {function} CreateAndLoginCallback
  * @param {string} uid - UID of created user
- * @param {string} token - Session token for user
+ * @param {string} agent - supertest agent instance with session cookie
  */
 
 /**
  * Uses the API to create and login a user.
- * This allows for easily getting a token of a valid user for other testing.
+ * Passes the API agent to the callback, persisting the session cookie.
  * If there is an issue with creating or logging in, this method throws the
  * appropriate errors to stop the test.
  *
@@ -23,7 +23,9 @@ const request = require('supertest');
  */
 const createAndLoginUser = (api, user, cb) => {
   const loginUserTest = (uid) => {
-    request(api)
+    const agent = request.agent(api);
+
+    agent
       .post('/api/auth')
       .send({
         email: user.email,
@@ -31,11 +33,9 @@ const createAndLoginUser = (api, user, cb) => {
       })
       .type('form')
       .expect(201)
-      .end((loginErr, loginRes) => {
+      .end((loginErr) => {
         expect(loginErr).to.be.null;
-        const token = loginRes.body.token;
-        expect(token).to.exist;
-        cb(uid, token);
+        cb(uid, agent);
       });
   };
 
