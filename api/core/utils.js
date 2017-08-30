@@ -20,15 +20,16 @@ const newIfPresent = (newValue, oldValue) => {
 
 /**
 * Utility function to get a MongoClient collection instance from Mongoose.
+* @param {string} connection - The mongoose connection.
 * @param {string} name - The name of the collection.
 * @returns {Promise<Object, Error>} - Resolves with the collection.
 */
-async function getCollection(name) {
+async function getCollection(connection, name) {
   let output;
 
   try {
     output = await new Promise((resolve, reject) => {
-      mongoose.connection.db.collection(name, (err, coll) => {
+      connection.db.collection(name, (err, coll) => {
         if (err) {
           reject(err);
           return;
@@ -55,7 +56,7 @@ async function deleteSessionsByEmail(email) {
 
   try {
     // Native MongoClient gets around lack of Session schema
-    const coll = await getCollection('sessions');
+    const coll = await getCollection(mongoose.connection, 'sessions');
 
     deleted = await new Promise((resolve, reject) => {
       coll.remove({ 'session.passport.user': email }, (err, num) => {
