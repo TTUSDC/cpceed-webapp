@@ -5,7 +5,7 @@ const request = require('supertest');
  *
  * @typedef {function} CreateAndLoginCallback
  * @param {string} uid - UID of created user
- * @param {string} agent - supertest agent instance with session cookie
+ * @param {Object} agent - supertest agent instance with session cookie
  */
 
 /**
