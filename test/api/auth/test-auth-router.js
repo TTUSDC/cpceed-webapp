@@ -80,6 +80,31 @@ describe('Auth Router & Integration', () => {
         .expect(400)
         .end(done);
     });
+
+    it('should delete user\'s existing sessions', (done) => {
+      utilsUser.createAndLoginUser(app, testStudent, (uid, agent) => {
+        utilsAuth.userHasSessions(testStudent.email)
+          .then((sessions) => {
+            expect(sessions).to.be.true;
+
+            return agent
+              .put('/api/auth/password')
+              .send({
+                email: testStudent.email,
+                password: testStudent.password,
+                newPassword: 'T0t@llyS3cure',
+              })
+              .type('form')
+              .expect(200);
+          })
+          .then(() => utilsAuth.userHasSessions(testStudent.email))
+          .then((sessions) => {
+            expect(sessions).to.be.false;
+            done();
+          })
+          .catch(done);
+      });
+    });
   });
 
   describe('PUT /api/auth/email', () => {
