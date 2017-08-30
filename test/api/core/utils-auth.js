@@ -1,5 +1,4 @@
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const utils = require('api/core/utils.js');
 
 /**
  * Determines whether the user has sessions in the database.
@@ -9,15 +8,10 @@ const MongoStore = require('connect-mongo')(session);
  */
 async function userHasSessions(email) {
   try {
-    const store = new MongoStore({
-      mongooseConnection: mongoose.connection,
-      ttl: 60 * 60 * 24 * 14,
-      collection: 'sessions',
-      stringify: false,
-    });
+    const coll = await utils.getCollection(mongoose.connection, 'sessions');
 
     const sessions = await new Promise((resolve, reject) => {
-      store.collection.find({ 'session.passport.user': email }).toArray((err, docs) => {
+      coll.find({ 'session.passport.user': email }).toArray((err, docs) => {
         if (err) {
           reject(err);
           return;
