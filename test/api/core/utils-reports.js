@@ -1,5 +1,3 @@
-const request = require('supertest');
-
 /**
  * Callback for CreateReport method
  *
@@ -8,24 +6,23 @@ const request = require('supertest');
  */
 
 /**
- * Uses the API and a logged in user to create a new report.
+ * Uses an API agent and a logged in user to create a new report.
  * To be used when a test requires a valid report to be in the database.
  * If there is an issue with creating the report, this method throws the
  * appropriate errors to stop the test.
  *
- * @param {Object} api - Running API server
+ * @param {Object} agent - supertest agent instance with session cookie
  * @param {Object} owner - User data for the owner/creator of the report
  * @param {string} owner.uid - UID of the creator
- * @param {string} owner.token - Session token to access API with
  * @param {Object} reportData - Data for report
  * @param {CreateReportCallback} cb - Called upon successful creation
  */
-const createReport = (api, owner, reportData, cb) => {
-  request(api)
+const createReport = (agent, owner, reportData, cb) => {
+  agent
     .post('/api/reports')
     .send(reportData)
     .type('form')
-    .query({ uid: owner.uid, token: owner.token })
+    .query({ uid: owner.uid })
     .expect(201)
     .end((err, res) => {
       expect(err).to.be.null;
