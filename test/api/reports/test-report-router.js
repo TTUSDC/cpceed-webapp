@@ -1,19 +1,18 @@
-const request = require('supertest');
 const utilsUser = require('../core/utils-user');
 const utilsReports = require('../core/utils-reports');
 const testUsers = require('../../core/users');
 const testReports = require('../../core/reports');
 const reportManager = require('../../../api/reports/report-manager');
 const reportModels = require('../../../api/reports/report-models');
-const server = require('../../../server');
+const connection = require('api/connection.js');
+const app = require('api/app.js');
 
 const Report = reportModels.Report;
 
-let api;
-mockgoose(mongoose);
-
 describe('Report Router & Integration', () => {
-  before((done) => { api = server.start(done); });
+  before((done) => {
+    connection.open().then(() => done()).catch(done);
+  });
 
   beforeEach((done) => {
     mockgoose.reset();
@@ -21,9 +20,7 @@ describe('Report Router & Integration', () => {
   });
 
   after((done) => {
-    server.stop(() => {
-      mongoose.unmock(done);
-    });
+    connection.close().then(() => done()).catch(done);
   });
 
   describe('POST /api/reports', () => {
@@ -44,13 +41,13 @@ describe('Report Router & Integration', () => {
 
     it('should return 201 and the created event report UID', (done) => {
       const testStudent = testUsers.student000;
-      utilsUser.createAndLoginUser(api, testStudent, (userUid, token) => {
+      utilsUser.createAndLoginUser(app, testStudent, (userUid, agent) => {
         const testReport = testReports.generateEventReportData(userUid);
-        request(api)
+        agent
           .post('/api/reports')
           .send(testReport)
           .type('form')
-          .query({ userUid, token })
+          .query({ userUid })
           .expect(201)
           .end((err, res) => {
             expect(err).to.be.null;
@@ -68,13 +65,13 @@ describe('Report Router & Integration', () => {
 
     it('should return 201 and the created other report UID', (done) => {
       const testStudent = testUsers.student000;
-      utilsUser.createAndLoginUser(api, testStudent, (userUid, token) => {
+      utilsUser.createAndLoginUser(app, testStudent, (userUid, agent) => {
         const testReport = testReports.generateOtherReportData(userUid);
-        request(api)
+        agent
           .post('/api/reports')
           .send(testReport)
           .type('form')
-          .query({ userUid, token })
+          .query({ userUid })
           .expect(201)
           .end((err, res) => {
             expect(err).to.be.null;
@@ -94,11 +91,11 @@ describe('Report Router & Integration', () => {
   describe('GET /api/reports', () => {
     it('should return the correct report', (done) => {
       const admin = testUsers.admin000;
-      utilsUser.createAndLoginUser(api, admin, (userUid, token) => {
+      utilsUser.createAndLoginUser(app, admin, (userUid, agent) => {
         const testReport = testReports.generateOtherReportData(userUid);
-        utilsReports.createReport(api, { token, uid: userUid }, testReport,
+        utilsReports.createReport(agent, { uid: userUid }, testReport,
           (reportUid) => {
-            request(api)
+            agent
               .get('/api/reports')
               .query({ uid: reportUid })
               .expect(200)
@@ -117,18 +114,18 @@ describe('Report Router & Integration', () => {
   describe('PUT /api/reports', () => {
     it('should update the created other report', (done) => {
       const admin = testUsers.admin000;
-      utilsUser.createAndLoginUser(api, admin, (userUid, token) => {
+      utilsUser.createAndLoginUser(app, admin, (userUid, agent) => {
         const testReport = testReports.generateOtherReportData(userUid);
-        utilsReports.createReport(api, { token, uid: userUid }, testReport,
+        utilsReports.createReport(agent, { uid: userUid }, testReport,
           (reportUid) => {
             const fieldsToUpdate = {
               location: `${testReport.location}_edit`,
               type: testReport.type,
             };
-            request(api)
+            agent
               .put('/api/reports')
               .expect(200)
-              .query({ token, uid: reportUid })
+              .query({ uid: reportUid })
               .send(fieldsToUpdate)
               .end((putErr, putRes) => {
                 expect(putErr).to.be.null;
