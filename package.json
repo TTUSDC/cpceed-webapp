@@ -12,7 +12,7 @@
     "dev-api": "cross-env NODE_ENV=dev node server.js",
     "test": "npm-run-all --parallel --continue-on-error test-app test-api",
     "test-app": "karma start karma.conf.js",
-    "test-api": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/api --recursive --require test/api/api-test-globals",
+    "test-api": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --recursive test/api/api-test-globals.js test/api",
     "lint": "node_modules/.bin/eslint src test api",
     "docs": "node_modules/.bin/esdoc"
   },
