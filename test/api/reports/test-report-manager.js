@@ -5,20 +5,12 @@ const Report = reportModels.Report;
 const EventReport = reportModels.EventReport;
 const OtherReport = reportModels.OtherReport;
 
-mockgoose(mongoose);
-
 describe('reportManager', () => {
-  // Mockgoose doesn't start the mock until after 'mongoose.connect()' is
-  // called.
-  before((done) => { mongoose.connect('', done); });
-
   // Clear out the mocked database before each test case.
   beforeEach((done) => {
     mockgoose.reset();
     done();
   });
-
-  after((done) => { mongoose.unmock(done); });
 
   describe('#createReport', () => {
     it('should pass a created event report to the callback', (done) => {

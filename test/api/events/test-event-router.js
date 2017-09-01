@@ -4,23 +4,13 @@ const testUsers = require('../../core/users');
 const testEvents = require('../../core/events');
 const eventManager = require('../../../api/events/event-manager');
 const eventModels = require('../../../api/events/event-models');
-const connection = require('api/connection.js');
-const app = require('api/app.js');
 
 const Event = eventModels.Event;
 
 describe('Event Router & Integration', () => {
-  before((done) => {
-    connection.open().then(() => done()).catch(done);
-  });
-
   beforeEach((done) => {
     mockgoose.reset();
     done();
-  });
-
-  after((done) => {
-    connection.close().then(() => done()).catch(done);
   });
 
   describe('POST /api/events', () => {

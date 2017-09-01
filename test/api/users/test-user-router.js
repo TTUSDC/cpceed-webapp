@@ -5,23 +5,13 @@ const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
 const compareHelper = require('../core/helper-compare');
-const connection = require('api/connection.js');
-const app = require('api/app.js');
 
 const Student = userModels.Student;
 
 describe('User Router & Integration', () => {
-  before((done) => {
-    connection.open().then(() => done()).catch(done);
-  });
-
   beforeEach((done) => {
     mockgoose.reset();
     done();
-  });
-
-  after((done) => {
-    connection.close().then(() => done()).catch(done);
   });
 
   describe('POST /api/users', () => {

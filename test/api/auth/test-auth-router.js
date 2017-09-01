@@ -3,21 +3,11 @@ const request = require('supertest');
 const utilsUser = require('test/api/core/utils-user.js');
 const utilsAuth = require('test/api/core/utils-auth.js');
 const testUsers = require('test/core/users.js');
-const connection = require('api/connection.js');
-const app = require('api/app.js');
 
 describe('Auth Router & Integration', () => {
-  before((done) => {
-    connection.open().then(() => done()).catch(done);
-  });
-
   beforeEach((done) => {
     mockgoose.reset();
     done();
-  });
-
-  after((done) => {
-    connection.close().then(() => done()).catch(done);
   });
 
   describe('POST /api/auth', () => {

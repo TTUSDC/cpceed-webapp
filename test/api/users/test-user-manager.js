@@ -3,23 +3,15 @@ const userModels = require('../../../api/users/user-models');
 const testUsers = require('../../core/users');
 const compareHelper = require('../core/helper-compare');
 
-
 const Admin = userModels.Admin;
 const Student = userModels.Student;
 
-mockgoose(mongoose);
-
 describe('userManager', () => {
-  // Connect to the database.
-  before((done) => { mongoose.connect('', done); });
-
   // Clear the database before each test case.
   beforeEach((done) => {
     mockgoose.reset();
     done();
   });
-
-  after((done) => { mongoose.unmock(done); });
 
   describe('#createUser', () => {
     describe('role: student', () => {

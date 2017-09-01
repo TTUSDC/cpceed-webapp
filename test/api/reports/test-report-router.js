@@ -4,23 +4,13 @@ const testUsers = require('../../core/users');
 const testReports = require('../../core/reports');
 const reportManager = require('../../../api/reports/report-manager');
 const reportModels = require('../../../api/reports/report-models');
-const connection = require('api/connection.js');
-const app = require('api/app.js');
 
 const Report = reportModels.Report;
 
 describe('Report Router & Integration', () => {
-  before((done) => {
-    connection.open().then(() => done()).catch(done);
-  });
-
   beforeEach((done) => {
     mockgoose.reset();
     done();
-  });
-
-  after((done) => {
-    connection.close().then(() => done()).catch(done);
   });
 
   describe('POST /api/reports', () => {
