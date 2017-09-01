@@ -1,6 +1,6 @@
-const reportManager = require('../../../api/reports/report-manager');
-const reportModels = require('../../../api/reports/report-models');
-const logger = require('common/logger');
+const reportManager = require('api/reports/report-manager');
+const reportModels = require('api/reports/report-models');
+
 const Report = reportModels.Report;
 const EventReport = reportModels.EventReport;
 const OtherReport = reportModels.OtherReport;
@@ -28,8 +28,8 @@ describe('reportManager', () => {
         expect(createdReport.student).to.be.equal(eventReport.student);
         expect(createdReport.event).to.be.equal(eventReport.event);
 
-        Report.findById(createdReport.id, (err, foundReport) => {
-          expect(err).to.be.null;
+        Report.findById(createdReport.id, (findErr, foundReport) => {
+          expect(findErr).to.be.null;
           expect(foundReport.type).to.be.equal('EventReport');
           expect(foundReport.approvalStatus).to.be.false;
           expect(foundReport.student).to.be.equal(eventReport.student);
@@ -60,8 +60,8 @@ describe('reportManager', () => {
         expect(createdReport.location).to.be.equal(otherReport.location);
         expect(createdReport.description).to.be.equal(otherReport.description);
 
-        Report.findById(createdReport.id, (err, foundReport) => {
-          expect(err).to.be.null;
+        Report.findById(createdReport.id, (findErr, foundReport) => {
+          expect(findErr).to.be.null;
           expect(foundReport.type).to.be.equal('OtherReport');
           expect(foundReport.approvalStatus).to.be.false;
           expect(foundReport.student).to.be.equal(otherReport.student);
@@ -92,8 +92,8 @@ describe('reportManager', () => {
         expect(err).to.be.null;
         reportManager.modifyReport(
             createdReport.id, updatedEventReport, {},
-            (err, actualUpdatedReport) => {
-              expect(err).to.be.null;
+            (modifyErr, actualUpdatedReport) => {
+              expect(modifyErr).to.be.null;
               expect(actualUpdatedReport.type).to.be.equal('EventReport');
               expect(actualUpdatedReport.student)
                   .to.be.equal(updatedEventReport.student);
@@ -124,13 +124,11 @@ describe('reportManager', () => {
       };
 
       originalOtherReport.save((err, createdReport) => {
-        console.log(createdReport, 'createdReport');
         expect(err).to.be.null;
         reportManager.modifyReport(
             createdReport.id, updatedOtherReport, {},
-            (err, actualUpdatedReport) => {
-              console.log(actualUpdatedReport, 'actualUpdatedReport');
-              expect(err).to.be.null;
+            (modifyErr, actualUpdatedReport) => {
+              expect(modifyErr).to.be.null;
               expect(actualUpdatedReport.type).to.be.equal('OtherReport');
               expect(actualUpdatedReport.student)
                   .to.be.equal(updatedOtherReport.student);
@@ -160,12 +158,12 @@ describe('reportManager', () => {
       eventReport.save((err, createdReport) => {
         expect(err).to.be.null;
         reportManager.deleteReport(
-            createdReport.id, {}, (err, deletedReport) => {
-              expect(err).to.be.null;
+            createdReport.id, {}, (deleteErr, deletedReport) => {
+              expect(deleteErr).to.be.null;
               expect(deletedReport.student).to.be.equal(eventReport.student);
               expect(deletedReport.event).to.be.equal(eventReport.event);
 
-              Report.findById(createdReport.id, {}, (err, foundReport) => {
+              Report.findById(createdReport.id, {}, (findErr, foundReport) => {
                 expect(foundReport).to.be.null;
                 done();
               });
@@ -182,12 +180,12 @@ describe('reportManager', () => {
       otherReport.save((err, createdReport) => {
         expect(err).to.be.null;
         reportManager.deleteReport(
-            createdReport.id, {}, (err, deletedReport) => {
-              expect(err).to.be.null;
+            createdReport.id, {}, (deleteErr, deletedReport) => {
+              expect(deleteErr).to.be.null;
               expect(deletedReport.student).to.be.equal(otherReport.student);
               expect(deletedReport.location).to.be.equal(otherReport.location);
 
-              Report.findById(createdReport.id, {}, (err, foundReport) => {
+              Report.findById(createdReport.id, {}, (findErr, foundReport) => {
                 expect(foundReport).to.be.null;
                 done();
               });
@@ -207,8 +205,8 @@ describe('reportManager', () => {
          eventReport.save((err, createdReport) => {
            expect(err).to.be.null;
            reportManager.getReportById(
-               createdReport.id, {}, (err, foundReport) => {
-                 expect(err).to.be.null;
+               createdReport.id, {}, (getErr, foundReport) => {
+                 expect(getErr).to.be.null;
                  expect(foundReport.student).to.be.equal(eventReport.student);
                  expect(foundReport.event).to.be.equal(eventReport.event);
                  done();
@@ -225,8 +223,8 @@ describe('reportManager', () => {
          otherReport.save((err, createdReport) => {
            expect(err).to.be.null;
            reportManager.getReportById(
-               createdReport.id, {}, (err, foundReport) => {
-                 expect(err).to.be.null;
+               createdReport.id, {}, (getErr, foundReport) => {
+                 expect(getErr).to.be.null;
                  expect(foundReport.student).to.be.equal(otherReport.student);
                  expect(foundReport.location).to.be.equal(otherReport.location);
                  done();
@@ -249,10 +247,10 @@ describe('reportManager', () => {
 
       report1.save((err, expectedReport1) => {
         expect(err).to.be.null;
-        report2.save((err, expectedReport2) => {
-          expect(err).to.be.null;
-          reportManager.getAllReports({}, {}, (err, reports) => {
-            expect(err).to.be.null;
+        report2.save((err2, expectedReport2) => {
+          expect(err2).to.be.null;
+          reportManager.getAllReports({}, {}, (getErr, reports) => {
+            expect(getErr).to.be.null;
             expect(Object.keys(reports).length).to.be.equal(2);
 
             const actualReport1 = reports[expectedReport1.id];
