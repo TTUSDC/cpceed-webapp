@@ -45,7 +45,7 @@ describe('reportManager', () => {
         approvalStatus: true,
         student: 'John Doe',
         category: 'Some category',
-        datetime: 'Apr 04 2017 18:30',
+        datetime: new Date('Apr 04 2017 18:30'),
         location: 'EC203',
         description: 'Some report description',
       };
