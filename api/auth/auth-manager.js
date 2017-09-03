@@ -13,7 +13,7 @@ const utils = require('api/core/utils.js');
  */
 const login = async (req, res) => {
   try {
-    await new Promise((resolve, reject) => {
+    const rawUser = await new Promise((resolve, reject) => {
       // Arguments come from passport-config.js callback.
       passport.authenticate('local', (err, user, info) => {
         if (err) {
@@ -32,12 +32,27 @@ const login = async (req, res) => {
             return;
           }
 
-          resolve();
+          resolve(user);
         });
       })(req, res);
     });
 
-    return req.session.id;
+    const output = {
+      user: {
+        uid: rawUser.id,
+        email: rawUser.email,
+        name: rawUser.name,
+        role: rawUser.role,
+      },
+      expires: req.session.cookie.expires,
+    };
+
+    if (rawUser.role === 'student') {
+      output.user.points = rawUser.points;
+      output.user.isApproved = rawUser.isApproved;
+    }
+
+    return output;
   } catch (err) {
     throw err;
   }

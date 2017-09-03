@@ -16,13 +16,12 @@ authRouter.get('/', authManager.verify, (req, res) => {
   res.status(200).json({ role: req.user.role }).end();
 });
 
-// TODO(NilsG-S): Have login return the user, to avoid having to call getUser
 // Log the User in on a specific device.
 authRouter.post('/', (req, res) => {
   authManager.login(req, res)
-    .then(() => {
+    .then((output) => {
       // The token is in a cookie, so it doesn't have to be in the body
-      res.status(201).end();
+      res.status(201).json(output).end();
     })
     .catch((err) => {
       res.status(err.status).json({ message: err.message }).end();
