@@ -1,24 +1,19 @@
 import store from 'redux/store.js';
 import { updateUser, logoutUser } from 'redux/actions';
 import Connection from 'server/core/connection';
-// import logger from 'logger/logger';
-import * as tokenManager from 'server/core/tokenmanager';
 
 /**
  * Attempt to login using email and password.
  * @param {String} email - The email address.
  * @param {String} password - The password.
- * @return {Promise<string, Error>} - Promise that resolves with the user's
+ * @return {Promise<Object, Error>} - Promise that resolves with the user's
  *                                    data or rejects with an error.
  */
 export function login(email, password) {
   return new Promise((resolve, reject) => {
     const onSuccess = (res) => {
-      tokenManager.saveToken(res.token);
-      const userData = tokenManager.decode(res.token);
-      userData.role = userData.role.toLowerCase();
-      store.dispatch(updateUser(userData)); // TODO(asclines): This is temp until getUser is setup
-      resolve(userData);
+      // TODO(NilsG-S): Login should return the user object instead
+      resolve();
     };
 
     new Connection()
@@ -31,13 +26,12 @@ export function login(email, password) {
 
 /**
  * Attempt to logout.
- * @return {Promise<string, Error>} - Promise that resolves as undefined or
- *                                    rejects with an error.
+ * @return {Promise<undefined, Error>} - Promise that resolves as undefined or
+ *                                       rejects with an error.
  */
 export function logout() {
   return new Promise((resolve, reject) => {
     const onSuccess = () => {
-      tokenManager.removeToken();
       store.dispatch(logoutUser());
       resolve();
     };
@@ -45,7 +39,6 @@ export function logout() {
     new Connection()
       .del()
       .auth()
-      .data({ token: tokenManager.getToken() })
       .call(onSuccess, reject);
   });
 }

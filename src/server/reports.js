@@ -31,7 +31,6 @@ export function createReport(newReport) {
       .post()
       .reports()
       .data(newReport)
-      .token()
       .call(resolve, reject);
   });
 }
@@ -60,7 +59,6 @@ export function modifyReport(uid, updatedReport) {
       .reports()
       .data(updatedReport)
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -85,7 +83,6 @@ export function removeReport(uid) {
       .del()
       .reports()
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -109,7 +106,6 @@ export function getReport(uid) {
       .get()
       .reports()
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -137,7 +133,6 @@ export function getAllReports() {
       .get()
       .all()
       .reports()
-      .token()
       .call(resolve, reject);
   });
 }

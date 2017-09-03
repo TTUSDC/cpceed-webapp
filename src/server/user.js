@@ -1,6 +1,4 @@
-// import logger from 'logger/logger';
 import Connection from 'server/core/connection';
-import * as tokenManager from 'server/core/tokenmanager';
 
 /**
  * Creates a new user on the server
@@ -28,13 +26,11 @@ export function createUser(newUser) {
  */
 export function deleteUser(userUid) {
   return new Promise((resolve, reject) => {
-    const token = tokenManager.getToken();
-    const uid = userUid || tokenManager.decode(token).id;
+    const uid = userUid;
     new Connection()
       .del()
       .users()
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -46,18 +42,16 @@ export function deleteUser(userUid) {
  * @param {string} [userUid] - UID of user to be updated, defaults to current
  *                             user's uid
  * @return {Promise<UserSchema, Error>} - Promise that resolves with the
- *                                       modified user or rejects with error
+ *                                        modified user or rejects with error
  */
 export function modifyUser(data, userUid) {
   return new Promise((resolve, reject) => {
-    const token = tokenManager.getToken();
-    const uid = userUid || tokenManager.decode(token).id;
+    const uid = userUid;
     new Connection()
       .put()
       .users()
       .data(data)
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -72,13 +66,11 @@ export function modifyUser(data, userUid) {
  */
 export function getUser(userUid) {
   return new Promise((resolve, reject) => {
-    const token = tokenManager.getToken();
-    const uid = userUid || tokenManager.decode(token).id;
+    const uid = userUid;
     new Connection()
       .get()
       .users()
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }

@@ -80,6 +80,7 @@ class AuthContainer extends React.Component {
       logErr: '',
     });
 
+    // TODO(NilsG-S): Rework this to account for lack of token
     server.login(email, password)
       .then(token => server.getUser(token.id))
       .then((user) => {
