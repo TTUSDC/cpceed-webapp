@@ -1,6 +1,5 @@
 import axios from 'axios';
 import logger from 'logger.js';
-import * as tokenManager from 'server/core/tokenmanager';
 
 
 /**
@@ -138,16 +137,6 @@ export default class Connection {
     return this;
   }
 
-  /**
-   * Adds the `token` to `params`
-   * @returns {Connection}
-   */
-  token() {
-    this.config.params.token = tokenManager.getToken();
-    return this;
-  }
-
-
   call(onSuccess, onError) {
     this.config.method = this.method;
     if (this.endpoint) {
@@ -163,4 +152,3 @@ export default class Connection {
     });
   }
 }
-
