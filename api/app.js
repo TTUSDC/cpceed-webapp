@@ -6,6 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const cors = require('cors');
 
+const strings = require('api/resources/strings.js');
 const passport = require('api/passport-config.js');
 const apiRouter = require('api/router.js');
 const logger = require('common/logger.js');
@@ -35,7 +36,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 14,
     secure: process.env.NODE_ENV === 'prod',
   },
-  name: 'cpceed.sid',
+  name: strings.cookieName,
   resave: false,
   saveUninitialized: false,
   secret: process.env.SECRET,

@@ -1,4 +1,6 @@
 const express = require('express');
+
+const strings = require('api/resources/strings.js');
 const authManager = require('api/auth/auth-manager');
 const logger = require('common/logger.js');
 
@@ -14,6 +16,7 @@ authRouter.get('/', authManager.verify, (req, res) => {
   res.status(200).json({ role: req.user.role }).end();
 });
 
+// TODO(NilsG-S): Have login return the user, to avoid having to call getUser
 // Log the User in on a specific device.
 authRouter.post('/', (req, res) => {
   authManager.login(req, res)
@@ -35,7 +38,7 @@ authRouter.delete('/', authManager.verify, (req, res) => {
 
   authManager.logout(req.session)
     .then(() => {
-      res.status(204).end();
+      res.status(204).clearCookie(strings.cookieName, { path: '/' }).end();
     })
     .catch((err) => {
       res.status(400).json({ message: err.message }).end();
@@ -59,7 +62,7 @@ authRouter.put('/password',
 
     authManager.changePassword(email, storedPassword, password, newPassword)
       .then(() => {
-        res.status(200).end();
+        res.status(200).clearCookie(strings.cookieName, { path: '/' }).end();
       })
       .catch((err) => {
         res.status(400).json({ message: err.message }).end();
@@ -83,7 +86,7 @@ authRouter.put('/email',
 
     authManager.changeEmail(email, storedPassword, password, newEmail)
       .then(() => {
-        res.status(200).end();
+        res.status(200).clearCookie(strings.cookieName, { path: '/' }).end();
       })
       .catch((err) => {
         res.status(400).json({ message: err.message }).end();
