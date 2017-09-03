@@ -12,8 +12,8 @@ import Connection from 'server/core/connection';
 export function login(email, password) {
   return new Promise((resolve, reject) => {
     const onSuccess = (res) => {
-      // TODO(NilsG-S): Login should return the user object instead
-      resolve();
+      store.dispatch(updateUser(res.user));
+      resolve(res.user);
     };
 
     new Connection()
