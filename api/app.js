@@ -23,11 +23,11 @@ switch (process.env.NODE_ENV) {
     logger.disableAll();
     break;
   case 'dev':
-    corsOptions.origin = 'http://localhost:8080';
+    corsOptions.origin = 'http://127.0.0.1:8080';
     corsOptions.credentials = true;
     break;
   default:
-    corsOptions.origin = 'http://localhost:3000';
+    corsOptions.origin = 'http://127.0.0.1:3000';
 }
 
 // Express configuration.

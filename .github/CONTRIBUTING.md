@@ -27,7 +27,7 @@ Once you've started making changes, you'll need to make sure the app still runs 
 To use the testing server, do the following:
 
 1. Run `npm start` from the project directory.
-2. Enter `localhost:8080` into the URL bar of your browser to see the app.
+2. Enter `127.0.0.1:8080` into the URL bar of your browser to see the app.
 
 You should also run the unit tests to ensure the code is still functioning properly.
 To run the unit tests, do the following:

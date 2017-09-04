@@ -1,6 +1,9 @@
 import axios from 'axios';
 import logger from 'logger.js';
 
+if (ENV === 'dev') {
+  axios.defaults.withCredentials = true;
+}
 
 /**
  * The connection information for the server hosting the API.
@@ -9,7 +12,7 @@ import logger from 'logger.js';
  * @param {number} timeout - Time in ms that each call should take
  */
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/api', // TODO(asclines): Move this to env
+  baseURL: 'http://127.0.0.1:3000/api', // TODO(asclines): Move this to env
   timeout: 5000,
 });
 
