@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import * as tokenManager from 'server/core/tokenmanager';
+
 import Connection from 'server/core/connection';
 import {
   createReport,
@@ -8,9 +8,7 @@ import {
   getReport,
   getAllReports,
 } from 'server/reports';
-// import logger from 'logger.js';
 import { user38257001 as testUser } from './core/users';
-import { testToken1 as testToken } from './core/tokens';
 import { generateOtherReportData } from '../core/reports';
 
 const sinonChai = require('sinon-chai');
@@ -23,8 +21,6 @@ const sandbox = sinon.sandbox.create();
 export default describe('Server API: Reports', () => {
   beforeEach(() => {
     sandbox.stub(Connection.prototype, 'call');
-    sandbox.stub(tokenManager, 'getToken').callsFake(() => testToken.token);
-    sandbox.spy(tokenManager, 'decode');
   });
 
   afterEach(() => {
@@ -48,7 +44,6 @@ export default describe('Server API: Reports', () => {
         expect(connectionCallData.url).to.equal('/reports');
         expect(connectionCallData.config.data).to.deep.equal(testReport);
         expect(data).to.equal(expectedResult);
-        expect(connectionCallData.config.params.token).to.equal(testToken.token);
         done();
       }).catch(done);
     });
@@ -68,7 +63,6 @@ export default describe('Server API: Reports', () => {
         expect(connectionCallData.method).to.equal('put');
         expect(connectionCallData.url).to.equal('/reports');
         expect(connectionCallData.config.data).to.deep.equal(testReport);
-        expect(connectionCallData.config.params.token).to.equal(testToken.token);
         expect(connectionCallData.config.params.uid).to.equal(testReportUid);
         expect(data).to.equal(testReport);
         done();
@@ -89,7 +83,6 @@ export default describe('Server API: Reports', () => {
         expect(connectionCallData.method).to.equal('delete');
         expect(connectionCallData.url).to.equal('/reports');
         expect(connectionCallData.config.params.uid).to.equal(testReportUid);
-        expect(connectionCallData.config.params.token).to.equal(testToken.token);
         done();
       }).catch(done);
     });
@@ -109,7 +102,6 @@ export default describe('Server API: Reports', () => {
         expect(connectionCallData.method).to.equal('get');
         expect(connectionCallData.url).to.equal('/reports');
         expect(connectionCallData.config.params.uid).to.equal(testReportUid);
-        expect(connectionCallData.config.params.token).to.equal(testToken.token);
         expect(data).to.equal(testReport);
         done();
       }).catch(done);
@@ -133,7 +125,6 @@ export default describe('Server API: Reports', () => {
         expect(connectionCallData.method).to.equal('get');
         expect(connectionCallData.url).to.equal('/reports');
         expect(connectionCallData.endpoint).to.equal('all');
-        expect(connectionCallData.config.params.token).to.equal(testToken.token);
         expect(list).to.deep.equal(testReports);
         done();
       }).catch(done);

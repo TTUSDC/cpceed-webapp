@@ -1,10 +1,8 @@
 import sinon from 'sinon';
-// import logger from 'logger/logger';
+
 import { createUser, deleteUser, modifyUser, getUser } from 'server/user';
 import Connection from 'server/core/connection';
-import * as tokenManager from 'server/core/tokenmanager';
 import { user38257001 as testUser } from './core/users';
-import { testToken1 as testToken } from './core/tokens';
 
 const sinonChai = require('sinon-chai');
 const chai = require('chai');
@@ -16,8 +14,6 @@ const sandbox = sinon.sandbox.create();
 export default describe('Server API: User', () => {
   beforeEach(() => {
     sandbox.stub(Connection.prototype, 'call');
-    sandbox.stub(tokenManager, 'getToken').callsFake(() => testToken.token);
-    sandbox.spy(tokenManager, 'decode');
   });
 
   afterEach(() => {

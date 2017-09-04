@@ -37,7 +37,7 @@ export default describe('Server API: Auth', () => {
   });
 
   describe('#login', () => {
-    it('should save the session token', (done) => {
+    it('should call onSuccess', (done) => {
       Connection.prototype.call.callsFake((onSuccess) => {
         onSuccess({ user: testUser });
       });
@@ -58,7 +58,7 @@ export default describe('Server API: Auth', () => {
   });
 
   describe('#logout', () => {
-    it('should remove the session token', (done) => {
+    it('should call onSuccess', (done) => {
       Connection.prototype.call.callsFake((onSuccess, onError) => {
         const method = Connection.prototype.call
           .thisValues[Connection.prototype.call.callCount - 1].method;
