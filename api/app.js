@@ -60,7 +60,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes.
-app.use('/', express.static(`${__dirname}/build`));
+app.use('/', express.static(`${__dirname}/../build`));
 app.use('/api', apiRouter);
 
 // 404.
