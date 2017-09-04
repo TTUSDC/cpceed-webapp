@@ -15,14 +15,23 @@ const logger = require('common/logger.js');
 const port = process.env.PORT || 3000;
 const app = express();
 const format = ':method :url :status :response-time ms - :res[content-length]';
+const corsOptions = {};
 
 // NODE_ENV dependent variations
-if (process.env.NODE_ENV === 'test') {
-  logger.disableAll();
+switch (process.env.NODE_ENV) {
+  case 'test':
+    logger.disableAll();
+    break;
+  case 'dev':
+    corsOptions.origin = 'http://localhost:8080';
+    corsOptions.credentials = true;
+    break;
+  default:
+    corsOptions.origin = 'http://localhost:3000';
 }
 
 // Express configuration.
-app.use(cors());
+app.use(cors(corsOptions));
 app.set('port', port);
 app.use(morgan(format, {
   skip() { return process.env.NODE_ENV === 'test'; },
