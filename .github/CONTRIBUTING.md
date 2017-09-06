@@ -30,7 +30,7 @@ The resources page on our wiki has links to information on everything listed her
 Once you've started making changes, you'll need to make sure the app still runs properly.
 To use the testing server, do the following:
 
-1. Run `npm dev` from the project directory.
+1. Run `npm run dev` from the project directory.
 2. Enter `127.0.0.1:8080` into the URL bar of your browser to see the app.
 
 You should also run the unit tests to ensure the code is still functioning properly.
@@ -55,8 +55,10 @@ The testing libraries used in this project are as follows:
 
 To run the API by itself, do the following:
 
-1. Run `npm dev-api` from the project directory.
+1. Run `npm run dev-api` from the project directory.
 2. Use an API testing client such as [Postman](https://www.getpostman.com/) to hit the endpoints.
+
+To run the unit tests, use `npm run test-api` from the project directory.
 
 All unit tests for the API are in `test/api`.
 
