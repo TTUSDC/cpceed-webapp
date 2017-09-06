@@ -23,20 +23,24 @@ The resources page on our wiki has links to information on everything listed her
 
 ### Testing Your Changes
 
+**Unless all of the tests pass, github will block your code from being merged**
+
+#### App
+
 Once you've started making changes, you'll need to make sure the app still runs properly.
 To use the testing server, do the following:
 
-1. Run `npm start` from the project directory.
+1. Run `npm dev` from the project directory.
 2. Enter `127.0.0.1:8080` into the URL bar of your browser to see the app.
 
 You should also run the unit tests to ensure the code is still functioning properly.
 To run the unit tests, do the following:
 
 1. Make sure you have Firefox installed. This project has the Karma test runner set up to use Firefox.
-2. Run `npm test` from the project directory.
+2. Run `npm run test-app` from the project directory.
 
 As you're writing application code, you should also be writing unit tests that can be used to ensure your code doesn't get broken.
-Unit tests go in `CPCEEDWebApp/test`, which follows the same structure as `CPCEEDWebApp/src`.
+Unit tests go in `cpceed-webapp/test`, which follows the same structure as `cpceed-webapp/src`.
 You should put your tests in the `test` subdirectory that mirrors the `src` subdirectory where you wrote your application code.
 For example, unit tests for files in `src/components/Auth/` go in `test/components/Auth/`.
 You must make sure your tests are either included by `test/index.js` directly or included by an `index.js` file that is linked to `test/index.js` through other `include` statements.
@@ -47,6 +51,15 @@ The testing libraries used in this project are as follows:
 3. Sinon: for spying on, stubbing, or mocking functions.
 4. Enzyme: a library that allows React components to be tested effectively (primarily through shallow rendering).
 
+#### API
+
+To run the API by itself, do the following:
+
+1. Run `npm dev-api` from the project directory.
+2. Use an API testing client such as [Postman](https://www.getpostman.com/) to hit the endpoints.
+
+All unit tests for the API are in `test/api`.
+
 ## Coding Standards
 We use [Airbnb's](https://github.com/airbnb/javascript) JavaScript style guide
 
@@ -55,3 +68,9 @@ Notable Aspects:
 - Indents should be 2 spaces.
 - Regular files and folders should use `dash-separated-names`. Short folder names are preferred.
 - React components should use `UpperCamelCase` for the class name, the file name, and the parent folder name.
+
+The best way to ensure there are no stylistic problems with your code is to use ESLint:
+
+1. Make changes to a file.
+2. Save the file.
+3. Run the command `node_modules/.bin/eslint [path/to/the/file]`.
