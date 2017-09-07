@@ -60,7 +60,13 @@ To run the API by itself, do the following:
 
 To run the unit tests, use `npm run test-api` from the project directory.
 
-All unit tests for the API are in `test/api`.
+All unit tests for the API are in `cpceed-webapp/test/api`, which mirrors the structure of `cpceed-webapp/api`.
+
+The same testing libraries are used, with the exception of Enzyme, which is not necessary.
+Instead, the backend uses `supertest` to do integration tests.
+For an example, see `test-auth-router.js`.
+Note that any integration test that requires sign-in will need to use `agent` to persist the session cookie.
+`createAndLoginUser` passes `agent` as the second argument to its callback.
 
 ## Coding Standards
 We use [Airbnb's](https://github.com/airbnb/javascript) JavaScript style guide
