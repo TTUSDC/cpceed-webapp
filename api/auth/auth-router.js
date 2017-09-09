@@ -1,4 +1,6 @@
 const express = require('express');
+
+const strings = require('api/resources/strings.js');
 const authManager = require('api/auth/auth-manager');
 const logger = require('common/logger.js');
 
@@ -9,45 +11,85 @@ authRouter.get('/', authManager.verify, (req, res) => {
   if (res.locals.err) {
     logger.error(res.locals.err);
     res.status(400).json(res.locals.err).end();
-  } else if (!res.locals.auth) {
-    const noAuthError = new Error('User not verified.');
-    logger.error(noAuthError);
-    res.status(400).json(noAuthError).end();
-  } else {
-    res.status(200).json({ role: res.locals.auth.role }).end();
   }
+
+  res.status(200).json({ role: req.user.role }).end();
 });
 
-// Log the User in (uses same token across all devices).
+// Log the User in on a specific device.
 authRouter.post('/', (req, res) => {
-  authManager.login(req.body.email, req.body.password, (err, token) => {
-    if (err) {
-      res.status(400).json(err).end();
+  authManager.login(req, res)
+    .then((output) => {
+      // The token is in a cookie, so it doesn't have to be in the body
+      res.status(201).json(output).end();
+    })
+    .catch((err) => {
+      res.status(err.status).json({ message: err.message }).end();
+    });
+});
+
+// Log the user out of a specific device.
+authRouter.delete('/', authManager.verify, (req, res) => {
+  if (res.locals.err) {
+    res.status(400).json({ message: res.locals.err.message }).end();
+    return;
+  }
+
+  authManager.logout(req.session)
+    .then(() => {
+      res.status(204).clearCookie(strings.cookieName, { path: '/' }).end();
+    })
+    .catch((err) => {
+      res.status(400).json({ message: err.message }).end();
+    });
+});
+
+// Change the user's password.
+authRouter.put('/password',
+  authManager.verify,
+  authManager.validateUidPermissions,
+  (req, res) => {
+    if (res.locals.err) {
+      res.status(400).json({ message: res.locals.err.message }).end();
       return;
     }
 
-    res.status(201).json({ token }).end();
+    const email = req.body.email;
+    const storedPassword = req.user.password;
+    const password = req.body.password;
+    const newPassword = req.body.newPassword;
+
+    authManager.changePassword(email, storedPassword, password, newPassword)
+      .then(() => {
+        res.status(200).clearCookie(strings.cookieName, { path: '/' }).end();
+      })
+      .catch((err) => {
+        res.status(400).json({ message: err.message }).end();
+      });
   });
-});
 
-// Log the User out of all devices.
-authRouter.delete('/', authManager.verify, (req, res) => {
-  if (res.locals.err) {
-    res.status(400).json(res.locals.err).end();
-    return;
-  }
-
-  if (!res.locals.auth) {
-    res.status(400).json(new Error('User not verified.')).end();
-    return;
-  }
-  authManager.logout(res.locals.auth.email, (logoutErr) => {
-    if (logoutErr) {
-      res.status(400).json(logoutErr).end();
-    } else {
-      res.status(204).end();
+// Change the user's email.
+authRouter.put('/email',
+  authManager.verify,
+  authManager.validateUidPermissions,
+  (req, res) => {
+    if (res.locals.err) {
+      res.status(400).json({ message: res.locals.err.message }).end();
+      return;
     }
+
+    const email = req.body.email;
+    const storedPassword = req.user.password;
+    const password = req.body.password;
+    const newEmail = req.body.newEmail;
+
+    authManager.changeEmail(email, storedPassword, password, newEmail)
+      .then(() => {
+        res.status(200).clearCookie(strings.cookieName, { path: '/' }).end();
+      })
+      .catch((err) => {
+        res.status(400).json({ message: err.message }).end();
+      });
   });
-});
 
 module.exports = { router: authRouter };

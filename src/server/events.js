@@ -31,7 +31,6 @@ export function createEvent(newEvent) {
       .post()
       .events()
       .data(newEvent)
-      .token()
       .call(resolve, reject);
   });
 }
@@ -60,7 +59,6 @@ export function modifyEvent(uid, updatedEvent) {
       .events()
       .data(updatedEvent)
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -85,7 +83,6 @@ export function removeEvent(uid) {
       .del()
       .events()
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -109,7 +106,6 @@ export function getEvent(uid) {
       .get()
       .events()
       .params({ uid })
-      .token()
       .call(resolve, reject);
   });
 }
@@ -137,7 +133,6 @@ export function getAllEvents() {
       .get()
       .all()
       .events()
-      .token()
       .call(resolve, reject);
   });
 }

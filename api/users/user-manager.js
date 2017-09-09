@@ -28,6 +28,7 @@ const createUser = (data, next) => {
     return;
   }
 
+  // TODO(NilsG-S): Password validation
   const info = {
     email: data.email,
     password: data.password,
@@ -79,6 +80,7 @@ const createUser = (data, next) => {
  * @param {ModifyUserCallback} modifyCallback
  */
 const modifyUser = (userUid, reqData, locals, modifyCallback) => {
+  // TODO(NilsG-S): modifyUser cannot be used to modify email or password
   const conditions = { _id: userUid };
   const update = {};
 

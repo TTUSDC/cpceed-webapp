@@ -2,12 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import * as server from 'server';
-import store from 'redux/store.js';
 import {
   coordinator,
   student,
   AuthStates,
-  updateUser,
 } from 'redux/actions.js';
 import logger from 'logger.js';
 import Auth from './Auth.jsx';
@@ -81,11 +79,8 @@ class AuthContainer extends React.Component {
     });
 
     server.login(email, password)
-      .then(token => server.getUser(token.id))
-      .then((user) => {
+      .then(() => {
         logger.info('User was logged in');
-
-        store.dispatch(updateUser(user));
 
         if (this.props.authFinished) {
           this.props.authFinished();

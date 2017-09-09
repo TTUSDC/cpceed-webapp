@@ -4,8 +4,6 @@ const eventModels = require('../../../api/events/event-models');
 
 const Event = eventModels.Event;
 
-mockgoose(mongoose);
-
 describe('eventManager', () => {
   // Helper method to get an object for event test
   const getDefaultTestData = (seed) => {
@@ -24,17 +22,10 @@ describe('eventManager', () => {
     return defaultTestData;
   };
 
-
-  before((done) => {
-    mongoose.connect('', done);
-  });
-
   beforeEach((done) => {
     mockgoose.reset();
     done();
   });
-
-  after((done) => { mongoose.unmock(done); });
 
   describe('#createEvent', () => {
     it('should pass a created and saved event to the callback', (done) => {

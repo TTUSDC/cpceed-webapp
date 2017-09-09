@@ -71,23 +71,38 @@ userSchema.pre('save', function pre(next) {
   });
 });
 
+userSchema.pre('findOneAndUpdate', function preUpdate(next) {
+  const password = this.getUpdate().$set.password;
 
-/**
-* Callback for {@link userSchema.methods.comparePassword}
-* @typedef {Object} ComparePasswordNext
-* @param {Object} err - error
-* @param {boolean} isMatch - Whether or not the passwords matched
-*/
+  // If the password is not modified, continue saving the user.
+  if (!password) {
+    next();
+    return;
+  }
+
+  bcrypt.genSalt(Number(process.env.SALT), (saltErr, salt) => {
+    if (saltErr) {
+      next(saltErr);
+      return;
+    }
+
+    bcrypt.hash(password, salt, (hashErr, hash) => {
+      /* eslint-disable no-underscore-dangle */
+      this._update.$set.password = hash;
+      /* eslint-enable no-underscore-dangle */
+      next(hashErr);
+    });
+  });
+});
 
 /**
 * Helper method to check users password
 * @param {string} password - The password to be compared to the user's password
-* @param {ComparePasswordNext} next
+* @returns {Promise<boolean, Error>} - Resolves with a boolean indicating whether
+* or not the password is a match
 */
-userSchema.methods.comparePassword = function comparePassword(password, next) {
-  bcrypt.compare(password, this.password, (err, isMatch) => {
-    next(err, isMatch);
-  });
+userSchema.methods.comparePassword = function comparePassword(password) {
+  return bcrypt.compare(password, this.password);
 };
 
 const studentSchema = new Schema({

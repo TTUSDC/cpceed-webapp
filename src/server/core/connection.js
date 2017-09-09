@@ -1,7 +1,10 @@
 import axios from 'axios';
 import logger from 'logger.js';
-import * as tokenManager from 'server/core/tokenmanager';
 
+if (ENV === 'dev') {
+  // Ensures session cookie is stored and sent with requests during dev
+  axios.defaults.withCredentials = true;
+}
 
 /**
  * The connection information for the server hosting the API.
@@ -10,7 +13,7 @@ import * as tokenManager from 'server/core/tokenmanager';
  * @param {number} timeout - Time in ms that each call should take
  */
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/api', // TODO(asclines): Move this to env
+  baseURL: 'http://127.0.0.1:3000/api', // TODO(asclines): Move this to env
   timeout: 5000,
 });
 
@@ -138,16 +141,6 @@ export default class Connection {
     return this;
   }
 
-  /**
-   * Adds the `token` to `params`
-   * @returns {Connection}
-   */
-  token() {
-    this.config.params.token = tokenManager.getToken();
-    return this;
-  }
-
-
   call(onSuccess, onError) {
     this.config.method = this.method;
     if (this.endpoint) {
@@ -163,4 +156,3 @@ export default class Connection {
     });
   }
 }
-

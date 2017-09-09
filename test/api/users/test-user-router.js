@@ -5,26 +5,13 @@ const testUsers = require('../../core/users');
 const userManager = require('../../../api/users/user-manager');
 const userModels = require('../../../api/users/user-models');
 const compareHelper = require('../core/helper-compare');
-const server = require('../../../server');
 
 const Student = userModels.Student;
 
-let api;
-
-mockgoose(mongoose);
-
 describe('User Router & Integration', () => {
-  before((done) => { api = server.start(done); });
-
   beforeEach((done) => {
     mockgoose.reset();
     done();
-  });
-
-  after((done) => {
-    server.stop(() => {
-      mongoose.unmock(done);
-    });
   });
 
   describe('POST /api/users', () => {
@@ -46,23 +33,23 @@ describe('User Router & Integration', () => {
 
     it('should return 201 and the created student UID', (done) => {
       const body = testUsers.student000;
-      request(api)
-      .post(endpoint)
-      .send(body)
-      .type('form')
-      .expect(201)
-      .end((err, res) => {
-        expect(err).to.be.null;
-        const uid = res.body.uid;
-        expect(uid).to.not.be.null;
-        expect(userManager.createUser).to.have.been.calledOnce;
-        expect(userManager.createUser.args[0][0].email).to.equal(body.email);
-        Student.findById(uid, (findErr, foundStudent) => {
-          expect(findErr).to.be.null;
-          compareHelper.compareStudentInfo(body, foundStudent);
-          done();
+      request(app)
+        .post(endpoint)
+        .send(body)
+        .type('form')
+        .expect(201)
+        .end((err, res) => {
+          expect(err).to.be.null;
+          const uid = res.body.uid;
+          expect(uid).to.not.be.null;
+          expect(userManager.createUser).to.have.been.calledOnce;
+          expect(userManager.createUser.args[0][0].email).to.equal(body.email);
+          Student.findById(uid, (findErr, foundStudent) => {
+            expect(findErr).to.be.null;
+            compareHelper.compareStudentInfo(body, foundStudent);
+            done();
+          });
         });
-      });
     });
 
     const requiredKeys = ['email', 'password', 'role'];
@@ -71,7 +58,7 @@ describe('User Router & Integration', () => {
       const student = JSON.parse(JSON.stringify(originalStudent)); // For object copying
       delete student[key];
       it(`should have returned an error for missing key: ${key}`, (innerDone) => {
-        request(api)
+        request(app)
           .post(endpoint)
           .send(student)
           .type('form')
@@ -87,8 +74,8 @@ describe('User Router & Integration', () => {
   });
 
   describe('GET /api/users', () => {
-    const getUserTest = (student, query, done) => {
-      request(api)
+    const getUserTest = (agent, student, query, done) => {
+      agent
         .get('/api/users')
         .query(query)
         .expect(200)
@@ -104,15 +91,15 @@ describe('User Router & Integration', () => {
 
     it('should get the logged in student by passing the UID', (done) => {
       const student = testUsers.student000;
-      utilsUser.createAndLoginUser(api, student, (uid, token) => {
-        getUserTest(student, { uid, token }, done);
+      utilsUser.createAndLoginUser(app, student, (uid, agent) => {
+        getUserTest(agent, student, { uid }, done);
       });
     });
 
     it('should get the logged in student WITHOUT passing the UID', (done) => {
       const student = testUsers.student000;
-      utilsUser.createAndLoginUser(api, student, (uid, token) => {
-        getUserTest(student, { token }, done);
+      utilsUser.createAndLoginUser(app, student, (uid, agent) => {
+        getUserTest(agent, student, {}, done);
       });
     });
   });
@@ -120,7 +107,7 @@ describe('User Router & Integration', () => {
   describe('PUT /api/users', () => {
     it('should update the logged in student', (done) => {
       const student = testUsers.student000;
-      utilsUser.createAndLoginUser(api, student, (uid, token) => {
+      utilsUser.createAndLoginUser(app, student, (uid, agent) => {
         const fieldsToUpdate = {
           name: `${student.name}_edit`,
         };
@@ -128,29 +115,28 @@ describe('User Router & Integration', () => {
         const expectedStudent = JSON.parse(JSON.stringify(student));
         expectedStudent.name = fieldsToUpdate.name;
 
-        request(api)
-        .put('/api/users')
-        .expect(200)
-        .query({ token })
-        .send(fieldsToUpdate)
-        .end((putErr, putRes) => {
-          expect(putErr).to.be.null;
-          expect(putRes).to.not.be.null;
-          const returnedStudent = putRes.body;
+        agent
+          .put('/api/users')
+          .expect(200)
+          .send(fieldsToUpdate)
+          .end((putErr, putRes) => {
+            expect(putErr).to.be.null;
+            expect(putRes).to.not.be.null;
+            const returnedStudent = putRes.body;
 
-          // Make sure the modified user was returned
-          compareHelper.compareStudentInfo(expectedStudent, returnedStudent);
+            // Make sure the modified user was returned
+            compareHelper.compareStudentInfo(expectedStudent, returnedStudent);
 
-          Student.findById(uid, (findErr, foundStudent) => {
-            expect(findErr).to.be.null;
-            expect(foundStudent).to.not.be.null;
+            Student.findById(uid, (findErr, foundStudent) => {
+              expect(findErr).to.be.null;
+              expect(foundStudent).to.not.be.null;
 
-            // Make sure the modified user was actually saved
-            compareHelper.compareStudentInfo(expectedStudent, foundStudent);
+              // Make sure the modified user was actually saved
+              compareHelper.compareStudentInfo(expectedStudent, foundStudent);
 
-            done();
+              done();
+            });
           });
-        });
       });
     });
   });

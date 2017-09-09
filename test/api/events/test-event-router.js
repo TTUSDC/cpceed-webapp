@@ -1,29 +1,16 @@
-const request = require('supertest');
 const utilsUser = require('../core/utils-user');
 const utilsEvents = require('../core/utils-events');
 const testUsers = require('../../core/users');
 const testEvents = require('../../core/events');
 const eventManager = require('../../../api/events/event-manager');
 const eventModels = require('../../../api/events/event-models');
-const server = require('../../../server');
 
 const Event = eventModels.Event;
 
-let api;
-mockgoose(mongoose);
-
 describe('Event Router & Integration', () => {
-  before((done) => { api = server.start(done); });
-
   beforeEach((done) => {
     mockgoose.reset();
     done();
-  });
-
-  after((done) => {
-    server.stop(() => {
-      mongoose.unmock(done);
-    });
   });
 
   describe('POST /api/events', () => {
@@ -44,13 +31,13 @@ describe('Event Router & Integration', () => {
 
     it('should return 201 and the created event UID', (done) => {
       const testStudent = testUsers.student000;
-      utilsUser.createAndLoginUser(api, testStudent, (userUid, token) => {
+      utilsUser.createAndLoginUser(app, testStudent, (userUid, agent) => {
         const testEvent = testEvents.generateEventData(userUid);
-        request(api)
+        agent
           .post('/api/events')
           .send(testEvent)
           .type('form')
-          .query({ userUid, token })
+          .query({ userUid })
           .expect(201)
           .end((err, res) => {
             expect(err).to.be.null;
@@ -70,21 +57,21 @@ describe('Event Router & Integration', () => {
   describe('GET /api/events', () => {
     it('should return the correct event', (done) => {
       const admin = testUsers.admin000;
-      utilsUser.createAndLoginUser(api, admin, (userUid, token) => {
+      utilsUser.createAndLoginUser(app, admin, (userUid, agent) => {
         const testEvent = testEvents.generateEventData(userUid);
-        utilsEvents.createEvent(api, { token, uid: userUid }, testEvent,
+        utilsEvents.createEvent(agent, { uid: userUid }, testEvent,
           (eventUid) => {
-            request(api)
-            .get('/api/events')
-            .query({ uid: eventUid })
-            .expect(200)
-            .end((getErr, getRes) => {
-              expect(getErr).to.be.null;
-              const returnedEvent = getRes.body;
-              expect(returnedEvent).to.not.be.null;
-              expect(returnedEvent.location).to.equal(testEvent.location);
-              done();
-            });
+            agent
+              .get('/api/events')
+              .query({ uid: eventUid })
+              .expect(200)
+              .end((getErr, getRes) => {
+                expect(getErr).to.be.null;
+                const returnedEvent = getRes.body;
+                expect(returnedEvent).to.not.be.null;
+                expect(returnedEvent.location).to.equal(testEvent.location);
+                done();
+              });
           });
       });
     });
@@ -93,17 +80,17 @@ describe('Event Router & Integration', () => {
   describe('PUT /api/events', () => {
     it('should update the created event', (done) => {
       const admin = testUsers.admin000;
-      utilsUser.createAndLoginUser(api, admin, (userUid, token) => {
+      utilsUser.createAndLoginUser(app, admin, (userUid, agent) => {
         const testEvent = testEvents.generateEventData(userUid);
-        utilsEvents.createEvent(api, { token, uid: userUid }, testEvent,
+        utilsEvents.createEvent(agent, { uid: userUid }, testEvent,
           (eventUid) => {
             const fieldsToUpdate = {
               location: `${testEvent.location}_edit`,
             };
-            request(api)
+            agent
               .put('/api/events')
               .expect(200)
-              .query({ token, uid: eventUid })
+              .query({ uid: eventUid })
               .send(fieldsToUpdate)
               .end((putErr, putRes) => {
                 expect(putErr).to.be.null;
