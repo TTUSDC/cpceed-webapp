@@ -1,0 +1,67 @@
+{
+  "coverage": "100%",
+  "expectCount": 47,
+  "actualCount": 47,
+  "files": {
+    "cpceed-webapp/src/server/core/connection.js": {
+      "expectCount": 6,
+      "actualCount": 6,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/api/auth/auth-manager.js": {
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/api/connection.js": {
+      "expectCount": 2,
+      "actualCount": 2,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/api/users/user-models.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/api/core/utils.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/api/events/event-manager.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/src/server/events.js": {
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/src/server/reports.js": {
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/api/reports/report-manager.js": {
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/src/server/user.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/api/users/user-manager.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "cpceed-webapp/src/server/user-auth.js": {
+      "expectCount": 2,
+      "actualCount": 2,
+      "undocumentLines": []
+    }
+  }
+}

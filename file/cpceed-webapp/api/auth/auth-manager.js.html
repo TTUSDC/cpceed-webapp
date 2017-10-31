@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">cpceed-webapp/api/auth/auth-manager.js | CPCEED API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/TTUSDC/CPCEEDWebApp" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-close">close</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-open">open</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/auth</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-changeEmail">changeEmail</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-changePassword">changePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-login">login</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-logout">logout</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-verify">verify</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/core</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-comparePassword">comparePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteSessionsByEmail">deleteSessionsByEmail</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCollection">getCollection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-newIfPresent">newIfPresent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef--">-</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/events</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-EventSchema">EventSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteEvent">Route-DeleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetAllEvents">Route-GetAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetEventById">Route-GetEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyEvent">Route-ModifyEvent</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/reports</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteReport">deleteReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getReportById">getReportById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyReport">modifyReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateReport">Route-CreateReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateReport">Route-CreateReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteReport">Route-DeleteReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetReportById">Route-GetReportById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyReport">Route-ModifyReport</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/users</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createUser">createUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteUser">deleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUserById">getUserById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyUser">modifyUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-comparePassword">comparePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CreateUserCallback">CreateUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-DeleteUserCallback">DeleteUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetUserCallback">GetUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ModifyUserCallback">ModifyUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-UserSchema">UserSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateUser">Route-CreateUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateUser">Route-CreateUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteUser">Route-DeleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetUser">Route-GetUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyUser">Route-ModifyUser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">src/server</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllEvents">getAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEvent">getEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-removeEvent">removeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getReport">getReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyReport">modifyReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-removeReport">removeReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-login">login</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-logout">logout</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createUser">createUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteUser">deleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUser">getUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyUser">modifyUser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">src/server/core</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/cpceed-webapp/src/server/core/connection.js~Connection.html">Connection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-errorHandler">errorHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-instance">instance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-OnApiCallFinished">OnApiCallFinished</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">cpceed-webapp/api/auth/auth-manager.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const passport = require(&apos;api/passport-config.js&apos;);
+
+const authErrors = require(&apos;api/errors/auth-errors&apos;);
+const User = require(&apos;api/users/user-models&apos;).User;
+const utils = require(&apos;api/core/utils.js&apos;);
+
+/**
+ * Given a valid email/password, generates a session and returns the id.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise&lt;string, Error&gt;} - Resolves with the session id, or
+ * rejects with an error that contains a status code and a message.
+ */
+const login = async (req, res) =&gt; {
+  try {
+    const rawUser = await new Promise((resolve, reject) =&gt; {
+      // Arguments come from passport-config.js callback.
+      passport.authenticate(&apos;local&apos;, (err, user, info) =&gt; {
+        if (err) {
+          reject(authErrors.errorConstructor(err.message, 400));
+          return;
+        }
+
+        if (!user) {
+          reject(authErrors.errorConstructor(info.message, 401));
+          return;
+        }
+
+        req.logIn(user, (authErr) =&gt; {
+          if (authErr) {
+            reject(authErrors.errorConstructor(authErr.message, 400));
+            return;
+          }
+
+          resolve(user);
+        });
+      })(req, res);
+    });
+
+    const output = {
+      user: {
+        uid: rawUser.id,
+        email: rawUser.email,
+        name: rawUser.name,
+        role: rawUser.role,
+      },
+      expires: req.session.cookie.expires,
+    };
+
+    if (rawUser.role === &apos;student&apos;) {
+      output.user.points = rawUser.points;
+      output.user.isApproved = rawUser.isApproved;
+    }
+
+    return output;
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
+ * Delete a specific session from the database.
+ * @param {Object} session - The client&apos;s session.
+ * @returns {Promise&lt;undefined, Error&gt;} - Resolves, or rejects with an error.
+ */
+const logout = async (session) =&gt; {
+  try {
+    await new Promise((resolve, reject) =&gt; {
+      // Delete the session from the DB.
+      session.destroy((err) =&gt; {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve();
+      });
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
+ * Delete all of user&apos;s sessions from database and change their password.
+ * @param {string} email - The user&apos;s email address.
+ * @param {string} storedPassword - The user&apos;s stored password.
+ * @param {string} password - The user&apos;s old password.
+ * @param {string} newPassword - The user&apos;s new password.
+ * @returns {Promise&lt;undefined, Error&gt;} - resolves, or rejects with an error.
+ */
+const changePassword = async (email, storedPassword, password, newPassword) =&gt; {
+  try {
+    const isMatch = await utils.comparePassword(password, storedPassword);
+
+    // The wrong password was provided.
+    if (!isMatch) {
+      throw authErrors.invalidPasswordError;
+    }
+
+    const conditions = { email };
+    const update = { password: newPassword };
+    const options = { new: true };
+
+    await User.findOneAndUpdate(conditions, { $set: update }, options).exec();
+
+    await utils.deleteSessionsByEmail(email);
+
+    return;
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
+ * Delete all of user&apos;s sessions from database and change their email.
+ * @param {string} email - The user&apos;s email address.
+ * @param {string} storedPassword - The user&apos;s stored password.
+ * @param {string} password - The user&apos;s old password.
+ * @param {string} newEmail - The user&apos;s new email.
+ * @returns {Promise&lt;undefined, Error&gt;} - resolves, or rejects with an error.
+ */
+const changeEmail = async (email, storedPassword, password, newEmail) =&gt; {
+  try {
+    const isMatch = await utils.comparePassword(password, storedPassword);
+
+    // The wrong password was provided.
+    if (!isMatch) {
+      throw authErrors.invalidPasswordError;
+    }
+
+    const conditions = { email };
+    const update = { email: newEmail };
+    const options = { new: true };
+
+    await User.findOneAndUpdate(conditions, { $set: update }, options).exec();
+
+    await utils.deleteSessionsByEmail(email);
+
+    return;
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
+ * Middleware to determine whether the session is verified.
+ * For valid sessions, the next middleware is called.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {function} next - Invoke the next middleware or route.
+ */
+const verify = (req, res, next) =&gt; {
+  // No user was retrieved, so no valid session exists. Inform the client.
+  if (!req.user) {
+    const message = authErrors.invalidSessionError.message;
+    // Prevent execution of later middleware for efficiency and clarity.
+    res.status(400).json({ message }).end();
+    return;
+  }
+
+  next();
+};
+
+/*
+ * Middleware to verify the user has access permissions of some document.
+ * For valid tokens, an `uid` object is added to the response.locals object.
+ * The `uid` object is the uid of the owner of the document being accessed.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {function} next - Invoke the next middleware or route.
+ */
+const validateUidPermissions = (req, res, next) =&gt; {
+  let uid = req.user.id;
+  if (!uid) {
+    res.locals.err = authErrors.missingTokenError;
+    next();
+    return;
+  }
+  // TODO(NilsG-S): Why reference req.query when the id is known to be in req.user?
+  // I&apos;m pretty sure this won&apos;t ever do anything...
+  if (req.query.uid) {
+    if (req.user.role === &apos;admin&apos;) {
+      uid = req.query.uid;
+    } else if (req.query.uid !== uid) {
+      res.locals.err = authErrors.unauthorizedError;
+      console.log(&apos;Unauthorized&apos;);
+      next(authErrors.unauthorizedError);
+      return;
+    }
+  }
+  res.locals.uid = uid;
+  next();
+};
+
+module.exports = {
+  changePassword,
+  changeEmail,
+  login,
+  logout,
+  verify,
+  validateUidPermissions,
+};
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

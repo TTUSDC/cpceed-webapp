@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">cpceed-webapp/api/reports/report-manager.js | CPCEED API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/TTUSDC/CPCEEDWebApp" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-close">close</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-open">open</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/auth</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-changeEmail">changeEmail</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-changePassword">changePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-login">login</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-logout">logout</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-verify">verify</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/core</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-comparePassword">comparePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteSessionsByEmail">deleteSessionsByEmail</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCollection">getCollection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-newIfPresent">newIfPresent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef--">-</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/events</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-EventSchema">EventSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteEvent">Route-DeleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetAllEvents">Route-GetAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetEventById">Route-GetEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyEvent">Route-ModifyEvent</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/reports</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteReport">deleteReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getReportById">getReportById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyReport">modifyReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateReport">Route-CreateReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateReport">Route-CreateReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteReport">Route-DeleteReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetReportById">Route-GetReportById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyReport">Route-ModifyReport</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/users</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createUser">createUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteUser">deleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUserById">getUserById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyUser">modifyUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-comparePassword">comparePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CreateUserCallback">CreateUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-DeleteUserCallback">DeleteUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetUserCallback">GetUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ModifyUserCallback">ModifyUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-UserSchema">UserSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateUser">Route-CreateUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateUser">Route-CreateUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteUser">Route-DeleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetUser">Route-GetUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyUser">Route-ModifyUser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">src/server</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllEvents">getAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEvent">getEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-removeEvent">removeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getReport">getReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyReport">modifyReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-removeReport">removeReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-login">login</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-logout">logout</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createUser">createUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteUser">deleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUser">getUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyUser">modifyUser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">src/server/core</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/cpceed-webapp/src/server/core/connection.js~Connection.html">Connection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-errorHandler">errorHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-instance">instance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-OnApiCallFinished">OnApiCallFinished</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">cpceed-webapp/api/reports/report-manager.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const reportModels = require(&apos;api/reports/report-models&apos;);
+const logger = require(&apos;common/logger&apos;);
+const newIfPresent = require(&apos;api/core/utils&apos;).newIfPresent;
+
+const Report = reportModels.Report;
+const EventReport = reportModels.EventReport;
+const OtherReport = reportModels.OtherReport;
+
+/**
+ * Callback used by report CRUD methods that return only one report.
+ * @callback reportCallback
+ * @param {Error} err - An error that occurred during the operation.  Null if no
+ *     errors occurred.
+ * @param {Report} report - The report operated on.
+ */
+
+/**
+ * Creates a report with the fields in the request object, and calls a callback
+ * when the database save finishes.
+ * @param {Object} reqData - The request object representing the report to be
+ *     created.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} createCallback - Called once the operation finishes.
+ */
+const createReport = (reqData, locals, createCallback) =&gt; {
+  // TODO(jmtaber129): Check that the student UID matches the requesting user,
+  // or the requesting user is an admin.
+  let report;
+  if (reqData.type === &apos;event&apos;) {
+    report = new EventReport({
+      approvalStatus: false,
+      student: reqData.student,
+      event: reqData.event,
+    });
+  } else if (reqData.type === &apos;other&apos;) {
+    report = new OtherReport({
+      approvalStatus: false,
+      student: reqData.student,
+      category: reqData.category,
+      datetime: reqData.datetime,
+      location: reqData.location,
+      title: reqData.title,
+      description: reqData.description,
+    });
+  } else {
+    // TODO(jmtaber129): Better error handling for invalid report types.
+    createCallback({ message: &apos;Invalid report type.&apos; });
+    return;
+  }
+
+  report.save(createCallback);
+};
+
+/**
+ * Modifies a specific report according to the fields in the request object, and
+ * calls a callback when the database save finishes.
+ * @param {string} reportUid - The UID corresponding to the report to be
+ *     modified.
+ * @param {Object} reqData - The request object containing the fields to be
+ *     modified.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} modifyCallback - Called once the operation finishes.
+ */
+const modifyReport = (reportUid, reqData, locals, modifyCallback) =&gt; {
+  // TODO(asclines): Add checks for required data and expection handling
+
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the report or an admin.
+  const conditions = { _id: reportUid };
+  const update = {};
+
+  if (reqData.type !== &apos;event&apos; &amp;&amp; reqData.type !== &apos;other&apos;) {
+    modifyCallback(new Error(&apos;Invalid report type&apos;));
+    return;
+  }
+
+
+  Object.keys(reqData).forEach((key) =&gt; {
+    if (key !== &apos;type&apos;) { update[key] = reqData[key]; }
+  });
+
+  const options = { new: true };
+
+  if (reqData.type === &apos;other&apos;) {
+    OtherReport.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
+  } else {
+    EventReport.findOneAndUpdate(conditions, { $set: update }, options, modifyCallback);
+  }
+};
+
+/**
+ * Deletes a specific report, and calls a callback once the database deletion
+ * finishes.
+ * @param {string} reportUid - The UID corresponding to the report to be
+ *     deleted.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} deleteCallback - Called once the operation finishes.
+ */
+const deleteReport = (reportUid, locals, deleteCallback) =&gt; {
+  // TODO(asclines): Check the UID of the logged in user and make sure they
+  // are either the creator of the report or an admin.
+
+  // TODO(asclines): Look into better error handling.
+  Report.findByIdAndRemove(reportUid, deleteCallback);
+};
+
+/**
+ * Finds a specific report, and calls a callback once the report is found.
+ * @param {string} reportUid - The UID corresponding to the report to be found.
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {reportCallback} queryCallback - Called once the operation finishes.
+ */
+const getReportById = (reportUid, locals, queryCallback) =&gt; {
+  Report.findById(reportUid, (err, report) =&gt; {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+
+    // If the report&apos;s student UID does not match the user UID, and the user is
+    // not an admin, &apos;report&apos; should not be returned.
+    // TODO(jmtaber129): Check report&apos;s student UID and user UID, and add error
+    // handling.
+
+    queryCallback(err, report);
+  });
+};
+
+/**
+ * Callback used by report CRUD methods that return multiple reports.
+ * @callback multipleReportsCallback
+ * @param {Error} err - An error that occurred during the operation.  Null if no
+ *     errors occurred.
+ * @param {Object.&lt;string, Report&gt;} reports - An object of reports with their
+ *     UIDs as keys.
+ */
+
+/**
+ * Finds all reports, and calls a callback once all reports are found.
+ * @param {Object} reqData - An object containing additional search parameters
+ *     (not yet implemented).
+ * @param {Object} locals - An object containing the current request&apos;s local
+ *     variables.
+ * @param {multipleReportsCallback} queryCallback - Called once the operation
+ *     finishes.
+ */
+const getAllReports = (reqData, locals, queryCallback) =&gt; {
+  const conditions = {};
+
+  // If the user is not an admin, limit the results to reports with the user&apos;s
+  // UID.  If the user is not an admin, and one of the query parameters is a
+  // student UID other than their own, handle it as an error.
+  // TODO(jmtaber129): Set conditions.student to user UID for non-admins.
+  // TODO(jmtaber129): Add error handling for requesting reports with student
+  // UIDs other than the UID of a non-admin user.
+
+  // TODO(jmtaber129): Set additional conditions once query parameters are
+  // accepted in the request object.
+
+  // Both report types are in the same collection, and querying a model queries
+  // the entire collection, so querying one report model will return results for
+  // both report types.
+  Report.find(conditions, (err, reports) =&gt; {
+    if (err) {
+      queryCallback(err);
+      return;
+    }
+
+    const returnObject = {};
+
+    reports.forEach((report) =&gt; {
+      returnObject[report.id] = report;
+
+      // TODO(jmtaber129): Add point value to report in &apos;returnObject&apos;.
+    });
+
+    queryCallback(err, returnObject);
+  });
+};
+
+module.exports = { createReport,
+  modifyReport,
+  deleteReport,
+  getReportById,
+  getAllReports };
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

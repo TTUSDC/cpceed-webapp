@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../../../../../">
+  <title data-ice="title">cpceed-webapp/src/routes/Settings/routes/Account/components/Account.jsx | CPCEED API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/TTUSDC/CPCEEDWebApp" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-close">close</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-open">open</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/auth</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-changeEmail">changeEmail</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-changePassword">changePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-login">login</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-logout">logout</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-verify">verify</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/core</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-comparePassword">comparePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteSessionsByEmail">deleteSessionsByEmail</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getCollection">getCollection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-newIfPresent">newIfPresent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef--">-</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/events</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteEvent">deleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEventById">getEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-EventSchema">EventSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateEvent">Route-CreateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteEvent">Route-DeleteEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetAllEvents">Route-GetAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetEventById">Route-GetEventById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyEvent">Route-ModifyEvent</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/reports</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteReport">deleteReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getReportById">getReportById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyReport">modifyReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateReport">Route-CreateReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateReport">Route-CreateReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteReport">Route-DeleteReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetReportById">Route-GetReportById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyReport">Route-ModifyReport</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">api/users</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createUser">createUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteUser">deleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUserById">getUserById</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyUser">modifyUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-comparePassword">comparePassword</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-CreateUserCallback">CreateUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-DeleteUserCallback">DeleteUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-GetUserCallback">GetUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-ModifyUserCallback">ModifyUserCallback</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-UserSchema">UserSchema</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateUser">Route-CreateUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-CreateUser">Route-CreateUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-DeleteUser">Route-DeleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-GetUser">Route-GetUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-Route-ModifyUser">Route-ModifyUser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">src/server</div><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createEvent">createEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllEvents">getAllEvents</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getEvent">getEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyEvent">modifyEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-removeEvent">removeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createReport">createReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getAllReports">getAllReports</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getReport">getReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyReport">modifyReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-removeReport">removeReport</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-login">login</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-logout">logout</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-createUser">createUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-deleteUser">deleteUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getUser">getUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-modifyUser">modifyUser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">src/server/core</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/cpceed-webapp/src/server/core/connection.js~Connection.html">Connection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-errorHandler">errorHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-instance">instance</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-typedef">T</span><span data-ice="name"><span><a href="typedef/index.html#static-typedef-OnApiCallFinished">OnApiCallFinished</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">cpceed-webapp/src/routes/Settings/routes/Account/components/Account.jsx</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import React from &apos;react&apos;;
+import PropTypes from &apos;prop-types&apos;;
+import update from &apos;immutability-helper&apos;;
+
+import Box from &apos;grommet/components/Box&apos;;
+import Form from &apos;grommet/components/Form&apos;;
+import Heading from &apos;grommet/components/Heading&apos;;
+import FormField from &apos;grommet/components/FormField&apos;;
+import Paragraph from &apos;grommet/components/Paragraph&apos;;
+import Footer from &apos;grommet/components/Footer&apos;;
+import Button from &apos;grommet/components/Button&apos;;
+
+import {
+  checkPass,
+  checkConfirm,
+  checkEmail,
+} from &apos;components/Auth/verify.js&apos;;
+import logger from &apos;logger.js&apos;;
+
+class Account extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      password: &apos;&apos;,
+      confirm: &apos;&apos;,
+      old: &apos;&apos;,
+      email: this.props.user.email,
+      err: {
+        password: &apos;&apos;,
+        confirm: &apos;&apos;,
+        email: &apos;&apos;,
+      },
+    };
+
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handlePassword = this.handlePassword.bind(this);
+    this.handleEmail = this.handleEmail.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
+    this.inputChecking = this.inputChecking.bind(this);
+  }
+
+  handlePasswordChange(event) {
+    this.setState({
+      password: event.target.value,
+      confirm: &apos;&apos;,
+      err: update(this.state.err, {
+        confirm: { $set: &apos;&apos; },
+      }),
+    });
+  }
+
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value,
+    });
+  }
+
+  handlePassword(event) {
+    // This prevents a &apos;?&apos; from being appended to the URL
+    event.preventDefault();
+    this.props.handlePassword(this.state.password, this.state.old);
+  }
+
+  handleEmail(event) {
+    event.preventDefault();
+    this.props.handleEmail(this.state.email);
+  }
+
+  handleFocus(event) {
+    const name = event.target.name;
+
+    switch (name) {
+      case &apos;password&apos;:
+        if (this.state.err.password !== &apos;&apos;) {
+          this.setState({
+            err: update(this.state.err, {
+              password: { $set: &apos;&apos; },
+            }),
+          });
+        }
+
+        break;
+      case &apos;confirm&apos;:
+        if (this.state.err.confirm !== &apos;&apos;) {
+          this.setState({
+            err: update(this.state.err, {
+              confirm: { $set: &apos;&apos; },
+            }),
+          });
+        }
+
+        break;
+      case &apos;email&apos;:
+        if (this.state.err.email !== &apos;&apos;) {
+          this.setState({
+            err: update(this.state.err, {
+              email: { $set: &apos;&apos; },
+            }),
+          });
+        }
+
+        break;
+      default:
+        logger.error(`Create an onFocus handler in Account.js for ${name}`);
+    }
+  }
+
+  inputChecking(event) {
+    const name = event.target.name;
+    let value = null;
+
+    switch (name) {
+      case &apos;password&apos;:
+        value = checkPass(this.state.password);
+
+        this.setState({
+          err: update(this.state.err, {
+            password: { $set: value },
+          }),
+        });
+
+        break;
+      case &apos;confirm&apos;:
+        value = checkConfirm(this.state.password, this.state.confirm);
+
+        this.setState({
+          err: update(this.state.err, {
+            confirm: { $set: value },
+          }),
+        });
+
+        break;
+      case &apos;email&apos;:
+        value = checkEmail(this.state.email);
+
+        this.setState({
+          err: update(this.state.err, {
+            email: { $set: value },
+          }),
+        });
+
+        break;
+      default:
+        logger.error(`Create an onBlur handler in Account.js for ${name}`);
+    }
+  }
+
+  render() {
+    // Password conditional rendering
+
+    let passwordMessage = null;
+    if (this.props.err.password !== &apos;&apos;) {
+      passwordMessage = (
+        &lt;span style={{ color: &apos;red&apos; }}&gt;{this.props.err.password}&lt;/span&gt;
+      );
+    }
+
+    let passPassword = this.handlePassword;
+    if (this.state.err.password !== &apos;&apos;) {
+      passPassword = null;
+    } else if (this.state.err.confirm !== &apos;&apos;) {
+      passPassword = null;
+    } else if (this.props.waiting.password === true) {
+      passPassword = null;
+    }
+
+    // Email conditional rendering
+
+    let emailMessage = null;
+    if (this.props.err.email !== &apos;&apos;) {
+      emailMessage = (
+        &lt;span style={{ color: &apos;red&apos; }}&gt;{this.props.err.email}&lt;/span&gt;
+      );
+    }
+
+    let passEmail = this.handleEmail;
+    if (this.state.err.email !== &apos;&apos;) {
+      passEmail = null;
+    } else if (this.props.waiting.email === true) {
+      passEmail = null;
+    }
+
+    return (
+      &lt;Box
+        flex
+        align=&apos;center&apos;
+        size={{ width: &apos;full&apos; }}
+      &gt;
+        &lt;Heading tag=&apos;h2&apos;&gt;
+          Change Password
+        &lt;/Heading&gt;
+        &lt;Form
+          pad=&apos;medium&apos;
+          plain={false}
+          onSubmit={passPassword}
+        &gt;
+          &lt;fieldset&gt;
+            &lt;Paragraph margin=&apos;none&apos;&gt;
+              Your password should use at least 8 characters. It should
+              contain only ASCII text, with at least one uppercase, one
+              lowercase, one number, and one special character.
+            &lt;/Paragraph&gt;
+            &lt;FormField
+              label=&apos;Password&apos;
+              error={this.state.err.password}
+            &gt;
+              &lt;input
+                name=&apos;password&apos;
+                type=&apos;password&apos;
+                value={this.state.password}
+                onBlur={this.inputChecking}
+                onFocus={this.handleFocus}
+                onChange={this.handlePasswordChange}
+              /&gt;
+            &lt;/FormField&gt;
+            &lt;FormField
+              label=&apos;Confirm Password&apos;
+              error={this.state.err.confirm}
+            &gt;
+              &lt;input
+                name=&apos;confirm&apos;
+                type=&apos;password&apos;
+                value={this.state.confirm}
+                onBlur={this.inputChecking}
+                onFocus={this.handleFocus}
+                onChange={this.handleInputChange}
+              /&gt;
+            &lt;/FormField&gt;
+            &lt;FormField label=&apos;Old Password&apos;&gt;
+              &lt;input
+                name=&apos;old&apos;
+                type=&apos;password&apos;
+                value={this.state.old}
+                onChange={this.handleInputChange}
+              /&gt;
+            &lt;/FormField&gt;
+            {passwordMessage}
+          &lt;/fieldset&gt;
+          &lt;Footer size=&apos;small&apos;&gt;
+            &lt;Button
+              label=&apos;Change Password&apos;
+              type=&apos;submit&apos;
+              primary
+              onClick={passPassword}
+            /&gt;
+          &lt;/Footer&gt;
+        &lt;/Form&gt;
+        &lt;Heading tag=&apos;h2&apos;&gt;
+          Change Email
+        &lt;/Heading&gt;
+        &lt;Form
+          pad=&apos;medium&apos;
+          plain={false}
+          onSubmit={passEmail}
+        &gt;
+          &lt;fieldset&gt;
+            &lt;Paragraph margin=&apos;none&apos;&gt;
+              You use your email to login, so make sure to use your new one
+              on your next visit.
+            &lt;/Paragraph&gt;
+            &lt;FormField
+              label=&apos;Email&apos;
+              error={this.state.err.email}
+            &gt;
+              &lt;input
+                name=&apos;email&apos;
+                type=&apos;email&apos;
+                value={this.state.email}
+                onBlur={this.inputChecking}
+                onFocus={this.handleFocus}
+                onChange={this.handleInputChange}
+              /&gt;
+            &lt;/FormField&gt;
+            {emailMessage}
+          &lt;/fieldset&gt;
+          &lt;Footer size=&apos;small&apos;&gt;
+            &lt;Button
+              label=&apos;Change Email&apos;
+              type=&apos;submit&apos;
+              primary
+              onClick={passEmail}
+            /&gt;
+          &lt;/Footer&gt;
+        &lt;/Form&gt;
+      &lt;/Box&gt;
+    );
+  }
+}
+
+Account.propTypes = {
+  handlePassword: PropTypes.func.isRequired,
+  handleEmail: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    email: PropTypes.string.isRequired,
+  }).isRequired,
+  err: PropTypes.shape({
+    password: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }).isRequired,
+  waiting: PropTypes.shape({
+    password: PropTypes.bool.isRequired,
+    email: PropTypes.bool.isRequired,
+  }).isRequired,
+};
+
+export default Account;
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
