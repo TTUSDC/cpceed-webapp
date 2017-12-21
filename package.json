@@ -2,7 +2,7 @@
   "name": "cpceed-web-app",
   "version": "0.0.0",
   "description": "Time logging app for the CPCEED program at Texas Tech University",
-  "main": "src/index.jsx",
+  "main": "app/index.jsx",
   "scripts": {
     "prod": "npm-run-all prod-app prod-api",
     "prod-app": "webpack --env=prod",

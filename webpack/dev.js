@@ -16,7 +16,7 @@ const dev = webpackMerge(base, {
   entry: {
     app: [
       'react-hot-loader/patch',
-      './src/index.jsx',
+      './app/index.jsx',
     ],
   },
 

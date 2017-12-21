@@ -13,7 +13,7 @@ const prod = webpackMerge(base, {
     filename: "bundle.js"
   },
 
-  entry: './src/index.jsx',
+  entry: './app/index.jsx',
 
   plugins: [
     // Resolve global constant ENV to 'prod' during build
