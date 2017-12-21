@@ -1,6 +1,6 @@
 require('app-module-path').addPath(__dirname);
 // load environment variables from .env file.
-require('dotenv').load({ path: process.env.ENV_PATH || '.env.default' });
+require('dotenv').load({ path: '.env' });
 
 const logger = require('api/core/logger.js');
 const connection = require('api/connection.js');
@@ -20,3 +20,4 @@ connection.open()
     logger.info('MongoDB connection error. Please make sure MongoDB is running.');
     process.exit(1);
   });
+

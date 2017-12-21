@@ -5,27 +5,68 @@ To get involved with this project, you'll need to do a few things.
 
 There are a few tools and design patterns that every front end developer for this project must familiarize themselves with:
 
-- Redux and react-redux - Components that need to be aware of user permissions have to read it from the Redux store. To do so, you must use the `connect` function from react-redux. `src/components/NavBar/NavBarContainer.js` is an example of this, as is `src/components/Auth/RequireAuth.js`.
-- firebase - This project is using firebase while the backend is under development. Everyone working on this project should know how to use the firebase web API.
-- Grommet - Grommet is the UX library used in this project. Developers should be familiar the components it provides.
-- The higher-order components design pattern - For components that can only be accessed by certain users, we have a higher order component (HOC) called `RequireAuth` that is used to check the current user's permissions. The component calling `RequireAuth` must pass it a JavaScript object containing the permissions it requires. An example of this is `src/routes/Activity/components/Activity.js`. The permissions assigned to each user type are defined in `src/redux/actions.js`, so if your component requires new permissions you must add them there as well.
-- react-router - This project uses react-router to manage UI with respect to the URL. Examples of how to use it can be found in `src/appRoute.js` and `src/routes/Activity/index.js`.
+- Redux and react-redux - Components that need to be aware of user permissions have to read it from the Redux store.
+To do so, you must use the `connect` function from react-redux.
+`src/components/NavBar/NavBarContainer.js` is an example of this, as is `src/components/Auth/RequireAuth.js`.
+- Grommet - Grommet is the UX library used in this project.
+Developers should be familiar the components it provides.
+- The higher-order components design pattern - For components that can only be accessed by certain users, we have a higher order component (HOC) called `RequireAuth` that is used to check the current user's permissions.
+The component calling `RequireAuth` must pass it a JavaScript object containing the permissions it requires.
+An example of this is `src/routes/Activity/components/Activity.js`.
+The permissions assigned to each user type are defined in `src/redux/actions.js`, so if your component requires new permissions you must add them there as well.
+- react-router - This project uses react-router to manage UI with respect to the URL.
+Examples of how to use it can be found in `src/appRoute.js` and `src/routes/Activity/index.js`.
 - React
+- ESLint
+- MongoDB (back-end)
+- Express.js (back-end)
 
 The resources page on our wiki has links to information on everything listed here: https://github.com/TTUSDC/CPCEEDWebApp/wiki/Resources.
 
-## Making Changes
+## Coding Standards
+We use [Airbnb's](https://github.com/airbnb/javascript) JavaScript style guide
 
-1. Download [Node.js](https://nodejs.org/) and [Git](https://git-scm.com/). Node.js 8.2.1 and NPM 5.3.0 or above are required for developers working on the project. Anything below that cannot be guaranteed to function properly.
-2. Clone this repository by running `git clone https://github.com/TTUSDC/CPCEEDWebApp.git` in the location of your choice.
-3. Download the dependencies by running `npm install` when you're in the project directory.
-4. Visit the wiki at https://github.com/TTUSDC/CPCEEDWebApp/wiki to learn about the developer guidelines for this project.
+Notable Aspects:
 
-### Testing Your Changes
+- Indents should be 2 spaces.
+- Regular files and folders should use `dash-separated-names`. Short folder names are preferred.
+- React components should use `UpperCamelCase` for the class name, the file name, and the parent folder name.
+
+The best way to ensure there are no stylistic problems with your code is to use ESLint:
+
+1. Make changes to a file.
+2. Save the file.
+3. Run the command `node_modules/.bin/eslint [path/to/the/file]`.
+
+## Setting Up 
+
+1. Download the dependencies:
+
+    - [Git](https://git-scm.com/).
+    - [Node.js 8.9.3](https://nodejs.org/)
+    - NPM 5.5.1
+    - Yarn 1.3.2
+    - MongoDB 3.4.9
+
+2. Clone this repository by running `git clone https://github.com/TTUSDC/cpceed-webapp.git` in the location of your choice.
+3. Download the dependencies by running `yarn install` when you're in the project directory.
+4. Add a `.env` file to the top level of the project with the following contents:
+
+```
+MONGODB_URI=mongodb://localhost:27017/test
+MONGOLAB_URI=mongodb://localhost:27017/test
+
+SECRET=thisisoursecret
+SALT=10
+```
+
+5. Visit the wiki at https://github.com/TTUSDC/CPCEEDWebApp/wiki to learn about the developer guidelines for this project.
+
+## Testing Changes 
 
 **Unless all of the tests pass, github will block your code from being merged**
 
-#### App
+### App
 
 Once you've started making changes, you'll need to make sure the app still runs properly.
 To use the testing server, do the following:
@@ -51,8 +92,7 @@ The testing libraries used in this project are as follows:
 3. Sinon: for spying on, stubbing, or mocking functions.
 4. Enzyme: a library that allows React components to be tested effectively (primarily through shallow rendering).
 
-#### API
-
+### API
 To run the API by itself, do the following:
 
 1. Run `npm run dev-api` from the project directory.
@@ -68,17 +108,3 @@ For an example, see `test-auth-router.js`.
 Note that any integration test that requires sign-in will need to use `agent` to persist the session cookie.
 `createAndLoginUser` passes `agent` as the second argument to its callback.
 
-## Coding Standards
-We use [Airbnb's](https://github.com/airbnb/javascript) JavaScript style guide
-
-Notable Aspects:
-
-- Indents should be 2 spaces.
-- Regular files and folders should use `dash-separated-names`. Short folder names are preferred.
-- React components should use `UpperCamelCase` for the class name, the file name, and the parent folder name.
-
-The best way to ensure there are no stylistic problems with your code is to use ESLint:
-
-1. Make changes to a file.
-2. Save the file.
-3. Run the command `node_modules/.bin/eslint [path/to/the/file]`.

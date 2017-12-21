@@ -1,6 +1,8 @@
+const path = require('path');
+
 require('app-module-path').addPath(`${__dirname}/../../`);
 // load environment variables from .env file.
-require('dotenv').load({ path: process.env.ENV_PATH || '.env.default' });
+require('dotenv').load({ path: path.resolve(__dirname, '../../.env') });
 
 const mockgoose = require('mockgoose');
 const mongoose = require('mongoose');
