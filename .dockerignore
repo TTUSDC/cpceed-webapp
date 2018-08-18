@@ -9,3 +9,6 @@ node_modules # Windows node_modules won't work on Ubuntu
 ## Docker
 Dockerfile
 docker-compose*
+
+## Logs
+*.log
