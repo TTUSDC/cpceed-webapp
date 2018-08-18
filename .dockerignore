@@ -1,0 +1,11 @@
+# Dependencies
+node_modules # Windows node_modules won't work on Ubuntu
+
+# Project
+.git
+
+# Development
+
+## Docker
+Dockerfile
+docker-compose*
